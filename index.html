@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Horizon Atlas – Mission Control</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#05020a;--pan:rgba(14,6,22,.9);--ink:#cfd8e8;--mut:#6f7c99;--line:rgba(220,70,235,.35);--cy:#e84bf0;--am:#e8a24a;--ok:#4fd08a;--bad:#ff7a6b;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;overflow-x:hidden}
+#stars{position:fixed;top:0;left:0;width:1px;height:1px;border-radius:50%;z-index:0}
+.lab{font:11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.cy{color:var(--cy)}.am{color:var(--am)}
+#intro{position:relative;z-index:1;min-height:86vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:20px;padding:40px 6vw}
+@media(max-width:820px){#intro{grid-template-columns:1fr;padding-top:30px}}
+#intro h1{font-weight:200;font-size:clamp(44px,8vw,92px);letter-spacing:.12em;margin:10px 0 0;line-height:1}
+#intro .sub{font:13px var(--mono);letter-spacing:.5em;color:var(--cy);margin:8px 0 26px}
+#intro p.d{border-left:2px solid var(--line);padding-left:14px;color:#9aa8c4;max-width:460px}
+.btn{background:#e9eff6;color:#0a0f1c;border:0;padding:16px 46px;font:12px var(--mono);letter-spacing:.25em;cursor:pointer;text-transform:uppercase;margin:18px 0}
+.btn:hover{background:#fff}
+.moonwrap{position:relative;width:min(420px,80vw);aspect-ratio:1;justify-self:center}
+.moon{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),radial-gradient(circle at 70% 55%,rgba(60,60,60,.55) 0 9%,transparent 10%),radial-gradient(circle at 35% 62%,rgba(70,70,70,.5) 0 8%,transparent 9%),radial-gradient(circle at 28% 28%,rgba(90,90,90,.4) 0 6%,transparent 7%),radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#222 100%);box-shadow:inset -40px -30px 70px rgba(0,0,0,.75),0 0 60px rgba(232,75,240,.12)}
+.moonwrap svg{position:absolute;inset:0;width:100%;height:100%}
+#app{display:block;position:relative;z-index:1;max-width:1180px;margin:auto;padding:14px}
+.hud{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:18px;align-items:end;border:1px solid var(--line);background:var(--pan);padding:10px 16px}
+@media(max-width:760px){.hud{grid-template-columns:1fr 1fr}.hud .brand{grid-column:1/-1}}
+.brand{font:600 15px var(--mono);letter-spacing:.12em}.brand span{color:var(--mut);font-weight:400}
+.m b{display:block;font:600 16px var(--mono)}.m .t{height:3px;background:#2a1538;margin-top:3px}.m .t i{display:block;height:100%;background:var(--cy);width:0;transition:width .25s}
+.chip{font:11px var(--mono);letter-spacing:.15em;padding:5px 10px;border:1px solid var(--line)}
+.chip.ok{color:var(--ok);border-color:var(--ok)}.chip.no{color:var(--bad);border-color:var(--bad)}
+.steps{display:flex;gap:18px;flex-wrap:wrap;padding:12px 4px;font:11px var(--mono);letter-spacing:.15em;color:var(--mut)}
+.steps a{cursor:pointer}.steps a:before{content:"○ "}.steps a.on{color:var(--cy)}.steps a.on:before{content:"● "}
+.pan{border:1px solid var(--line);background:var(--pan);padding:16px;margin-bottom:12px;position:relative}
+.pan:before{content:"";position:absolute;top:-1px;left:0;width:60px;height:2px;background:var(--cy)}
+.pan h2{margin:4px 0 10px;font-size:22px;font-weight:400}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.opt{border:1px solid var(--line);padding:10px;margin-bottom:8px}
+.opt b{float:right;font:600 13px var(--mono);color:var(--am)}
+.opt .up{color:var(--ok);font-size:12px}.opt .dn{color:var(--bad);font-size:12px}
+input[type=range]{width:100%;accent-color:#e84bf0}
+.sc{overflow-x:auto}table{border-collapse:separate;border-spacing:2px;font-size:11px}
+th{font:10px var(--mono);color:var(--mut);text-align:right;padding-right:6px;white-space:nowrap;font-weight:400}
+.dates th{text-align:center;padding:0;font-size:9px}
+td{width:21px;height:21px;cursor:pointer;padding:0}
+td.pass{outline:1px solid #fff;outline-offset:-2px}td.sel{box-shadow:0 0 0 2px var(--am)}
+.res{margin-top:10px;padding:10px;border:1px solid var(--ok);background:rgba(79,208,138,.07)}
+.res.no{border-color:var(--bad);background:rgba(255,122,107,.06)}.res ul{margin:6px 0 0;padding-left:18px}
+.leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+svg.sky{width:100%;display:block}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.bar{height:6px;background:#2a1538;margin-top:4px}.bar i{display:block;height:100%;width:0;transition:width .2s}
+.foot{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);margin-top:10px}
+@media(max-width:640px){.foot{grid-template-columns:1fr 1fr}}
+.foot div{padding:10px;border-right:1px solid var(--line)}.foot b{display:block;font:600 20px var(--mono)}
+.ctl{display:flex;gap:12px;align-items:center;margin-top:8px}
+.ctl .btn{padding:8px 20px;margin:0}
+.nav{position:sticky;top:0;z-index:5;display:flex;gap:22px;align-items:center;padding:12px 6vw;background:rgba(5,7,13,.92);border-bottom:1px solid var(--line);font:11px var(--mono);letter-spacing:.18em}
+.nav b{margin-right:auto}.nav a{color:var(--mut);text-decoration:none}.nav a:hover{color:var(--cy)}
+section{scroll-margin-top:50px}#app section{margin-bottom:40px}
+.sh{font-weight:300;font-size:28px;margin:4px 0 14px}
+select{background:#0a0f1c;color:var(--ink);border:1px solid var(--line);padding:8px;font:12px var(--mono);max-width:100%}
+.ctl{flex-wrap:wrap}.ct{border-spacing:0;margin:10px 0}.ct td{width:auto;height:auto;cursor:default;padding:6px 18px 6px 0;font:13px var(--mono)}.good{color:var(--ok)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:820px){.g2{grid-template-columns:1fr}}
+.xr{display:grid;grid-template-columns:100px 1fr 40px;align-items:center;gap:8px;margin:6px 0;font:12px var(--mono)}.xr i{display:block;height:8px}
+textarea{width:100%;height:150px;background:#03050b;color:var(--ink);border:1px solid var(--line);font:11px var(--mono)}
+.nav{justify-content:center;gap:26px;flex-wrap:wrap;background:rgba(5,2,10,.88);padding:12px 3vw}.nav a{color:#cfc3dc}
+.dd{position:relative}.dd>div{display:none;position:absolute;top:100%;left:-14px;min-width:170px;background:rgba(122,31,160,.96);padding:6px 0}
+.dd:hover>div,.dd:focus-within>div{display:block}.dd>div a{display:block;padding:7px 16px;color:#fff}
+.hero{position:relative;z-index:1;height:min(88vh,720px);overflow:hidden;text-align:center;padding-top:50px}.hc{position:relative;z-index:2}.lg{width:92px;height:92px}
+.hero h1{margin:8px 0 0;font-size:clamp(34px,6vw,58px);font-weight:600;letter-spacing:.05em}.hs{font-size:clamp(16px,2.6vw,26px);letter-spacing:.14em;font-weight:500}
+.tag{font:12px var(--mono);letter-spacing:.2em;color:#c9a6d6;margin:6px 0 24px}
+.limb{position:absolute;left:50%;top:50%;width:170%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 50% 0,rgba(255,60,255,.3),transparent 22%),#07030d;box-shadow:0 -4px 14px 1px rgba(255,200,255,.9),0 -10px 60px 8px rgba(230,50,240,.55),0 -30px 160px 40px rgba(110,30,160,.35)}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:auto;padding:70px 20px}
+.big{font-size:clamp(26px,4vw,38px);font-weight:600;margin:0 0 10px}.cen{text-align:center}.s{color:#a794b8;max-width:560px;margin:0 auto 30px}.s2{color:#a794b8;font-size:13px}
+.about{display:grid;grid-template-columns:340px 1fr;gap:50px;align-items:center}.about.r{grid-template-columns:1fr 340px}
+@media(max-width:820px){.about,.about.r{grid-template-columns:1fr;justify-items:center}}
+.disc{width:min(300px,80vw);aspect-ratio:1;border-radius:50%;padding:6px;background:linear-gradient(135deg,#ff3dff,#3a0b55)}
+.disc i{display:block;height:100%;border-radius:50%;background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),radial-gradient(circle at 70% 58%,rgba(60,60,60,.55) 0 9%,transparent 10%),radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#222 100%);box-shadow:inset -30px -20px 50px rgba(0,0,0,.7)}
+.disc.e i{background:radial-gradient(circle at 35% 30%,#7fd0ff,#1b5aa8 45%,#061a3a 100%)}
+.arc{position:relative}.arc:before{content:"";position:absolute;left:3%;right:3%;top:40px;height:420px;border:1px solid var(--line);border-bottom:0;border-radius:50% 50% 0 0}
+.fg{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;position:relative}.fg>div{font-size:13px;color:#a794b8}
+.fg>div:nth-child(1),.fg>div:nth-child(6){margin-top:150px}.fg>div:nth-child(2),.fg>div:nth-child(5){margin-top:70px}
+h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
+.ic{width:62px;height:62px;border-radius:50%;border:1px solid var(--cy);display:grid;place-items:center;margin:auto;color:var(--cy);font-size:24px;background:#07030d;box-shadow:0 0 18px rgba(232,75,240,.35)}
+.rm{display:inline-block;border:1px solid #fff;padding:2px 12px;font-size:11px;color:#fff;text-decoration:none;margin-top:8px}
+.cb{display:block;margin:30px auto 0;width:min(260px,60vw);height:min(260px,60vw)}
+@media(max-width:900px){.fg{grid-template-columns:1fr 1fr}.fg>div{margin-top:20px!important}.arc:before{display:none}}
+.tl{display:grid;grid-template-columns:repeat(5,1fr);align-items:start}.tl .ti{padding:10px 12px;font-size:13px;color:#a794b8}
+.tl .n{grid-row:2;background:linear-gradient(#c01cc8,#7a1fa0);font:600 16px var(--mono);padding:8px 0;border-left:1px solid rgba(0,0,0,.25)}.tl .a{grid-row:1;align-self:end}.tl .b{grid-row:3}
+@media(max-width:820px){.tl{grid-template-columns:1fr}.tl>*{grid-column:1!important;grid-row:auto!important}}
+.ck{list-style:none;padding:0}.ck li{margin:14px 0;padding-left:32px;position:relative}.ck li:before{content:"✓";position:absolute;left:0;top:1px;width:18px;height:18px;border:1px solid #fff;font-size:12px;display:grid;place-items:center}
+.wg{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}@media(max-width:820px){.wg{grid-template-columns:1fr}}
+.wc{border:1px solid var(--line);padding:26px 20px;background:radial-gradient(circle,#fff 0 3px,transparent 4px) 0 0/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 100% 0/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 0 100%/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 100% 100%/12px 12px no-repeat}
+.av{width:84px;height:84px;border-radius:50%;margin:auto;display:grid;place-items:center;font-size:38px;background:radial-gradient(circle at 35% 30%,#7a3a8a,#25102f);border:3px solid #3a2147}
+.cs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:10px 0 40px}.cs>div{display:flex;gap:14px;align-items:center}.cs .ic{margin:0;flex:none;border-color:#fff;color:#fff}
+.fc{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;font-size:13px;color:#a794b8;border-top:1px solid var(--line);padding-top:30px}.fc h5{color:#fff;font-size:16px;margin:0 0 10px}.fc a{display:block;color:#a794b8;text-decoration:none;margin:6px 0}
+@media(max-width:820px){.cs,.fc{grid-template-columns:1fr}}
+</style></head><body>
+<div id="stars"></div>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#05020a" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
+<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
+
+<header class="hero"><div class="limb"></div><div class="hc"><svg class="lg"><use href="#lg"/></svg><h1>HORIZON ATLAS</h1><div class="hs">LUNAR MISSION PLANNER</div><div class="tag">— WHERE AND WHEN CAN YOUR LANDER WORK —</div><button class="btn" id="go">Start Planning</button></div></header>
+
+<section id="about" class="wrap about"><div class="disc"><i></i></div><div><h2 class="big">About Horizon Atlas</h2>
+<p>NASA wants to land spacecraft near the Moon's south pole. There the Sun sits very low, ridges can hide it, and Earth is sometimes below the horizon. Both decide a lander's power and contact.</p>
+<p>Most tools start with a site and show what happens there. We turn it around: you tell us what the lander needs, and Horizon Atlas shows where and when it can work.</p></div></section>
+<section id="feat" class="wrap cen"><h2 class="big">Our Features</h2><p class="s">Six tools, one calculation engine, built for the CLPS Lunar Mission Browser challenge.</p>
+<div class="arc"><div class="fg"><div><div class="ic">▦</div><h4>Explore</h4>Atlas heatmap of every site and date, plus the sky view.<br><a class="rm" href="#s1">Read More &gt;</a></div><div><div class="ic">⚖</div><h4>Decision</h4>Set priorities. Get the top 3 with strengths and risks.<br><a class="rm" href="#sd">Read More &gt;</a></div><div><div class="ic">⏲</div><h4>Scenario</h4>Which site is best for one specific mission?<br><a class="rm" href="#sc">Read More &gt;</a></div><div><div class="ic">✦</div><h4>Explain</h4>Why a choice scored this way, and what would change it.<br><a class="rm" href="#sx">Read More &gt;</a></div><div><div class="ic">⚗</div><h4>Scientist</h4>Uncertainty range and CSV data for checking results.<br><a class="rm" href="#ss">Read More &gt;</a></div><div><div class="ic">◈</div><h4>Game</h4>Polar Window: choose where and when it lands.<br><a class="rm" href="#s3">Read More &gt;</a></div></div><svg class="cb" viewBox="0 0 100 100"><use href="#lg"/></svg></div></section>
+<section id="how" class="wrap cen"><h2 class="big">How It Works</h2><p class="s">From a lander's needs to an explained decision in five steps.</p><div class="tl"><div class="ti a" style="grid-column:1"><h4>Set your needs</h4>Sunlight, darkness limit and Earth contact.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:1">1</div><div class="ti b" style="grid-column:2"><h4>Scan the Atlas</h4>See every site and date at once.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:2">2</div><div class="ti a" style="grid-column:3"><h4>Check the sky</h4>Watch the Sun and Earth over the horizon.<br><a class="rm" href="#s2">Read More &gt;</a></div><div class="n" style="grid-column:3">3</div><div class="ti b" style="grid-column:4"><h4>Decide and simulate</h4>Rank options for your mission.<br><a class="rm" href="#sd">Read More &gt;</a></div><div class="n" style="grid-column:4">4</div><div class="ti a" style="grid-column:5"><h4>Explain and export</h4>See why, then take the data.<br><a class="rm" href="#sx">Read More &gt;</a></div><div class="n" style="grid-column:5">5</div></div></section>
+<main id="app">
+ <section id="s1"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Explore: what does your lander need?</h3>
+ <div class="hud">
+  <div class="brand">HORIZON <span>MISSION CONTROL</span></div>
+  <div class="m"><span class="lab">Sunlit</span><b id="hs">–</b><div class="t"><i id="hsb"></i></div></div>
+  <div class="m"><span class="lab">Longest dark</span><b id="hd">–</b><div class="t"><i id="hdb"></i></div></div>
+  <div class="m"><span class="lab">Earth contact</span><b id="hc">–</b><div class="t"><i id="hcb"></i></div></div>
+  <div class="chip" id="verdict">–</div>
+ </div>
+ 
+
+ <div class="grid">
+  <div class="pan" id="p1"><div class="lab cy">Requirements</div><h2>Lander needs</h2>
+   <div class="opt"><b id="vs"></b>Sunlight at least<div class="up">▲ more power</div><input id="rs" type="range" min="20" max="95" value="55"></div>
+   <div class="opt"><b id="vd"></b>Longest dark under<div class="dn">▼ battery must survive it</div><input id="rd" type="range" min="10" max="200" value="90"></div>
+   <div class="opt"><b id="vc"></b>Days with Earth contact<div class="up">▲ direct link to Earth</div><input id="rc" type="range" min="10" max="100" value="70"></div>
+   <div class="lab" style="line-height:1.7;letter-spacing:.08em">Sun counts when its centre is above the horizon. Earth counts when above terrain. Simplified model.</div>
+  </div>
+  <div class="pan" id="p2"><div class="lab cy">Atlas</div><h2>Landing Window Atlas</h2>
+   <div class="sc"><table id="atlas"></table></div>
+   <div class="leg lab"><span class="am">■</span> selected <span>▢ passes all needs</span><span>red → green = far → meets</span><span>click a square</span></div>
+   <div id="result"></div>
+  </div>
+ </div>
+
+ </section>
+<section id="s2"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Sky view and compare mode</h3>
+ <div class="pan" id="p3"><div class="lab cy">Sky view</div><h2 id="skyT">Sky view</h2>
+  <svg class="sky" id="sky" viewBox="0 0 720 220"></svg>
+  <div class="lab" style="display:flex;justify-content:space-between"><span>N</span><span>E</span><span>S</span><span>W</span><span>N</span></div>
+  <div class="bars">
+   <div><span class="lab">Power now</span> <b id="pw" style="font:600 12px var(--mono)"></b><div class="bar"><i id="pwb" style="background:var(--am)"></i></div></div>
+   <div><span class="lab">Contact now</span> <b id="ct" style="font:600 12px var(--mono)"></b><div class="bar"><i id="ctb" style="background:#5ab0ff"></i></div></div>
+  </div>
+  <svg id="strips" viewBox="0 0 240 36" preserveAspectRatio="none" style="width:100%;height:42px;display:block"></svg>
+  <div class="lab" style="margin-top:4px">Top: sunlight · Bottom: Earth contact · 10 days</div>
+  <input id="time" type="range" min="0" max="239" value="0" style="margin-top:8px">
+  <div class="ctl"><button class="btn" id="play">▶ Play</button><span class="lab" id="tl"></span></div>
+  <div class="foot">
+   <div><span class="lab">Sunlit</span><b id="f1"></b></div><div><span class="lab">Longest dark</span><b id="f2"></b></div>
+   <div><span class="lab">Contact days</span><b id="f3"></b></div><div><span class="lab">Verdict</span><b id="f4"></b></div>
+  </div>
+ </div>
+<div class="pan" id="cmp"><div class="lab cy">Compare mode</div><h2>Compare two choices</h2>
+  <div class="ctl"><select id="ca"></select><select id="cad"></select><span class="lab">vs</span><select id="cb"></select><select id="cbd"></select></div>
+  <div id="cmpT"></div><p id="cmpS"></p></div>
+</section>
+<section id="sd"><div class="lab cy">02 · Decision mode · MUST</div><h3 class="sh">Decision: set your priorities, get the top 3</h3>
+ <div class="grid"><div class="pan"><h2>Priorities</h2><div id="wsl"></div><div class="lab" style="letter-spacing:.06em;line-height:1.7">*Science is a placeholder score until LRO shadow data is added.</div></div>
+ <div class="pan"><h2>Top 3 site and date</h2><div id="dec"></div><p class="lab" style="letter-spacing:.06em">No single best answer: each option shows its strengths, weaknesses and how certain it is.</p></div></div></section>
+<section id="sc"><div class="lab cy">03 · Mission scenario simulator · SHOULD</div><h3 class="sh">Scenario: best site for a specific mission</h3>
+ <div class="grid"><div class="pan"><h2>Mission profile</h2><select id="pf"></select>
+  <div class="opt" style="margin-top:10px"><b id="a0v"></b>Battery drain per dark hour<input id="a0" type="range" min="0.5" max="4" step="0.1" value="1"></div>
+  <div class="opt"><b id="a1v"></b>Charge per sunlit hour<input id="a1" type="range" min="1" max="6" step="0.5" value="3"></div>
+  <label class="lab"><input type="checkbox" id="a2"> Earth contact needed every day</label>
+  <p class="lab" style="letter-spacing:.06em;line-height:1.7">These battery numbers are our assumptions. Change them. Every site and date is simulated hour by hour.</p></div>
+ <div class="pan"><h2>Best sites for this mission</h2><div id="scn"></div></div></div></section>
+<section id="sx"><div class="lab cy">04 · Explain · SHOULD</div><h3 class="sh">Explain: why it scored this way, and what would change it</h3>
+ <div class="pan"><div class="lab cy" id="xt"></div><p class="lab" style="letter-spacing:.06em">Click any Atlas square to explain it. No black-box AI: every number comes from Sun and Earth geometry.</p>
+ <div class="g2"><div><h2>Why this score</h2><div id="xb"></div></div><div><h2>What if...</h2><div id="xw"></div><h2 style="margin-top:14px">Sensitivity</h2><div id="xs"></div></div></div></div></section>
+<section id="ss"><div class="lab cy">05 · Scientist tools · COULD</div><h3 class="sh">Scientists: check the numbers, export the data</h3>
+ <div class="g2"><div class="pan"><h2>Uncertainty for the selected choice</h2><div id="un"></div><p class="lab" style="letter-spacing:.06em;line-height:1.7">A landing offset is modelled as a higher horizon (0.3° is about 400 m here, an assumption).</p>
+  <h2>Science target</h2><p>Permanent-shadow areas near a site (possible ice) need LRO data. Planned.</p></div>
+ <div class="pan"><h2>Data and export</h2><p class="lab" style="letter-spacing:.06em;line-height:1.7">Source now: simplified demo model. Planned: NASA SPICE (Sun, Earth) and LRO (terrain).</p>
+  <textarea id="csv" readonly></textarea><div class="ctl"><button class="btn" id="cp">Copy CSV</button><span class="lab" id="cpm"></span></div></div></div>
+ <div class="res no">Accuracy warning: do not use these results for science claims until SPICE and LRO data replace the demo model.</div></section>
+<section id="s3"><div class="lab cy">06 · Game · COULD</div><h3 class="sh">Polar Window: the playable form of the simulator</h3>
+ <div class="pan"><div class="lab cy" id="lvl"></div><h2>You choose where and when</h2><p id="brief"></p>
+  <div class="ctl"><select id="gs"></select><select id="gd"></select><button class="btn" id="scout">Scout (3)</button><button class="btn" id="launch">Launch</button></div>
+  <div class="lab" id="scoutOut" style="margin:8px 0"></div>
+  <div class="lab">Battery over 10 days</div>
+  <svg id="gsv" viewBox="0 0 240 70" preserveAspectRatio="none" style="width:100%;height:110px;background:#03050b;display:block"></svg>
+  <div id="gres" class="res" style="display:none"></div>
+  <div class="ctl"><button class="btn" id="nextL" style="display:none">Next level</button></div></div>
+</section>
+</main>
+<section id="str" class="wrap about r"><div><h2 class="big">Our Strengths</h2><p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
+<ul class="ck"><li>Starts from your lander's needs, not from one site.</li><li>Searches every site and date at once.</li><li>Explains why a choice wins or fails, and by how much.</li><li>Plans to test against real past CLPS landings.</li><li>Clear limits: demo model now, NASA SPICE and LRO data next.</li></ul></div><div class="disc e"><i></i></div></section>
+<section id="who" class="wrap cen"><h2 class="big">Who It Helps</h2><p class="s">One tool, three kinds of users.</p><div class="wg">
+<div class="wc"><div class="av">🛰</div><h4>Mission planners</h4><div class="am">Compare many options fast</div><p class="s2">Get a ranked shortlist with strengths, risks and certainty.</p></div>
+<div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
+<div class="wc"><div class="av">🔬</div><h4>Lunar scientists</h4><div class="am">Check the numbers</div><p class="s2">Uncertainty ranges, data export and clear sources. Accuracy needs SPICE and LRO.</p></div></div></section>
+<footer id="contact" class="wrap"><div class="cs"><div><div class="ic">★</div><div><b>NASA Space Apps Challenge</b><br><span class="s2">Bangladesh 2026</span></div></div><div><div class="ic">◎</div><div><b>Challenge</b><br><span class="s2">CLPS Lunar Mission Browser</span></div></div><div><div class="ic">☰</div><div><b>Team</b><br><span class="s2">[Team name]</span></div></div></div>
+<div class="fc"><div><svg class="lg" style="width:60px;height:60px"><use href="#lg"/></svg><br><b>HORIZON ATLAS</b><p>A planning and learning tool, not software for real missions. Demo model.</p></div>
+<div><h5>Quick Links</h5><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><a href="#who">Who it helps</a></div>
+<div><h5>Tools</h5><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a></div>
+<div><h5>Data</h5><span>NASA SPICE (planned)</span><br><span>NASA LRO (planned)</span><br><span>NASA CLPS records</span></div></div>
+<p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · NASA Space Apps Challenge Bangladesh 2026</p></footer>
+
+<script>
+let sh='';for(let i=0;i<140;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.2?1:0}px rgba(220,230,255,${.3+Math.random()*.6}),`;
+document.getElementById('stars').style.boxShadow=sh.slice(0,-1);
+const SITES=[["Shackleton rim",.9,.5,.4,1,.2,2.1,0,5,0],["Connecting Ridge",1.5,.3,.3,2,.15,1.2,.8,3,1],["de Gerlache rim",.7,.8,.6,0,.3,3.0,1.6,6,2],["Malapert massif",1.2,.4,.5,3,.2,.5,2.4,-1,3],["Nobile rim",.6,.9,.7,1.5,.35,2.2,3.1,2,4],["Haworth edge",.4,1,.9,2.5,.4,1.0,3.9,0,5],["Faustini rim",1.0,.6,.5,.4,.25,2.6,4.7,4,.5],["Amundsen rim",.8,.7,.6,1.1,.3,1.7,5.5,7,1.5]]
+.map(a=>({n:a[0],so:a[1],h0:a[2],a1:a[3],p1:a[4],a2:a[5],p2:a[6],sa:a[7]*57,e0:a[8],ep:a[9],ea:150+a[9]*20}));
+const ND=24,H=240,R=Math.PI/180,D0=Date.UTC(2027,0,1),$=id=>document.getElementById(id);
+let DH=0;const hor=(s,az)=>Math.max(0,DH+s.h0+s.a1*Math.sin(az*R*2+s.p1)+s.a2*Math.sin(az*R*5+s.p2));
+const sun=(s,d0,t)=>{const d=d0+t/24;return[(d/29.53*360+s.sa)%360,1.7*Math.sin(2*Math.PI*d/365.25+s.ep)+s.so]};
+const earth=(s,d0,t)=>{const d=d0+t/24,w=2*Math.PI*d/27.32+s.ep;return[s.ea+9*Math.sin(w),s.e0+5*Math.sin(w+1.3)+.6*Math.sin(2*Math.PI*t/24)]};
+function sim(si,di){const s=SITES[si],d0=di*15.2,lit=[],con=[];
+ for(let t=0;t<H;t++){const[a,e]=sun(s,d0,t),[b,f]=earth(s,d0,t);lit.push(e>hor(s,a));con.push(f>hor(s,b))}
+ let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
+ let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
+ return{lit,con,sun:100*lit.filter(Boolean).length/H,dark:mx,cd:cd*10}}
+const M=SITES.map((_,i)=>Array.from({length:ND},(_,j)=>sim(i,j)));
+let sel=[0,0],timer=null;
+const req=()=>({s:+$('rs').value,d:+$('rd').value,c:+$('rc').value});
+const dl=j=>new Date(D0+j*15.2*864e5).toISOString().slice(5,10);
+const score=(m,r)=>Math.min(1,m.sun/r.s,r.d/Math.max(m.dark,1),m.cd/r.c);
+function fails(m,r){const f=[];
+ if(m.sun<r.s)f.push(`Sunlight ${m.sun.toFixed(0)}%, needs ${r.s}% (short by ${(r.s-m.sun).toFixed(0)} pts)`);
+ if(m.dark>r.d)f.push(`Longest dark ${m.dark} h, limit ${r.d} h (over by ${m.dark-r.d} h)`);
+ if(m.cd<r.c)f.push(`Earth contact ${m.cd}% of days, needs ${r.c}%`);return f}
+function atlas(){const r=req();$('vs').textContent=r.s+'%';$('vd').textContent=r.d+' h';$('vc').textContent=r.c+'%';
+ let h='<tr class="dates"><th></th>'+Array.from({length:ND},(_,j)=>`<th>${j%3?'':dl(j)}</th>`).join('')+'</tr>',pass=[],all=[];
+ SITES.forEach((s,i)=>{h+=`<tr><th>${s.n}</th>`;for(let j=0;j<ND;j++){const m=M[i][j],sc=score(m,r),p=sc>=1;
+  if(p)pass.push([i,j]);all.push([sc,i,j]);
+  h+=`<td data-i="${i}" data-j="${j}" class="${p?'pass':''}${sel[0]==i&&sel[1]==j?' sel':''}" style="background:hsl(${Math.round(Math.min(sc,1)*125)},60%,${p?46:30}%)" title="${s.n} ${dl(j)}"></td>`}h+='</tr>'});
+ $('atlas').innerHTML=h;const o=$('result');
+ if(pass.length){o.className='res';o.innerHTML=`<b>${pass.length} of ${SITES.length*ND}</b> choices pass. Best: ${pass.slice(0,3).map(([i,j])=>`${SITES[i].n} (${dl(j)})`).join(', ')}.`}
+ else{all.sort((a,b)=>b[0]-a[0]);o.className='res no';o.innerHTML='<b>Nothing passes. Why not — closest options:</b><ul>'+all.slice(0,3).map(([,i,j])=>`<li><b>${SITES[i].n}, ${dl(j)}</b><br>${fails(M[i][j],r).join('<br>')}</li>`).join('')+'</ul>'}
+ sky()}
+function sky(){const[i,j]=sel,s=SITES[i],m=M[i][j],r=req(),t=+$('time').value,d0=j*15.2,Y=e=>170-Math.max(-3,Math.min(11,e))*13,X=a=>(a%360)/360*720;
+ const[sa,se]=sun(s,d0,t),[ea,ee]=earth(s,d0,t);
+ let pts='0,220';for(let a=0;a<=360;a+=2)pts+=` ${X(a)},${Y(hor(s,a))}`;pts+=' 720,220';
+ let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(232,75,240,.12)"/><text x="4" y="${Y(e)-2}" fill="#6f7c99" font-size="9" font-family="monospace">${e}°</text>`;
+ $('sky').innerHTML=`<rect width="720" height="220" fill="#03050b"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#e8a24a"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#5ab0ff"/><polygon points="${pts}" fill="#2a3042"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#e8a24a" font-size="11" font-family="monospace">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#5ab0ff" font-size="11" font-family="monospace">EARTH</text>`;
+ $('skyT').textContent=`${s.n} · start ${dl(j)}`;
+ const l=m.lit[t],c=m.con[t],ok=score(m,r)>=1;
+ $('pw').textContent=l?'SUNLIT':'DARK';$('pwb').style.width=l?'100%':'4%';
+ $('ct').textContent=c?'EARTH VISIBLE':'NO CONTACT';$('ctb').style.width=c?'100%':'4%';
+ let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="14" fill="${m.lit[k]?'#e8a24a':'#2a1538'}"/><rect x="${k}" y="20" width="1.05" height="14" fill="${m.con[k]?'#5ab0ff':'#2a1538'}"/>`;
+ $('strips').innerHTML=st+`<rect x="${t}" y="0" width="1.5" height="36" fill="#fff"/>`;
+ $('tl').textContent=`Day ${Math.floor(t/24)+1} · hour ${t%24}`;
+ $('hs').textContent=m.sun.toFixed(0)+'%';$('hsb').style.width=m.sun+'%';
+ $('hd').textContent=m.dark+' h';$('hdb').style.width=Math.min(100,m.dark/2)+'%';
+ $('hc').textContent=m.cd+'%';$('hcb').style.width=m.cd+'%';
+ const v=$('verdict');v.textContent=ok?'MEETS NEEDS':'FAILS NEEDS';v.className='chip '+(ok?'ok':'no');
+ $('f1').textContent=m.sun.toFixed(0)+'%';$('f2').textContent=m.dark+' h';$('f3').textContent=m.cd+'%';
+ $('f4').textContent=ok?'GO':'NO-GO';$('f4').style.color=ok?'var(--ok)':'var(--bad)'}
+$('atlas').addEventListener('click',e=>{const c=e.target.closest('td');if(!c)return;sel=[+c.dataset.i,+c.dataset.j];atlas()});
+['rs','rd','rc'].forEach(id=>$(id).addEventListener('input',atlas));
+$('time').addEventListener('input',sky);
+$('play').onclick=()=>{if(timer){clearInterval(timer);timer=null;$('play').textContent='▶ Play';return}
+ $('play').textContent='❚❚ Pause';timer=setInterval(()=>{$('time').value=(+$('time').value+2)%H;sky()},60)};
+$('go').onclick=()=>$('s1').scrollIntoView();
+document.querySelectorAll('.steps a').forEach(a=>a.onclick=()=>{$(a.dataset.t).scrollIntoView();document.querySelectorAll('.steps a').forEach(x=>x.classList.toggle('on',x==a))});
+const dates=Array.from({length:ND},(_,j)=>dl(j));
+const fill=(id,a)=>$(id).innerHTML=a.map((t,i)=>`<option value="${i}">${t}</option>`).join('');
+['ca','cb','gs'].forEach(id=>fill(id,SITES.map(s=>s.n)));['cad','cbd','gd'].forEach(id=>fill(id,dates));
+function cmp(){const a=M[+$('ca').value][+$('cad').value],b=M[+$('cb').value][+$('cbd').value],r=req();
+ const rows=[['Sunlight',a.sun,b.sun,1,'%'],['Longest dark',a.dark,b.dark,-1,' h'],['Earth contact',a.cd,b.cd,1,'%']];
+ $('cmpT').innerHTML='<table class="ct"><tr><td></td><td>A</td><td>B</td></tr>'+rows.map(x=>{const w=(x[1]-x[2])*x[3];return `<tr><td>${x[0]}</td><td class="${w>0?'good':''}">${x[1].toFixed(0)}${x[4]}</td><td class="${w<0?'good':''}">${x[2].toFixed(0)}${x[4]}</td></tr>`}).join('')+'</table>';
+ const sa=a.sun-b.sun,da=a.dark-b.dark,sA=score(a,r),sB=score(b,r);
+ $('cmpS').textContent=`A gets ${Math.abs(sa).toFixed(0)} points ${sa>=0?'more':'less'} sunlight than B, and its longest dark is ${Math.abs(da)} h ${da<=0?'shorter':'longer'}. For your needs, ${sA==sB?'both are equally close':(sA>sB?'A':'B')+' is closer to passing'}.`}
+['ca','cad','cb','cbd'].forEach(id=>$(id).onchange=cmp);
+let cin=0;const _at=atlas;
+atlas=function(){_at();$('ca').value=sel[0];$('cad').value=sel[1];
+ if(!cin){cin=1;let bb=[-1,1,5];for(let i=0;i<SITES.length;i++)for(let j=0;j<ND;j++){const c=score(M[i][j],req());if((i!=sel[0]||j!=sel[1])&&c>bb[0])bb=[c,i,j]}$('cb').value=bb[1];$('cbd').value=bb[2]}
+ cmp();xai()};
+const LV=[{d:1.6,c:0,s:0,t:'Sunlight only'},{d:1.6,c:1,s:0,t:'Add Earth contact'},{d:2,c:1,s:50,t:'Tighter power'}];
+let lv=0,sc=3,gt=null;
+function gdraw(p,f){let g='<line x1="0" x2="240" y1="68" y2="68" stroke="#6f7c99" stroke-width=".3"/>';
+ if(p.length)g+=`<polyline fill="none" stroke="#e8a24a" stroke-width="1.2" points="${p.map((v,i)=>i+','+(68-v*.66)).join(' ')}"/>`;
+ if(f!=null)g+=`<line x1="${f}" x2="${f}" y1="0" y2="70" stroke="#ff7a6b"/>`;$('gsv').innerHTML=g}
+function brief(){const L=LV[lv];$('lvl').textContent=`Level ${lv+1} / 3 · ${L.t}`;
+ $('brief').textContent=`Your lander has a small battery. It loses ${L.d}% each dark hour and charges 3% each sunlit hour.`+(L.c?' It must reach Earth at least once every day.':'')+(L.s?` It also needs ${L.s}% sunlight overall.`:'')+' The mission lasts 10 days. Pick a site and a start date.';
+ sc=3;$('scout').textContent='Scout (3)';$('scoutOut').textContent='';$('gres').style.display='none';$('nextL').style.display='none';gdraw([])}
+$('scout').onclick=()=>{if(sc<1){$('scoutOut').textContent='No scouts left. Decide now.';return}
+ sc--;const m=M[+$('gs').value][+$('gd').value];$('scout').textContent=`Scout (${sc})`;
+ $('scoutOut').textContent=`Scout: sunlight ${m.sun.toFixed(0)}% · longest dark ${m.dark} h · Earth contact ${m.cd}% of days`};
+$('nextL').onclick=()=>{lv++;brief()};
+$('launch').onclick=()=>{clearInterval(gt);const m=M[+$('gs').value][+$('gd').value],L=LV[lv];let b=100,bs=[],fail=null;
+ for(let t=0;t<H;t++){b=m.lit[t]?Math.min(100,b+3):b-L.d;bs.push(Math.max(b,0));
+  if(b<=0){fail=[t,'OUT OF POWER'];break}
+  if(L.c&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){fail=[t,'LOST CONTACT'];break}}
+ if(!fail&&m.sun<L.s)fail=[H-1,'TOO LITTLE SUNLIGHT'];
+ const last=fail?fail[0]:H-1;$('gres').style.display='none';let i=0;
+ gt=setInterval(()=>{i+=4;const e=Math.min(i,last);gdraw(bs.slice(0,e+1),fail&&e>=last?last:null);
+  if(e>=last){clearInterval(gt);const o=$('gres');o.style.display='block';
+   if(fail){o.className='res no';o.innerHTML=`<b>${fail[1]}</b> on day ${Math.floor(fail[0]/24)+1}, hour ${fail[0]%24}. That hour decided the mission.`}
+   else{o.className='res';o.innerHTML='<b>MISSION SUCCESS</b> The lander survived all 10 days.';if(lv<2)$('nextL').style.display='inline-block'}}},30)};
+const CN=['Power','Contact','Safe margin','Science*'],SCI=[80,55,70,40,65,50,85,60],WD=[8,6,5,3];
+$('wsl').innerHTML=CN.map((n,k)=>`<div class="opt"><b id="wv${k}"></b>${n}<input id="w${k}" type="range" min="0" max="10" value="${WD[k]}"></div>`).join('');
+const wts=()=>CN.map((_,k)=>+$('w'+k).value);
+const comp=(i,m)=>[m.sun,m.cd,Math.max(0,100-m.dark/2.4),SCI[i]];
+const tot=(i,m,w)=>{const t=w.reduce((a,b)=>a+b,0)||1;return comp(i,m).reduce((a,c,k)=>a+c*w[k],0)/t};
+const alt=(i,j,dh,dd=0)=>{DH=dh;const m=sim(i,j+dd/15.2);DH=0;return m};
+function dec(){const w=wts();CN.forEach((_,k)=>$('wv'+k).textContent=w[k]);
+ const best=SITES.map((_,i)=>{let b=[-1,0];for(let j=0;j<ND;j++){const t=tot(i,M[i][j],w);if(t>b[0])b=[t,j]}return[b[0],i,b[1]]}).sort((a,b)=>b[0]-a[0]).slice(0,3);
+ $('dec').innerHTML=best.map(([t,i,j],n)=>{const m=M[i][j],c=comp(i,m),m2=alt(i,j,.3),dr=m.sun-m2.sun,cert=dr<5?'High':dr<15?'Medium':'Low';
+  const L=f=>c.map((v,k)=>f(v)?CN[k]+' '+v.toFixed(0):'').filter(Boolean).join(', ');
+  return `<div class="opt"><b>${t.toFixed(0)} / 100</b>#${n+1} ${SITES[i].n} · start ${dl(j)}<div class="up">▲ ${L(v=>v>=70)||'no strong factor'}</div><div class="dn">▼ ${L(v=>v<=40)||'no weak factor'}</div><div class="lab" style="margin-top:6px;letter-spacing:.06em">Certainty: ${cert}. If landing shifts about 400 m, sunlight goes ${m.sun.toFixed(0)}% to ${m2.sun.toFixed(0)}%.</div></div>`}).join('');xai()}
+CN.forEach((_,k)=>$('w'+k).oninput=dec);
+const PF=[{n:'10-day solar lander',d:1,c:3,e:0},{n:'Battery-limited lander',d:2,c:3,e:0},{n:'Comms-critical mission',d:1.2,c:3,e:1}];
+fill('pf',PF.map(p=>p.n));
+function bat(m,d,ch,e){let b=100,mn=100,f=null;for(let t=0;t<H;t++){b=m.lit[t]?Math.min(100,b+ch):b-d;mn=Math.min(mn,b);
+ if(b<=0){f=[t,'out of power'];break}
+ if(e&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){f=[t,'lost contact'];break}}return{ok:!f,mn:Math.max(mn,0),f}}
+function scn(){const d=+$('a0').value,ch=+$('a1').value,e=$('a2').checked;$('a0v').textContent=d+'% / h';$('a1v').textContent=ch+'% / h';
+ const all=[];SITES.forEach((s,i)=>M[i].forEach((m,j)=>all.push([i,j,bat(m,d,ch,e)])));
+ const ok=all.filter(x=>x[2].ok).sort((a,b)=>b[2].mn-a[2].mn);
+ $('scn').innerHTML=`<div class="res${ok.length?'':' no'}"><b>${ok.length} of ${all.length}</b> site and date choices survive 10 days.</div><div style="height:8px"></div>`+
+ (ok.length?ok:all.sort((a,b)=>b[2].f[0]-a[2].f[0])).slice(0,5).map(([i,j,r])=>`<div class="opt">${r.ok?`<b>margin ${r.mn.toFixed(0)}%</b>`:''}${SITES[i].n} · ${dl(j)}<div class="${r.ok?'up':'dn'}">${r.ok?`▲ battery never below ${r.mn.toFixed(0)}%`:`▼ ${r.f[1]} on day ${Math.floor(r.f[0]/24)+1}, hour ${r.f[0]%24}`}</div></div>`).join('')}
+function pset(){const p=PF[+$('pf').value];$('a0').value=p.d;$('a1').value=p.c;$('a2').checked=!!p.e;scn()}
+$('pf').onchange=pset;['a0','a1','a2'].forEach(id=>$(id).oninput=scn);
+function xai(){const[i,j]=sel,m=M[i][j],w=wts(),sw=w.reduce((a,b)=>a+b,0)||1,c=comp(i,m),r=req();
+ $('xt').textContent=`${SITES[i].n} · start ${dl(j)} · score ${tot(i,m,w).toFixed(0)} / 100`;
+ $('xb').innerHTML=CN.map((n,k)=>{const v=w[k]/sw*(c[k]-50);return `<div class="xr"><span>${n}</span><span><i style="width:${Math.min(100,Math.abs(v)*3)}%;background:var(--${v>=0?'ok':'bad'})"></i></span><b>${v>=0?'+':''}${v.toFixed(0)}</b></div>`}).join('')+'<p class="lab" style="letter-spacing:.06em;line-height:1.7">Starts at 50. Each bar shows how far a factor pushed the score up or down, using your Decision priorities.</p>';
+ const pf=x=>score(x,r)>=1?'<b style="color:var(--ok)">PASS</b>':'<b style="color:var(--bad)">FAIL</b>',row=(a,b)=>`<div class="xr" style="grid-template-columns:1fr auto"><span>${a}</span><span>${b}</span></div>`;
+ $('xw').innerHTML=[-6,-3,3,6].map(dd=>[`Start ${dd>0?'+':''}${dd} days`,alt(i,j,0,dd)]).concat([['Horizon 0.3° higher',alt(i,j,.3)]]).map(([l,x])=>row('If: '+l,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark ${pf(x)}`)).join('');
+ const ms=[['Sunlight need',(m.sun-r.s)/r.s,`can rise to ${m.sun.toFixed(0)}% (now ${r.s}%)`],['Dark limit',(r.d-m.dark)/r.d,`can fall to ${m.dark} h (now ${r.d} h)`],['Contact need',(m.cd-r.c)/r.c,`can rise to ${m.cd}% (now ${r.c}%)`]].sort((a,b)=>a[1]-b[1]);
+ $('xs').innerHTML=ms.map(x=>row(x[0],x[1]<0?'<b style="color:var(--bad)">already failing</b>':x[2])).join('')+`<p class="lab" style="letter-spacing:.06em;line-height:1.7">Most sensitive: ${ms[0][0]}. A small change there flips the verdict first.</p>`;
+ const us=[0,.15,.3,.5].map(o=>[o,alt(i,j,o)]),sn=us.map(x=>x[1].sun);
+ $('un').innerHTML=us.map(([o,x])=>row(`Horizon +${o}° (~${Math.round(o/.3*400)} m)`,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark`)).join('')+`<p>Sunlight ranges from ${Math.min(...sn).toFixed(0)}% to ${Math.max(...sn).toFixed(0)}% across these shifts.</p>`;
+ let t='site,start_date_2027,sunlit_pct,longest_dark_h,earth_contact_pct,meets_needs\n';
+ SITES.forEach((s,a)=>M[a].forEach((x,b)=>t+=`${s.n},${dl(b)},${x.sun.toFixed(1)},${x.dark},${x.cd},${score(x,r)>=1}\n`));$('csv').value=t}
+$('cp').onclick=()=>{$('csv').select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}$('cpm').textContent=ok?'Copied':'Press Ctrl+C to copy'};
+pset();atlas();brief();dec();
+</script></body></html>
