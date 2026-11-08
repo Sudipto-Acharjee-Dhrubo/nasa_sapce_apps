@@ -412,6 +412,92 @@ svg.sky{
 .bars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
 .bar{height:8px;background:#132035;margin-top:6px;border-radius:3px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;transition:width .2s}
+
+/* --- Celestial Bodies Animations (Sun & Earth) --- */
+.anim-sun-spin{
+  width:52px;height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  animation:sun-rotate 35s linear infinite;
+  filter:drop-shadow(0 0 16px rgba(255,140,0,0.85)) drop-shadow(0 0 30px rgba(232,75,240,0.4)) brightness(1.1);
+  will-change:transform;
+}
+@keyframes sun-rotate{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.05)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+
+.anim-earth-spin{
+  width:48px;height:48px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  animation:earth-rotate 45s linear infinite;
+  filter:drop-shadow(0 0 14px rgba(0,130,243,0.85)) drop-shadow(0 0 25px rgba(0,210,255,0.4));
+  box-shadow:inset -10px -8px 16px rgba(0,0,0,0.7);
+  will-change:transform;
+}
+@keyframes earth-rotate{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+/* Sky canvas SVG Sun & Earth */
+.sky-celestial-sun{
+  filter:drop-shadow(0 0 10px rgba(255,160,0,0.95)) drop-shadow(0 0 18px rgba(255,80,0,0.6));
+  animation:sky-sun-flare 2.5s ease-in-out infinite alternate;
+}
+@keyframes sky-sun-flare{
+  0%{opacity:0.9;filter:drop-shadow(0 0 8px rgba(255,160,0,0.9)) brightness(1)}
+  100%{opacity:1;filter:drop-shadow(0 0 16px rgba(255,200,40,1)) brightness(1.2)}
+}
+
+.sky-celestial-earth{
+  filter:drop-shadow(0 0 8px rgba(0,130,243,0.9)) drop-shadow(0 0 14px rgba(0,210,255,0.5));
+  animation:sky-earth-glow 3s ease-in-out infinite alternate;
+}
+@keyframes sky-earth-glow{
+  0%{opacity:0.9;filter:drop-shadow(0 0 6px rgba(0,130,243,0.85)) brightness(1)}
+  100%{opacity:1;filter:drop-shadow(0 0 12px rgba(90,190,255,1)) brightness(1.15)}
+}
+
+/* Celestial Strip & Cards */
+.celestial-strip{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  margin:12px 0 16px;
+}
+@media(max-width:768px){.celestial-strip{grid-template-columns:1fr}}
+.celestial-card{
+  display:flex;align-items:center;gap:14px;padding:12px 16px;
+  background:rgba(4,7,16,0.85);border:1px solid var(--line-blue);
+  border-radius:4px;position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s;
+}
+.celestial-card:hover{
+  border-color:rgba(0,130,243,0.5);
+  box-shadow:0 0 20px rgba(0,130,243,0.15);
+}
+.celestial-card.sun-panel:hover{
+  border-color:rgba(232,162,74,0.6);
+  box-shadow:0 0 20px rgba(232,162,74,0.2);
+}
+.celestial-thumb-wrap{
+  flex-shrink:0;width:54px;height:54px;
+  display:grid;place-items:center;
+}
+.celestial-details{flex-grow:1;min-width:0}
+.celestial-type{font:700 10px var(--mono);letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+.celestial-title{display:flex;align-items:center;gap:8px;font:700 13px var(--mono);color:#fff;margin:3px 0 2px;flex-wrap:wrap}
+.celestial-meta{font:500 11px var(--font-cond);letter-spacing:.08em;color:var(--mut)}
+.celestial-pill{
+  font:700 10px var(--mono);letter-spacing:.12em;padding:2px 8px;border-radius:2px;text-transform:uppercase;
+}
+.celestial-pill.lit{background:rgba(232,162,74,0.15);color:var(--am);border:1px solid rgba(232,162,74,0.4)}
+.celestial-pill.dark{background:rgba(234,56,76,0.12);color:var(--bad);border:1px solid rgba(234,56,76,0.35)}
+.celestial-pill.contact{background:rgba(0,130,243,0.15);color:var(--electric-blue);border:1px solid rgba(0,130,243,0.4)}
+.celestial-pill.nocontact{background:rgba(234,56,76,0.12);color:var(--bad);border:1px solid rgba(234,56,76,0.35)}
 .foot{
   display:grid;grid-template-columns:repeat(4,1fr);
   border:1px solid var(--line-blue);
@@ -706,6 +792,30 @@ textarea{
   <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:8px 12px;border-left:3px solid var(--cy);background:rgba(232,75,240,.08);line-height:1.6">Sun/Earth: NASA/JPL Horizons API. Topographic horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).</div>
   <svg class="sky" id="sky" viewBox="0 0 720 220"></svg>
   <div class="lab" style="display:flex;justify-content:space-between;padding:4px 6px"><span>N (0°)</span><span>E (90°)</span><span>S (180°)</span><span>W (270°)</span><span>N (360°)</span></div>
+  
+  <div class="celestial-strip">
+    <div class="celestial-card sun-panel">
+      <div class="celestial-thumb-wrap">
+        <img src="assets/sun.png" alt="Solar Disk" class="anim-sun-spin">
+      </div>
+      <div class="celestial-details">
+        <div class="celestial-type">SOLAR EPHEMERIS</div>
+        <div class="celestial-title"><span id="sunStatusPill" class="celestial-pill lit">SUNLIT</span> <span id="sunCoords">EL: +1.4° · AZ: 120.5°</span></div>
+        <div class="celestial-meta">Direct photovoltaic power generation telemetry</div>
+      </div>
+    </div>
+
+    <div class="celestial-card earth-panel">
+      <div class="celestial-thumb-wrap">
+        <img src="assets/earth.png" alt="Earth Marble" class="anim-earth-spin">
+      </div>
+      <div class="celestial-details">
+        <div class="celestial-type">EARTH TELEMETRY</div>
+        <div class="celestial-title"><span id="earthStatusPill" class="celestial-pill contact">VISIBLE</span> <span id="earthCoords">EL: +4.8° · AZ: 188.2°</span></div>
+        <div class="celestial-meta">Direct-to-Earth DSN comms carrier link active</div>
+      </div>
+    </div>
+  </div>
   <div class="bars">
    <div><span class="lab">Power now</span> <b id="pw" style="font:700 13px var(--mono)"></b><div class="bar"><i id="pwb" style="background:var(--am)"></i></div></div>
    <div><span class="lab">Contact now</span> <b id="ct" style="font:700 13px var(--mono)"></b><div class="bar"><i id="ctb" style="background:var(--cy)"></i></div></div>
@@ -1119,13 +1229,30 @@ function sky(){
   }
   
   let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(0,130,243,0.18)" stroke-dasharray="3,3"/><text x="6" y="${Y(e)-3}" fill="#5b769b" font-size="9" font-family="'JetBrains Mono',monospace">${e}°</text>`;
-  $('sky').innerHTML=`<rect width="720" height="220" fill="#020409"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#e8a24a" filter="drop-shadow(0 0 8px rgba(232,162,74,0.8))"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#0082f3" filter="drop-shadow(0 0 8px rgba(0,130,243,0.8))"/><polygon points="${pts}" fill="#08101c" stroke="#1c2e46" stroke-width="1.5"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#e8a24a" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#0082f3" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">EARTH</text>`;
+  $('sky').innerHTML=`<rect width="720" height="220" fill="#020409"/>${g}`+
+    `<image href="assets/sun.png" x="${X(sa)-16}" y="${Y(se)-16}" width="32" height="32" class="sky-celestial-sun"/>`+
+    `<image href="assets/earth.png" x="${X(ea)-11}" y="${Y(ee)-11}" width="22" height="22" class="sky-celestial-earth"/>`+
+    `<polygon points="${pts}" fill="#050811" stroke="#1c2e46" stroke-width="1.5"/>`+
+    `<text x="${X(sa)+18}" y="${Y(se)-6}" fill="#e8a24a" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">SUN ${se>=0?'+':''}${se.toFixed(1)}°</text>`+
+    `<text x="${X(ea)+14}" y="${Y(ee)-6}" fill="#0082f3" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">EARTH ${ee>=0?'+':''}${ee.toFixed(1)}°</text>`;
   
   const curTimeStr=isRealData&&m.times?` · ${m.times[t]}`:``;
   $('skyT').textContent=`${s.n} · start ${dl(j)}${curTimeStr}`;
   const l=m.lit[t],c=m.con[t],ok=score(m,r)>=1;
   $('pw').textContent=l?'SUNLIT':'DARK';$('pwb').style.width=l?'100%':'4%';
   $('ct').textContent=c?'EARTH VISIBLE':'NO CONTACT';$('ctb').style.width=c?'100%':'4%';
+
+  const sunPill=$('sunStatusPill'), earthPill=$('earthStatusPill');
+  if(sunPill){
+    sunPill.textContent=l?'SUNLIT':'OCCLUDED';
+    sunPill.className='celestial-pill '+(l?'lit':'dark');
+    $('sunCoords').textContent=`EL: ${se>=0?'+':''}${se.toFixed(1)}° · AZ: ${sa.toFixed(1)}°`;
+  }
+  if(earthPill){
+    earthPill.textContent=c?'VISIBLE':'OCCLUDED';
+    earthPill.className='celestial-pill '+(c?'contact':'nocontact');
+    $('earthCoords').textContent=`EL: ${ee>=0?'+':''}${ee.toFixed(1)}° · AZ: ${ea.toFixed(1)}°`;
+  }
   
   let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="15" fill="${m.lit[k]?'#e8a24a':'#0c1524'}"/><rect x="${k}" y="20" width="1.05" height="15" fill="${m.con[k]?'#0082f3':'#0c1524'}"/>`;
   $('strips').innerHTML=st+`<rect x="${t}" y="0" width="2" height="36" fill="#fff" filter="drop-shadow(0 0 4px #fff)"/>`;
