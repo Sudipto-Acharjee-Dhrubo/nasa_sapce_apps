@@ -514,6 +514,16 @@ textarea{
   animation:ambient-spin 120s linear infinite;
 }
 
+/* --- Strengths Section Blue Moon Image --- */
+.str-moon-img{
+  width:100%;height:100%;
+  border-radius:50%;object-fit:cover;
+  display:block;
+  filter:brightness(1.08) contrast(1.15) drop-shadow(0 0 20px rgba(0,130,243,0.35));
+  box-shadow:inset -25px -15px 50px rgba(0,10,30,.85);
+  animation:ambient-spin 140s linear infinite reverse;
+}
+
 /* --- Scroll-Triggered Reveal Animations --- */
 .reveal-on-scroll{
   opacity:0;
@@ -730,8 +740,22 @@ textarea{
  </div>
 </section>
 
-<section id="str" class="wrap about r"><div><h2 class="big">Our Strengths</h2><p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
-<ul class="ck"><li>Starts from your lander's needs, not from one site.</li><li>Searches every site and date at once.</li><li>Explains why a choice wins or fails, and by how much.</li><li>Plans to test against real past CLPS landings.</li><li>Clear limits: demo model now, NASA SPICE and LRO data next.</li></ul></div><div class="disc e"><i></i></div></section>
+<section id="str" class="wrap about r reveal-on-scroll">
+  <div>
+    <h2 class="big">Our Strengths</h2>
+    <p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
+    <ul class="ck">
+      <li>Starts from your lander's needs, not from one site.</li>
+      <li>Searches every site and date at once.</li>
+      <li>Explains why a choice wins or fails, and by how much.</li>
+      <li>Plans to test against real past CLPS landings.</li>
+      <li>Clear limits: demo model now, NASA SPICE and LRO data next.</li>
+    </ul>
+  </div>
+  <div class="disc">
+    <img src="assets/blue_moon.png" alt="Lunar Blue Moon Telemetry" class="str-moon-img">
+  </div>
+</section>
 <section id="who" class="wrap cen"><h2 class="big">Who It Helps</h2><p class="s">One tool, three kinds of users.</p><div class="wg">
 <div class="wc"><div class="av">🛰</div><h4>Mission planners</h4><div class="am">Compare many options fast</div><p class="s2">Get a ranked shortlist with strengths, risks and certainty.</p></div>
 <div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
