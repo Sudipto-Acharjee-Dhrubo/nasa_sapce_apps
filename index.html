@@ -12,16 +12,16 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
   color-scheme:dark;
-  --bg:#04060e;                     /* Deep space void */
-  --pan:#0c1322;                    /* Spaced activity card background */
-  --pan-glass:rgba(12,19,34,0.85);  /* Glassmorphism panel */
-  --line-blue:#1c2e46;              /* HUD border blue */
-  --line-light:#5b769b;             /* Technical corner / accent blue */
-  --main-purple:#e84bf0;            /* Restored cyber neon purple */
+  --bg:#000000;                     /* Deep dark black space void */
+  --pan:#040711;                    /* Activity card dark slate */
+  --pan-glass:rgba(4,7,16,0.88);    /* Deep dark space glassmorphism */
+  --line-blue:#142236;              /* HUD border blue */
+  --line-light:#3e577a;             /* Technical corner / accent blue */
+  --main-purple:#e84bf0;            /* Cyber neon purple */
   --electric-blue:#0082f3;          /* Spaced celestial Earth link blue */
   --ink:#f3f3f3;                    /* High-contrast crisp text */
   --mut:#7d8ea6;                    /* Technical subtitle text */
-  --line:#1c2e46;                   /* Standard panel border */
+  --line:#142236;                   /* Standard panel border */
   --cy:#e84bf0;                     /* Cyber neon purple primary accent */
   --am:#e8a24a;                     /* Solar gold secondary accent */
   --ok:#22c55e;                     /* Mission GO green */
@@ -34,12 +34,12 @@ html{scroll-padding-top:70px;scroll-behavior:smooth}
 *{box-sizing:border-box}
 body{
   margin:0;
-  background:var(--bg);
+  background:#000000;
   background-image:
-    radial-gradient(circle at 50% 0%,rgba(232,75,240,0.18) 0%,rgba(0,130,243,0.10) 35%,transparent 65%),
-    linear-gradient(rgba(28,46,70,0.12) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(28,46,70,0.12) 1px,transparent 1px);
-  background-size:100% 100%, 48px 48px, 48px 48px;
+    radial-gradient(circle at 50% 0%,rgba(0,130,243,0.08) 0%,rgba(232,75,240,0.03) 25%,transparent 55%),
+    linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:100% 100%, 54px 54px, 54px 54px;
   color:var(--ink);
   font:14px/1.6 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   min-height:100vh;
@@ -66,7 +66,7 @@ body{
     radial-gradient(1.5px 1.5px at 1080px 175px, #fff, transparent 100%);
   background-size: 600px 300px;
   animation: star-drift 120s linear infinite;
-  opacity: 0.65;
+  opacity: 0.88;
 }
 @keyframes star-drift{
   0%{background-position:0 0}
@@ -119,7 +119,7 @@ h1, h2, h3, h4, h5{
   position:sticky;top:0;z-index:100;
   display:flex;justify-content:center;gap:24px;align-items:center;flex-wrap:wrap;
   padding:14px 4vw;
-  background:rgba(4,8,14,0.88);
+  background:rgba(0,0,0,0.92);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
   border-bottom:1px solid var(--line-blue);
@@ -144,17 +144,22 @@ h1, h2, h3, h4, h5{
 /* Hero Header - Spaced "To Space & Back" Design */
 .hero{
   position:relative;z-index:1;
-  min-height:min(86vh,720px);
+  min-height:min(90vh,780px);
   overflow:hidden;
-  text-align:center;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:40px 20px;
+  display:flex;align-items:center;justify-content:center;
+  padding:30px 20px 60px;
+}
+.hero-grid{
+  position:relative;z-index:2;
+  width:100%;max-width:1220px;margin:0 auto;
+  display:grid;grid-template-columns:1.15fr 0.85fr;
+  align-items:center;gap:40px;
 }
 .hero h1{
   font-family:var(--font-anton);
-  font-size:clamp(54px,11vw,110px);
+  font-size:clamp(46px,7vw,90px);
   letter-spacing:.04em;
-  line-height:.92;
+  line-height:.95;
   margin:10px 0 0;
   text-transform:uppercase;
   background:linear-gradient(180deg,#ffffff 45%,rgba(255,255,255,0.7) 75%,var(--main-purple) 100%);
@@ -164,7 +169,7 @@ h1, h2, h3, h4, h5{
 }
 .hero .hs{
   font-family:var(--font-cond);
-  font-size:clamp(16px,2.8vw,26px);
+  font-size:clamp(16px,2.4vw,24px);
   letter-spacing:.25em;
   font-weight:700;
   color:var(--electric-blue);
@@ -179,18 +184,80 @@ h1, h2, h3, h4, h5{
   text-transform:uppercase;
 }
 .limb{
-  position:absolute;left:50%;top:58%;width:180%;aspect-ratio:1;
+  position:absolute;left:50%;top:64%;width:180%;aspect-ratio:1;
   transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(ellipse at 50% 0%,rgba(255,60,255,0.3) 0%,rgba(232,75,240,0.15) 20%,#04060e 65%);
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,130,243,0.22) 0%,rgba(232,75,240,0.1) 22%,#000000 65%);
   box-shadow:
-    0 -3px 12px 1px rgba(255,200,255,0.85),
-    0 -8px 45px 4px rgba(230,50,240,0.5),
-    0 -25px 120px 30px rgba(110,30,160,0.35);
+    0 -2px 10px 1px rgba(255,255,255,0.85),
+    0 -6px 35px 2px rgba(0,130,243,0.4),
+    0 -20px 90px 20px rgba(232,75,240,0.25);
   pointer-events:none;
 }
-.hc{position:relative;z-index:2;max-width:900px}
-.lg{width:84px;height:84px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))}
+.hc{position:relative;z-index:2;max-width:680px;text-align:left}
+.lg{width:76px;height:76px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))}
+
+/* Spacecraft Lander Animated Presentation */
+.hero-craft-container{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  perspective:1000px;
+  transition:transform .3s ease-out;
+  will-change:transform;
+}
+.craft-hud-badge{
+  position:relative;
+  padding:7px 16px;
+  background:rgba(4,7,16,0.85);
+  border:1px solid var(--line-blue);
+  backdrop-filter:blur(10px);
+  border-radius:2px;
+  margin-bottom:14px;
+  text-align:left;
+  box-shadow:0 0 20px rgba(0,0,0,0.8);
+}
+.craft-hud-top{display:flex;align-items:center;gap:6px}
+.craft-hud-label{font:700 11px var(--mono);letter-spacing:.18em;color:var(--electric-blue);text-transform:uppercase}
+.craft-hud-telemetry{font:500 10px var(--mono);letter-spacing:.12em;color:var(--mut);margin-top:2px}
+.craft-float-wrap{
+  position:relative;
+  width:100%;max-width:440px;
+  animation:space-hover 7.5s ease-in-out infinite;
+  transform-origin:center center;
+  filter:drop-shadow(0 25px 45px rgba(0,0,0,0.95)) drop-shadow(0 0 30px rgba(0,130,243,0.25));
+}
+@keyframes space-hover{
+  0%{transform:translate3d(0,0px,0) rotate(0deg)}
+  25%{transform:translate3d(-5px,-14px,0) rotate(1.4deg)}
+  50%{transform:translate3d(4px,-5px,0) rotate(-0.6deg)}
+  75%{transform:translate3d(-3px,-20px,0) rotate(-1.5deg)}
+  100%{transform:translate3d(0,0px,0) rotate(0deg)}
+}
+.hero-spacecraft-img{
+  width:100%;height:auto;display:block;
+  filter:brightness(1.08) contrast(1.12);
+  user-select:none;pointer-events:none;
+}
+.thruster-glow{
+  position:absolute;bottom:8%;left:50%;
+  transform:translateX(-50%);
+  width:70px;height:90px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,130,243,0.95) 0%,rgba(232,75,240,0.55) 45%,rgba(232,162,74,0.3) 70%,transparent 85%);
+  filter:blur(6px);
+  pointer-events:none;
+  animation:thruster-burn 1.8s ease-in-out infinite alternate;
+}
+@keyframes thruster-burn{
+  0%{opacity:0.55;transform:translateX(-50%) scale(0.85,0.8)}
+  50%{opacity:1;transform:translateX(-50%) scale(1.15,1.3);filter:blur(5px) drop-shadow(0 0 18px rgba(0,130,243,0.85))}
+  100%{opacity:0.75;transform:translateX(-50%) scale(0.95,1.05)}
+}
+@media(max-width:960px){
+  .hero{min-height:auto;padding:30px 16px 40px}
+  .hero-grid{grid-template-columns:1fr;text-align:center;gap:24px}
+  .hc{text-align:center;max-width:100%}
+  .hero-craft-container{max-width:300px;margin:0 auto;order:0}
+}
 
 /* Buttons - Spaced Capsule Buttons */
 .btn{
@@ -543,16 +610,36 @@ textarea{
 
 <header class="hero">
   <div class="limb"></div>
-  <div class="hc">
-    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(12,21,36,0.85);border:1px solid var(--line-blue);border-radius:20px;margin-bottom:16px">
-      <span class="beacon-dot"></span>
-      <span class="lab" style="color:#fff;letter-spacing:.2em">NASA HORIZONS API & LOLA 80M DEM ACTIVE</span>
+  <div class="hero-grid">
+    <div class="hc">
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(4,7,16,0.85);border:1px solid var(--line-blue);border-radius:20px;margin-bottom:16px">
+        <span class="beacon-dot"></span>
+        <span class="lab" style="color:#fff;letter-spacing:.2em">NASA HORIZONS API & LOLA 80M DEM ACTIVE</span>
+      </div>
+      <div><svg class="lg"><use href="#lg"/></svg></div>
+      <h1>HORIZON ATLAS</h1>
+      <div class="hs">LUNAR LANDING SITE NAVIGATOR</div>
+      <div class="tag">— NASA ARTEMIS III & CLPS MISSION PLANNING SYSTEM —</div>
+      <div>
+        <button class="btn btn-primary" id="go">Launch Mission Control →</button>
+      </div>
     </div>
-    <svg class="lg"><use href="#lg"/></svg>
-    <h1>HORIZON ATLAS</h1>
-    <div class="hs">LUNAR LANDING SITE NAVIGATOR</div>
-    <div class="tag">— NASA ARTEMIS III & CLPS MISSION PLANNING SYSTEM —</div>
-    <button class="btn btn-primary" id="go">Launch Mission Control →</button>
+
+    <div class="hero-craft-container" id="heroCraft">
+      <div class="craft-hud-badge">
+        <div class="corner-tl"></div><div class="corner-tr"></div>
+        <div class="corner-bl"></div><div class="corner-br"></div>
+        <div class="craft-hud-top">
+          <span class="beacon-dot"></span>
+          <span class="craft-hud-label">APOLLO/CLPS LUNAR MODULE</span>
+        </div>
+        <div class="craft-hud-telemetry">ALTITUDE 15.2 KM · DESCENT STAGE ACTIVE</div>
+      </div>
+      <div class="craft-float-wrap">
+        <div class="thruster-glow"></div>
+        <img src="assets/spacecraft.png" alt="Lunar Lander Spacecraft" class="hero-spacecraft-img">
+      </div>
+    </div>
   </div>
 </header>
 
@@ -768,7 +855,7 @@ textarea{
 <p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · NASA Space Apps Challenge Bangladesh 2026</p></footer>
 
 <script>
-let sh='';for(let i=0;i<140;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.2?1:0}px rgba(220,230,255,${.3+Math.random()*.6}),`;
+let sh='';for(let i=0;i<240;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
 document.getElementById('stars').style.boxShadow=sh.slice(0,-1);
 
 const ND=24,H=240,R=Math.PI/180,$=id=>document.getElementById(id);
@@ -1286,8 +1373,9 @@ pset();
 brief();
 initData();
 
-// --- SCROLL ANIMATIONS (PROGRESS BAR & REVEALS) ---
+// --- SCROLL ANIMATIONS (PROGRESS BAR, SPACECRAFT PARALLAX & REVEALS) ---
 const scrollBarEl = document.getElementById('scrollBar');
+const heroCraftEl = document.getElementById('heroCraft');
 
 window.addEventListener('scroll', () => {
   const scrolled = window.pageYOffset || document.documentElement.scrollTop;
@@ -1296,7 +1384,28 @@ window.addEventListener('scroll', () => {
     const scrollPercent = winHeight > 0 ? (scrolled / winHeight) * 100 : 0;
     scrollBarEl.style.width = scrollPercent + '%';
   }
+  if (heroCraftEl && scrolled < 900) {
+    heroCraftEl.style.transform = `translate3d(0, ${(scrolled * 0.16).toFixed(1)}px, 0)`;
+  }
 }, { passive: true });
+
+// Interactive 3D tilt on hero mousemove
+const heroSectionEl = document.querySelector('.hero');
+if (heroSectionEl && heroCraftEl && window.matchMedia('(min-width: 960px)').matches) {
+  heroSectionEl.addEventListener('mousemove', (e) => {
+    const rect = heroSectionEl.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    heroCraftEl.style.transform = `translate3d(${(x * 24).toFixed(1)}px, ${(y * 24).toFixed(1)}px, 0) rotateY(${(x * 14).toFixed(1)}deg) rotateX(${(-y * 14).toFixed(1)}deg)`;
+  });
+  heroSectionEl.addEventListener('mouseleave', () => {
+    heroCraftEl.style.transform = 'translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg)';
+    heroCraftEl.style.transition = 'transform .6s cubic-bezier(0.16, 1, 0.3, 1)';
+  });
+  heroSectionEl.addEventListener('mouseenter', () => {
+    heroCraftEl.style.transition = 'transform .1s ease-out';
+  });
+}
 
 if ('IntersectionObserver' in window) {
   const scrollObserver = new IntersectionObserver((entries) => {
