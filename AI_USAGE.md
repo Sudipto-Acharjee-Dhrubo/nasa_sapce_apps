@@ -36,4 +36,19 @@ In compliance with NASA Space Apps Challenge regulations, this document records 
   - Generated `data/connecting_ridge.json`, `data/peak_near_shackleton.json`, `data/malapert_massif.json`, `data/haworth.json`, and `data/index.json`.
   - Analyzed and verified distinct astronomical variation across lunar latitudes, longitudes, and seasons.
 
+---
+
+### Step 3: Frontend Integration of NASA Horizons Ephemeris Data in `index.html`
+- **Date**: 2026-11-09
+- **Tool**: Antigravity (Gemini 3.8 Flash)
+- **Prompt Summary**: Connect `index.html` to load `data/index.json` and the 4 real site ephemeris files via `fetch()`. Compute 10-day windows across 24 real calendar dates, use real Sun/Earth azimuth and elevation in Sky View, provide clear "NASA/JPL Horizons data" vs "Demo model" toggles and badges, add "Data & Method" section, and exclude the placeholder Science score from real decision scores.
+- **Output / Deliverables**:
+  - Implemented asynchronous startup (`initData()`) loading real Horizons JSON with visible progress and graceful CORS/file:// error guidance.
+  - Added dual dataset switcher: "NASA/JPL Horizons (4 Real Sites)" vs "Demo Model (8 Illustrative Sites)" with distinct UI data labels.
+  - Built matrix engine slicing real 240-hour windows across real calendar dates (2026-12-01 to 2027-12-31).
+  - Updated Sky View to draw real Sun/Earth coordinates with 0° reference sphere horizon and disabled "Terrain mask: coming (LOLA)" placeholder toggle.
+  - Excluded placeholder Science score from Decision scoring for real sites.
+  - Added comprehensive "Data & Method" section documenting sources, assumptions, and coordinate references.
+
+
 

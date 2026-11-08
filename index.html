@@ -98,7 +98,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 </style></head><body>
 <div id="stars"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#05020a" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
-<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
+<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#data-method">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
 
 <header class="hero"><div class="limb"></div><div class="hc"><svg class="lg"><use href="#lg"/></svg><h1>HORIZON ATLAS</h1><div class="hs">LUNAR MISSION PLANNER</div><div class="tag">— WHERE AND WHEN CAN YOUR LANDER WORK —</div><button class="btn" id="go">Start Planning</button></div></header>
 
@@ -109,6 +109,18 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 <div class="arc"><div class="fg"><div><div class="ic">▦</div><h4>Explore</h4>Atlas heatmap of every site and date, plus the sky view.<br><a class="rm" href="#s1">Read More &gt;</a></div><div><div class="ic">⚖</div><h4>Decision</h4>Set priorities. Get the top 3 with strengths and risks.<br><a class="rm" href="#sd">Read More &gt;</a></div><div><div class="ic">⏲</div><h4>Scenario</h4>Which site is best for one specific mission?<br><a class="rm" href="#sc">Read More &gt;</a></div><div><div class="ic">✦</div><h4>Explain</h4>Why a choice scored this way, and what would change it.<br><a class="rm" href="#sx">Read More &gt;</a></div><div><div class="ic">⚗</div><h4>Scientist</h4>Uncertainty range and CSV data for checking results.<br><a class="rm" href="#ss">Read More &gt;</a></div><div><div class="ic">◈</div><h4>Game</h4>Polar Window: choose where and when it lands.<br><a class="rm" href="#s3">Read More &gt;</a></div></div><svg class="cb" viewBox="0 0 100 100"><use href="#lg"/></svg></div></section>
 <section id="how" class="wrap cen"><h2 class="big">How It Works</h2><p class="s">From a lander's needs to an explained decision in five steps.</p><div class="tl"><div class="ti a" style="grid-column:1"><h4>Set your needs</h4>Sunlight, darkness limit and Earth contact.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:1">1</div><div class="ti b" style="grid-column:2"><h4>Scan the Atlas</h4>See every site and date at once.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:2">2</div><div class="ti a" style="grid-column:3"><h4>Check the sky</h4>Watch the Sun and Earth over the horizon.<br><a class="rm" href="#s2">Read More &gt;</a></div><div class="n" style="grid-column:3">3</div><div class="ti b" style="grid-column:4"><h4>Decide and simulate</h4>Rank options for your mission.<br><a class="rm" href="#sd">Read More &gt;</a></div><div class="n" style="grid-column:4">4</div><div class="ti a" style="grid-column:5"><h4>Explain and export</h4>See why, then take the data.<br><a class="rm" href="#sx">Read More &gt;</a></div><div class="n" style="grid-column:5">5</div></div></section>
 <main id="app">
+ <div id="loadStatus" class="pan" style="display:none;margin-bottom:14px;border-color:var(--cy)">
+  <div class="lab cy">SYSTEM INITIALIZATION</div>
+  <div id="loadMsg" style="font:600 14px var(--mono);margin-top:4px">Connecting to NASA Horizons ephemeris repository...</div>
+ </div>
+
+ <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+  <span class="lab" style="font-weight:600">Active Dataset:</span>
+  <button id="btnReal" class="btn" style="padding:7px 18px;margin:0;background:var(--cy);color:#fff">NASA/JPL Horizons (4 Real Sites)</button>
+  <button id="btnDemo" class="btn" style="padding:7px 18px;margin:0;background:#170b24;color:var(--ink);border:1px solid var(--line)">Demo Model (8 Illustrative Sites)</button>
+  <span id="dsBadge" class="chip ok" style="margin-left:auto">NASA/JPL Horizons data</span>
+ </div>
+
  <section id="s1"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Explore: what does your lander need?</h3>
  <div class="hud">
   <div class="brand">HORIZON <span>MISSION CONTROL</span></div>
@@ -124,9 +136,9 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
    <div class="opt"><b id="vs"></b>Sunlight at least<div class="up">▲ more power</div><input id="rs" type="range" min="20" max="95" value="55"></div>
    <div class="opt"><b id="vd"></b>Longest dark under<div class="dn">▼ battery must survive it</div><input id="rd" type="range" min="10" max="200" value="90"></div>
    <div class="opt"><b id="vc"></b>Days with Earth contact<div class="up">▲ direct link to Earth</div><input id="rc" type="range" min="10" max="100" value="70"></div>
-   <div class="lab" style="line-height:1.7;letter-spacing:.08em">Sun counts when its centre is above the horizon. Earth counts when above terrain. Simplified model.</div>
+   <div class="lab" id="reqNote" style="line-height:1.7;letter-spacing:.08em">Sun & Earth count when above local 0° horizon. Terrain mask (LRO LOLA) not applied yet.</div>
   </div>
-  <div class="pan" id="p2"><div class="lab cy">Atlas</div><h2>Landing Window Atlas</h2>
+  <div class="pan" id="p2"><div class="lab cy" id="atlasTag">Atlas · NASA/JPL Horizons</div><h2>Landing Window Atlas</h2>
    <div class="sc"><table id="atlas"></table></div>
    <div class="leg lab"><span class="am">■</span> selected <span>▢ passes all needs</span><span>red → green = far → meets</span><span>click a square</span></div>
    <div id="result"></div>
@@ -136,6 +148,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
  </section>
 <section id="s2"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Sky view and compare mode</h3>
  <div class="pan" id="p3"><div class="lab cy">Sky view</div><h2 id="skyT">Sky view</h2>
+  <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:6px 10px;border-left:2px solid var(--am);background:rgba(232,162,74,.08);line-height:1.6">Sun/Earth positions: real NASA/JPL Horizons data. Terrain mask (LRO LOLA) not applied yet.</div>
   <svg class="sky" id="sky" viewBox="0 0 720 220"></svg>
   <div class="lab" style="display:flex;justify-content:space-between"><span>N</span><span>E</span><span>S</span><span>W</span><span>N</span></div>
   <div class="bars">
@@ -145,7 +158,14 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
   <svg id="strips" viewBox="0 0 240 36" preserveAspectRatio="none" style="width:100%;height:42px;display:block"></svg>
   <div class="lab" style="margin-top:4px">Top: sunlight · Bottom: Earth contact · 10 days</div>
   <input id="time" type="range" min="0" max="239" value="0" style="margin-top:8px">
-  <div class="ctl"><button class="btn" id="play">▶ Play</button><span class="lab" id="tl"></span></div>
+  <div class="ctl" style="justify-content:space-between;align-items:center">
+   <div style="display:flex;gap:12px;align-items:center">
+    <button class="btn" id="play">▶ Play</button><span class="lab" id="tl"></span>
+   </div>
+   <div>
+    <label class="lab" style="display:inline-flex;align-items:center;gap:6px;cursor:not-allowed;opacity:.7"><input type="checkbox" id="terrainToggle" disabled> Terrain mask: coming (LOLA)</label>
+   </div>
+  </div>
   <div class="foot">
    <div><span class="lab">Sunlit</span><b id="f1"></b></div><div><span class="lab">Longest dark</span><b id="f2"></b></div>
    <div><span class="lab">Contact days</span><b id="f3"></b></div><div><span class="lab">Verdict</span><b id="f4"></b></div>
@@ -156,7 +176,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
   <div id="cmpT"></div><p id="cmpS"></p></div>
 </section>
 <section id="sd"><div class="lab cy">02 · Decision mode · MUST</div><h3 class="sh">Decision: set your priorities, get the top 3</h3>
- <div class="grid"><div class="pan"><h2>Priorities</h2><div id="wsl"></div><div class="lab" style="letter-spacing:.06em;line-height:1.7">*Science is a placeholder score until LRO shadow data is added.</div></div>
+ <div class="grid"><div class="pan"><h2>Priorities</h2><div id="wsl"></div><div id="sciNote" class="lab" style="letter-spacing:.06em;line-height:1.7">*Science score: not yet available (needs LRO shadow data). Excluded from decision score in Real Data mode.</div></div>
  <div class="pan"><h2>Top 3 site and date</h2><div id="dec"></div><p class="lab" style="letter-spacing:.06em">No single best answer: each option shows its strengths, weaknesses and how certain it is.</p></div></div></section>
 <section id="sc"><div class="lab cy">03 · Mission scenario simulator · SHOULD</div><h3 class="sh">Scenario: best site for a specific mission</h3>
  <div class="grid"><div class="pan"><h2>Mission profile</h2><select id="pf"></select>
@@ -184,6 +204,70 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
   <div class="ctl"><button class="btn" id="nextL" style="display:none">Next level</button></div></div>
 </section>
 </main>
+
+<section id="data-method" class="wrap">
+ <div class="pan" style="padding:28px 24px">
+  <div class="lab cy">NASA DATA & METHODOLOGY</div>
+  <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
+  <p class="s2" style="margin-bottom:20px">In accordance with NASA Open Science principles, Horizon Atlas uses authentic NASA data endpoints and discloses all calculation parameters and limitations.</p>
+  
+  <div class="g2" style="margin-bottom:20px">
+   <div>
+    <h4 style="color:var(--cy)">1. Ephemerides: NASA / JPL Horizons</h4>
+    <p class="s2">Apparent hourly azimuth and elevation for the Sun (Body 10) and Earth (Body 399) are fetched via the official <a href="https://ssd.jpl.nasa.gov/api/horizons.api" target="_blank" style="color:#fff">JPL Horizons API</a> using lunar surface geodetic coordinates (<code>CENTER='coord@301'</code>). Window: <b>2026-12-01 to 2027-12-31</b> (9,481 hourly ephemeris steps per site).</p>
+   </div>
+   <div>
+    <h4 style="color:var(--cy)">2. Terrain & Topography: LRO LOLA</h4>
+    <p class="s2">Lunar topography is referenced to the Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) products (NASA PGDA / GSFC). <i>Note: In this version, Sun and Earth positions are real NASA data; local LOLA topographic horizon masking is currently pending Step 4.</i></p>
+   </div>
+  </div>
+
+  <h4 style="margin:16px 0 8px">Evaluated Artemis III Candidate Regions (Official NASA Coordinates)</h4>
+  <div class="sc">
+   <table class="ct" style="width:100%;font-size:12px">
+    <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
+     <td style="padding:8px 12px"><b>Region Name</b></td>
+     <td style="padding:8px 12px"><b>Latitude</b></td>
+     <td style="padding:8px 12px"><b>Longitude (East)</b></td>
+     <td style="padding:8px 12px"><b>Primary NASA Reference</b></td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Connecting Ridge (Site 01)</b></td>
+     <td style="padding:8px 12px">-89.46°</td>
+     <td style="padding:8px 12px">222.51° (137.49°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 01 LDEM</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Peak Near Shackleton (Site 07)</b></td>
+     <td style="padding:8px 12px">-88.81°</td>
+     <td style="padding:8px 12px">123.69°</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 07 LDEM</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Malapert Massif</b></td>
+     <td style="padding:8px 12px">-85.99°</td>
+     <td style="padding:8px 12px">357.07° (2.93°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / USGS LGRS</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Haworth Crater Region</b></td>
+     <td style="padding:8px 12px">-87.45°</td>
+     <td style="padding:8px 12px">354.83° (5.17°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / IAU Gazetteer (USGS)</td>
+    </tr>
+   </table>
+  </div>
+
+  <h4 style="margin:20px 0 8px">Model Assumptions & Limitations</h4>
+  <ul class="ck" style="font-size:13px;color:#a794b8">
+   <li><b>Local Horizon:</b> Calculated relative to the smooth geometric lunar sphere (elevation &gt; 0°). Terrain horizon profiling (ray-marching across LRO LOLA DEMs) will be applied in Step 4.</li>
+   <li><b>Solar & Earth Disks:</b> Measured from apparent disk center. Solar semi-diameter (~0.26°) and Earth semi-diameter (~0.95°) are noted.</li>
+   <li><b>Mission Windows:</b> Evaluated across 24 start dates spanning the full 13-month operational ephemeris window, simulating 240 continuous hours (10 Earth days) per mission.</li>
+   <li><b>Science Score:</b> Explicitly marked as a placeholder until permanently shadowed region (PSR) volatile distribution data is incorporated.</li>
+  </ul>
+ </div>
+</section>
+
 <section id="str" class="wrap about r"><div><h2 class="big">Our Strengths</h2><p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
 <ul class="ck"><li>Starts from your lander's needs, not from one site.</li><li>Searches every site and date at once.</li><li>Explains why a choice wins or fails, and by how much.</li><li>Plans to test against real past CLPS landings.</li><li>Clear limits: demo model now, NASA SPICE and LRO data next.</li></ul></div><div class="disc e"><i></i></div></section>
 <section id="who" class="wrap cen"><h2 class="big">Who It Helps</h2><p class="s">One tool, three kinds of users.</p><div class="wg">
@@ -200,130 +284,457 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 <script>
 let sh='';for(let i=0;i<140;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.2?1:0}px rgba(220,230,255,${.3+Math.random()*.6}),`;
 document.getElementById('stars').style.boxShadow=sh.slice(0,-1);
-const SITES=[["Shackleton rim",.9,.5,.4,1,.2,2.1,0,5,0],["Connecting Ridge",1.5,.3,.3,2,.15,1.2,.8,3,1],["de Gerlache rim",.7,.8,.6,0,.3,3.0,1.6,6,2],["Malapert massif",1.2,.4,.5,3,.2,.5,2.4,-1,3],["Nobile rim",.6,.9,.7,1.5,.35,2.2,3.1,2,4],["Haworth edge",.4,1,.9,2.5,.4,1.0,3.9,0,5],["Faustini rim",1.0,.6,.5,.4,.25,2.6,4.7,4,.5],["Amundsen rim",.8,.7,.6,1.1,.3,1.7,5.5,7,1.5]]
-.map(a=>({n:a[0],so:a[1],h0:a[2],a1:a[3],p1:a[4],a2:a[5],p2:a[6],sa:a[7]*57,e0:a[8],ep:a[9],ea:150+a[9]*20}));
-const ND=24,H=240,R=Math.PI/180,D0=Date.UTC(2027,0,1),$=id=>document.getElementById(id);
-let DH=0;const hor=(s,az)=>Math.max(0,DH+s.h0+s.a1*Math.sin(az*R*2+s.p1)+s.a2*Math.sin(az*R*5+s.p2));
-const sun=(s,d0,t)=>{const d=d0+t/24;return[(d/29.53*360+s.sa)%360,1.7*Math.sin(2*Math.PI*d/365.25+s.ep)+s.so]};
-const earth=(s,d0,t)=>{const d=d0+t/24,w=2*Math.PI*d/27.32+s.ep;return[s.ea+9*Math.sin(w),s.e0+5*Math.sin(w+1.3)+.6*Math.sin(2*Math.PI*t/24)]};
-function sim(si,di){const s=SITES[si],d0=di*15.2,lit=[],con=[];
- for(let t=0;t<H;t++){const[a,e]=sun(s,d0,t),[b,f]=earth(s,d0,t);lit.push(e>hor(s,a));con.push(f>hor(s,b))}
- let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
- let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
- return{lit,con,sun:100*lit.filter(Boolean).length/H,dark:mx,cd:cd*10}}
-const M=SITES.map((_,i)=>Array.from({length:ND},(_,j)=>sim(i,j)));
+
+const ND=24,H=240,R=Math.PI/180,$=id=>document.getElementById(id);
+
+// --- 1. DEMO SYNTHETIC MODEL (8 ILLUSTRATIVE SITES) ---
+const DEMO_RAW=[["Shackleton rim (demo)",.9,.5,.4,1,.2,2.1,0,5,0],["Connecting Ridge (demo)",1.5,.3,.3,2,.15,1.2,.8,3,1],["de Gerlache rim (demo)",.7,.8,.6,0,.3,3.0,1.6,6,2],["Malapert massif (demo)",1.2,.4,.5,3,.2,.5,2.4,-1,3],["Nobile rim (demo)",.6,.9,.7,1.5,.35,2.2,3.1,2,4],["Haworth edge (demo)",.4,1,.9,2.5,.4,1.0,3.9,0,5],["Faustini rim (demo)",1.0,.6,.5,.4,.25,2.6,4.7,4,.5],["Amundsen rim (demo)",.8,.7,.6,1.1,.3,1.7,5.5,7,1.5]];
+const DEMO_SITES=DEMO_RAW.map(a=>({
+  n:a[0],isReal:false,source:'Demo model (illustrative)',
+  so:a[1],h0:a[2],a1:a[3],p1:a[4],a2:a[5],p2:a[6],sa:a[7]*57,e0:a[8],ep:a[9],ea:150+a[9]*20
+}));
+const D0=Date.UTC(2027,0,1);
+const DEMO_DATES=Array.from({length:ND},(_,j)=>new Date(D0+j*15.2*864e5).toISOString().slice(5,10));
+let DH=0;
+const hor=(s,az)=>Math.max(0,DH+s.h0+s.a1*Math.sin(az*R*2+s.p1)+s.a2*Math.sin(az*R*5+s.p2));
+const demo_sun=(s,d0,t)=>{const d=d0+t/24;return[(d/29.53*360+s.sa)%360,1.7*Math.sin(2*Math.PI*d/365.25+s.ep)+s.so]};
+const demo_earth=(s,d0,t)=>{const d=d0+t/24,w=2*Math.PI*d/27.32+s.ep;return[s.ea+9*Math.sin(w),s.e0+5*Math.sin(w+1.3)+.6*Math.sin(2*Math.PI*t/24)]};
+function demo_sim(si,di){
+  const s=DEMO_SITES[si],d0=di*15.2,lit=[],con=[],s_az=[],s_el=[],e_az=[],e_el=[];
+  for(let t=0;t<H;t++){
+    const[a,e]=demo_sun(s,d0,t),[b,f]=demo_earth(s,d0,t);
+    s_az.push(a);s_el.push(e);e_az.push(b);e_el.push(f);
+    lit.push(e>hor(s,a));con.push(f>hor(s,b));
+  }
+  let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
+  let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
+  return{lit,con,sun:100*lit.filter(Boolean).length/H,dark:mx,cd:cd*10,sun_az:s_az,sun_el:s_el,earth_az:e_az,earth_el:e_el};
+}
+const DEMO_M=DEMO_SITES.map((_,i)=>Array.from({length:ND},(_,j)=>demo_sim(i,j)));
+
+// --- 2. REAL NASA HORIZONS DATA STATE ---
+let REAL_SITES=[];
+let REAL_M=[];
+let REAL_DATES=[];
+let REAL_INDICES=[];
+let isRealData=true;
+let SITES=DEMO_SITES;
+let M=DEMO_M;
+let DATES=DEMO_DATES;
+
+function buildRealMatrix(sitesList){
+  const N=sitesList[0].times.length;
+  REAL_INDICES=Array.from({length:ND},(_,j)=>Math.floor(j*(N-H)/(ND-1)));
+  REAL_DATES=REAL_INDICES.map(idx=>{
+    const raw=sitesList[0].times[idx]; // "YYYY-Mon-DD HH:MM"
+    const p=raw.split(' ')[0].split('-');
+    const mmap={Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+    return `${p[0]}-${mmap[p[1]]||p[1]}-${p[2]}`;
+  });
+  REAL_M=sitesList.map(s=>{
+    return REAL_INDICES.map(startIdx=>{
+      const w_sun_el=s.sun_el.slice(startIdx,startIdx+H);
+      const w_earth_el=s.earth_el.slice(startIdx,startIdx+H);
+      const w_sun_az=s.sun_az.slice(startIdx,startIdx+H);
+      const w_earth_az=s.earth_az.slice(startIdx,startIdx+H);
+      const w_times=s.times.slice(startIdx,startIdx+H);
+      const lit=w_sun_el.map(e=>e>0.0);
+      const con=w_earth_el.map(e=>e>0.0);
+      let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
+      let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
+      return{
+        lit,con,
+        sun:100*lit.filter(Boolean).length/H,
+        dark:mx,
+        cd:cd*10,
+        sun_az:w_sun_az,
+        sun_el:w_sun_el,
+        earth_az:w_earth_az,
+        earth_el:w_earth_el,
+        times:w_times,
+        startIdx
+      };
+    });
+  });
+}
+
+function setDatasetMode(useReal){
+  isRealData=useReal;
+  if(isRealData){
+    SITES=REAL_SITES;
+    M=REAL_M;
+    DATES=REAL_DATES;
+    $('btnReal').style.background='var(--cy)';
+    $('btnReal').style.color='#fff';
+    $('btnDemo').style.background='#170b24';
+    $('btnDemo').style.color='var(--ink)';
+    $('dsBadge').textContent='NASA/JPL Horizons data';
+    $('dsBadge').className='chip ok';
+    $('atlasTag').textContent='Atlas · NASA/JPL Horizons';
+    $('skyDataNote').textContent='Sun/Earth positions: real NASA/JPL Horizons data. Horizon: 0° reference sphere. Terrain mask (LRO LOLA) not applied yet.';
+    $('reqNote').textContent='Sun & Earth count when above local 0° horizon. Terrain mask (LRO LOLA) not applied yet.';
+    $('w3').disabled=true;
+    $('wv3').textContent='N/A';
+    $('sciNote').textContent='*Science score: not yet available (needs LRO shadow data). Excluded from decision score in Real Data mode.';
+  }else{
+    SITES=DEMO_SITES;
+    M=DEMO_M;
+    DATES=DEMO_DATES;
+    $('btnDemo').style.background='var(--cy)';
+    $('btnDemo').style.color='#fff';
+    $('btnReal').style.background='#170b24';
+    $('btnReal').style.color='var(--ink)';
+    $('dsBadge').textContent='Demo model (illustrative)';
+    $('dsBadge').className='chip';
+    $('atlasTag').textContent='Atlas · Demo model';
+    $('skyDataNote').textContent='Sun/Earth positions & terrain: synthetic demo model (illustrative numbers).';
+    $('reqNote').textContent='Synthetic demo model: sinusoidal horizon profile and simplified ephemerides.';
+    $('w3').disabled=false;
+    $('wv3').textContent=$('w3').value;
+    $('sciNote').textContent='*Science is an illustrative placeholder score.';
+  }
+  sel=[0,0];
+  updateSelectOptions();
+  atlas();
+  brief();
+  dec();
+  scn();
+}
+
+function updateSelectOptions(){
+  const siteNames=SITES.map(s=>s.n);
+  ['ca','cb','gs'].forEach(id=>fill(id,siteNames));
+  ['cad','cbd','gd'].forEach(id=>fill(id,DATES));
+}
+
+// --- 3. ASYNC INITIALIZATION WITH ERROR HANDLING ---
+async function initData(){
+  const statusEl=$('loadStatus');
+  const msgEl=$('loadMsg');
+  statusEl.style.display='block';
+  msgEl.innerHTML='Loading <b>data/index.json</b>...';
+  try{
+    const res=await fetch('data/index.json');
+    if(!res.ok)throw new Error(`HTTP ${res.status} fetching data/index.json`);
+    const idxData=await res.json();
+    REAL_SITES=[];
+    for(const s of idxData.sites){
+      msgEl.innerHTML=`Loading ephemeris: <b>data/${s.file}</b>...`;
+      const sRes=await fetch(`data/${s.file}`);
+      if(!sRes.ok)throw new Error(`HTTP ${sRes.status} fetching data/${s.file}`);
+      const sJson=await sRes.json();
+      sJson.n=s.name;
+      sJson.isReal=true;
+      REAL_SITES.push(sJson);
+    }
+    buildRealMatrix(REAL_SITES);
+    statusEl.style.display='none';
+    setDatasetMode(true);
+  }catch(err){
+    console.error('Data load error:',err);
+    statusEl.className='res no';
+    statusEl.style.display='block';
+    msgEl.innerHTML=`<b>Failed to load real NASA data:</b> ${err.message}<br><br>`+
+      `Web browsers block <code>fetch()</code> on local files when opened directly with <code>file://</code>.<br>`+
+      `To view real NASA data, run a local web server:<br>`+
+      `<pre style="background:#110419;padding:8px;margin:8px 0;border:1px solid #ff7a6b;font-size:12px">python -m http.server 8000</pre>`+
+      `Then open <b><a href="http://localhost:8000" style="color:#fff;text-decoration:underline">http://localhost:8000</a></b> in your browser.<br><br>`+
+      `<button class="btn" id="btnFallback" style="padding:6px 14px;margin:0">Switch to Demo Model</button>`;
+    $('btnFallback').onclick=()=>setDatasetMode(false);
+    setDatasetMode(false);
+  }
+}
+
+// --- 4. CORE SIMULATION & UI CONTROLS ---
 let sel=[0,0],timer=null;
 const req=()=>({s:+$('rs').value,d:+$('rd').value,c:+$('rc').value});
-const dl=j=>new Date(D0+j*15.2*864e5).toISOString().slice(5,10);
+const dl=j=>DATES[j]||`Date ${j+1}`;
 const score=(m,r)=>Math.min(1,m.sun/r.s,r.d/Math.max(m.dark,1),m.cd/r.c);
-function fails(m,r){const f=[];
- if(m.sun<r.s)f.push(`Sunlight ${m.sun.toFixed(0)}%, needs ${r.s}% (short by ${(r.s-m.sun).toFixed(0)} pts)`);
- if(m.dark>r.d)f.push(`Longest dark ${m.dark} h, limit ${r.d} h (over by ${m.dark-r.d} h)`);
- if(m.cd<r.c)f.push(`Earth contact ${m.cd}% of days, needs ${r.c}%`);return f}
-function atlas(){const r=req();$('vs').textContent=r.s+'%';$('vd').textContent=r.d+' h';$('vc').textContent=r.c+'%';
- let h='<tr class="dates"><th></th>'+Array.from({length:ND},(_,j)=>`<th>${j%3?'':dl(j)}</th>`).join('')+'</tr>',pass=[],all=[];
- SITES.forEach((s,i)=>{h+=`<tr><th>${s.n}</th>`;for(let j=0;j<ND;j++){const m=M[i][j],sc=score(m,r),p=sc>=1;
-  if(p)pass.push([i,j]);all.push([sc,i,j]);
-  h+=`<td data-i="${i}" data-j="${j}" class="${p?'pass':''}${sel[0]==i&&sel[1]==j?' sel':''}" style="background:hsl(${Math.round(Math.min(sc,1)*125)},60%,${p?46:30}%)" title="${s.n} ${dl(j)}"></td>`}h+='</tr>'});
- $('atlas').innerHTML=h;const o=$('result');
- if(pass.length){o.className='res';o.innerHTML=`<b>${pass.length} of ${SITES.length*ND}</b> choices pass. Best: ${pass.slice(0,3).map(([i,j])=>`${SITES[i].n} (${dl(j)})`).join(', ')}.`}
- else{all.sort((a,b)=>b[0]-a[0]);o.className='res no';o.innerHTML='<b>Nothing passes. Why not — closest options:</b><ul>'+all.slice(0,3).map(([,i,j])=>`<li><b>${SITES[i].n}, ${dl(j)}</b><br>${fails(M[i][j],r).join('<br>')}</li>`).join('')+'</ul>'}
- sky()}
-function sky(){const[i,j]=sel,s=SITES[i],m=M[i][j],r=req(),t=+$('time').value,d0=j*15.2,Y=e=>170-Math.max(-3,Math.min(11,e))*13,X=a=>(a%360)/360*720;
- const[sa,se]=sun(s,d0,t),[ea,ee]=earth(s,d0,t);
- let pts='0,220';for(let a=0;a<=360;a+=2)pts+=` ${X(a)},${Y(hor(s,a))}`;pts+=' 720,220';
- let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(232,75,240,.12)"/><text x="4" y="${Y(e)-2}" fill="#6f7c99" font-size="9" font-family="monospace">${e}°</text>`;
- $('sky').innerHTML=`<rect width="720" height="220" fill="#03050b"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#e8a24a"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#5ab0ff"/><polygon points="${pts}" fill="#2a3042"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#e8a24a" font-size="11" font-family="monospace">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#5ab0ff" font-size="11" font-family="monospace">EARTH</text>`;
- $('skyT').textContent=`${s.n} · start ${dl(j)}`;
- const l=m.lit[t],c=m.con[t],ok=score(m,r)>=1;
- $('pw').textContent=l?'SUNLIT':'DARK';$('pwb').style.width=l?'100%':'4%';
- $('ct').textContent=c?'EARTH VISIBLE':'NO CONTACT';$('ctb').style.width=c?'100%':'4%';
- let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="14" fill="${m.lit[k]?'#e8a24a':'#2a1538'}"/><rect x="${k}" y="20" width="1.05" height="14" fill="${m.con[k]?'#5ab0ff':'#2a1538'}"/>`;
- $('strips').innerHTML=st+`<rect x="${t}" y="0" width="1.5" height="36" fill="#fff"/>`;
- $('tl').textContent=`Day ${Math.floor(t/24)+1} · hour ${t%24}`;
- $('hs').textContent=m.sun.toFixed(0)+'%';$('hsb').style.width=m.sun+'%';
- $('hd').textContent=m.dark+' h';$('hdb').style.width=Math.min(100,m.dark/2)+'%';
- $('hc').textContent=m.cd+'%';$('hcb').style.width=m.cd+'%';
- const v=$('verdict');v.textContent=ok?'MEETS NEEDS':'FAILS NEEDS';v.className='chip '+(ok?'ok':'no');
- $('f1').textContent=m.sun.toFixed(0)+'%';$('f2').textContent=m.dark+' h';$('f3').textContent=m.cd+'%';
- $('f4').textContent=ok?'GO':'NO-GO';$('f4').style.color=ok?'var(--ok)':'var(--bad)'}
+
+function fails(m,r){
+  const f=[];
+  if(m.sun<r.s)f.push(`Sunlight ${m.sun.toFixed(0)}%, needs ${r.s}% (short by ${(r.s-m.sun).toFixed(0)} pts)`);
+  if(m.dark>r.d)f.push(`Longest dark ${m.dark} h, limit ${r.d} h (over by ${m.dark-r.d} h)`);
+  if(m.cd<r.c)f.push(`Earth contact ${m.cd}% of days, needs ${r.c}%`);
+  return f;
+}
+
+function atlas(){
+  const r=req();
+  $('vs').textContent=r.s+'%';$('vd').textContent=r.d+' h';$('vc').textContent=r.c+'%';
+  let h='<tr class="dates"><th></th>'+Array.from({length:ND},(_,j)=>`<th>${j%3?'':dl(j).slice(5)}</th>`).join('')+'</tr>',pass=[],all=[];
+  SITES.forEach((s,i)=>{
+    h+=`<tr><th>${s.n}</th>`;
+    for(let j=0;j<ND;j++){
+      const m=M[i][j],sc=score(m,r),p=sc>=1;
+      if(p)pass.push([i,j]);all.push([sc,i,j]);
+      h+=`<td data-i="${i}" data-j="${j}" class="${p?'pass':''}${sel[0]==i&&sel[1]==j?' sel':''}" style="background:hsl(${Math.round(Math.min(sc,1)*125)},60%,${p?46:30}%)" title="${s.n} ${dl(j)}"></td>`;
+    }
+    h+='</tr>';
+  });
+  $('atlas').innerHTML=h;
+  const o=$('result');
+  const tag=isRealData?'[NASA/JPL Horizons data]':'[Demo model]';
+  if(pass.length){
+    o.className='res';
+    o.innerHTML=`<b>${pass.length} of ${SITES.length*ND}</b> choices pass ${tag}. Best: ${pass.slice(0,3).map(([i,j])=>`${SITES[i].n} (${dl(j)})`).join(', ')}.`;
+  }else{
+    all.sort((a,b)=>b[0]-a[0]);
+    o.className='res no';
+    o.innerHTML=`<b>Nothing passes ${tag}. Why not — closest options:</b><ul>`+all.slice(0,3).map(([,i,j])=>`<li><b>${SITES[i].n}, ${dl(j)}</b><br>${fails(M[i][j],r).join('<br>')}</li>`).join('')+'</ul>';
+  }
+  sky();
+}
+
+function sky(){
+  const[i,j]=sel,s=SITES[i],m=M[i][j],r=req(),t=+$('time').value;
+  const Y=e=>170-Math.max(-3,Math.min(11,e))*13,X=a=>(a%360)/360*720;
+  
+  let sa,se,ea,ee,pts;
+  if(isRealData){
+    sa=m.sun_az[t];se=m.sun_el[t];
+    ea=m.earth_az[t];ee=m.earth_el[t];
+    // 0 deg smooth reference horizon
+    pts=`0,220 0,${Y(0)} 720,${Y(0)} 720,220`;
+  }else{
+    const d0=j*15.2;
+    [sa,se]=demo_sun(s,d0,t);
+    [ea,ee]=demo_earth(s,d0,t);
+    pts='0,220';for(let a=0;a<=360;a+=2)pts+=` ${X(a)},${Y(hor(s,a))}`;pts+=' 720,220';
+  }
+  
+  let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(232,75,240,.12)"/><text x="4" y="${Y(e)-2}" fill="#6f7c99" font-size="9" font-family="monospace">${e}°</text>`;
+  $('sky').innerHTML=`<rect width="720" height="220" fill="#03050b"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#e8a24a"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#5ab0ff"/><polygon points="${pts}" fill="#2a3042"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#e8a24a" font-size="11" font-family="monospace">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#5ab0ff" font-size="11" font-family="monospace">EARTH</text>`;
+  
+  const curTimeStr=isRealData&&m.times?` · ${m.times[t]}`:``;
+  $('skyT').textContent=`${s.n} · start ${dl(j)}${curTimeStr}`;
+  const l=m.lit[t],c=m.con[t],ok=score(m,r)>=1;
+  $('pw').textContent=l?'SUNLIT':'DARK';$('pwb').style.width=l?'100%':'4%';
+  $('ct').textContent=c?'EARTH VISIBLE':'NO CONTACT';$('ctb').style.width=c?'100%':'4%';
+  
+  let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="14" fill="${m.lit[k]?'#e8a24a':'#2a1538'}"/><rect x="${k}" y="20" width="1.05" height="14" fill="${m.con[k]?'#5ab0ff':'#2a1538'}"/>`;
+  $('strips').innerHTML=st+`<rect x="${t}" y="0" width="1.5" height="36" fill="#fff"/>`;
+  $('tl').textContent=`Day ${Math.floor(t/24)+1} · hour ${t%24}`;
+  $('hs').textContent=m.sun.toFixed(0)+'%';$('hsb').style.width=m.sun+'%';
+  $('hd').textContent=m.dark+' h';$('hdb').style.width=Math.min(100,m.dark/2)+'%';
+  $('hc').textContent=m.cd+'%';$('hcb').style.width=m.cd+'%';
+  const v=$('verdict');v.textContent=ok?'MEETS NEEDS':'FAILS NEEDS';v.className='chip '+(ok?'ok':'no');
+  $('f1').textContent=m.sun.toFixed(0)+'%';$('f2').textContent=m.dark+' h';$('f3').textContent=m.cd+'%';
+  $('f4').textContent=ok?'GO':'NO-GO';$('f4').style.color=ok?'var(--ok)':'var(--bad)';
+}
+
 $('atlas').addEventListener('click',e=>{const c=e.target.closest('td');if(!c)return;sel=[+c.dataset.i,+c.dataset.j];atlas()});
 ['rs','rd','rc'].forEach(id=>$(id).addEventListener('input',atlas));
 $('time').addEventListener('input',sky);
-$('play').onclick=()=>{if(timer){clearInterval(timer);timer=null;$('play').textContent='▶ Play';return}
- $('play').textContent='❚❚ Pause';timer=setInterval(()=>{$('time').value=(+$('time').value+2)%H;sky()},60)};
+$('play').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;$('play').textContent='▶ Play';return}
+  $('play').textContent='❚❚ Pause';
+  timer=setInterval(()=>{$('time').value=(+$('time').value+2)%H;sky()},60);
+};
 $('go').onclick=()=>$('s1').scrollIntoView();
 document.querySelectorAll('.steps a').forEach(a=>a.onclick=()=>{$(a.dataset.t).scrollIntoView();document.querySelectorAll('.steps a').forEach(x=>x.classList.toggle('on',x==a))});
-const dates=Array.from({length:ND},(_,j)=>dl(j));
+
 const fill=(id,a)=>$(id).innerHTML=a.map((t,i)=>`<option value="${i}">${t}</option>`).join('');
-['ca','cb','gs'].forEach(id=>fill(id,SITES.map(s=>s.n)));['cad','cbd','gd'].forEach(id=>fill(id,dates));
-function cmp(){const a=M[+$('ca').value][+$('cad').value],b=M[+$('cb').value][+$('cbd').value],r=req();
- const rows=[['Sunlight',a.sun,b.sun,1,'%'],['Longest dark',a.dark,b.dark,-1,' h'],['Earth contact',a.cd,b.cd,1,'%']];
- $('cmpT').innerHTML='<table class="ct"><tr><td></td><td>A</td><td>B</td></tr>'+rows.map(x=>{const w=(x[1]-x[2])*x[3];return `<tr><td>${x[0]}</td><td class="${w>0?'good':''}">${x[1].toFixed(0)}${x[4]}</td><td class="${w<0?'good':''}">${x[2].toFixed(0)}${x[4]}</td></tr>`}).join('')+'</table>';
- const sa=a.sun-b.sun,da=a.dark-b.dark,sA=score(a,r),sB=score(b,r);
- $('cmpS').textContent=`A gets ${Math.abs(sa).toFixed(0)} points ${sa>=0?'more':'less'} sunlight than B, and its longest dark is ${Math.abs(da)} h ${da<=0?'shorter':'longer'}. For your needs, ${sA==sB?'both are equally close':(sA>sB?'A':'B')+' is closer to passing'}.`}
+
+function cmp(){
+  const a=M[+$('ca').value][+$('cad').value],b=M[+$('cb').value][+$('cbd').value],r=req();
+  const rows=[['Sunlight',a.sun,b.sun,1,'%'],['Longest dark',a.dark,b.dark,-1,' h'],['Earth contact',a.cd,b.cd,1,'%']];
+  const tag=isRealData?'(NASA/JPL Horizons)':'(Demo model)';
+  $('cmpT').innerHTML=`<table class="ct"><tr><td><b>Metric ${tag}</b></td><td><b>A</b></td><td><b>B</b></td></tr>`+rows.map(x=>{const w=(x[1]-x[2])*x[3];return `<tr><td>${x[0]}</td><td class="${w>0?'good':''}">${x[1].toFixed(0)}${x[4]}</td><td class="${w<0?'good':''}">${x[2].toFixed(0)}${x[4]}</td></tr>`}).join('')+'</table>';
+  const sa=a.sun-b.sun,da=a.dark-b.dark,sA=score(a,r),sB=score(b,r);
+  $('cmpS').textContent=`A gets ${Math.abs(sa).toFixed(0)} points ${sa>=0?'more':'less'} sunlight than B, and its longest dark is ${Math.abs(da)} h ${da<=0?'shorter':'longer'}. For your needs, ${sA==sB?'both are equally close':(sA>sB?'A':'B')+' is closer to passing'}.`;
+}
 ['ca','cad','cb','cbd'].forEach(id=>$(id).onchange=cmp);
+
 let cin=0;const _at=atlas;
-atlas=function(){_at();$('ca').value=sel[0];$('cad').value=sel[1];
- if(!cin){cin=1;let bb=[-1,1,5];for(let i=0;i<SITES.length;i++)for(let j=0;j<ND;j++){const c=score(M[i][j],req());if((i!=sel[0]||j!=sel[1])&&c>bb[0])bb=[c,i,j]}$('cb').value=bb[1];$('cbd').value=bb[2]}
- cmp();xai()};
+atlas=function(){
+  _at();
+  if($('ca').options.length>sel[0])$('ca').value=sel[0];
+  if($('cad').options.length>sel[1])$('cad').value=sel[1];
+  if(!cin){
+    cin=1;let bb=[-1,1,5];
+    for(let i=0;i<SITES.length;i++)for(let j=0;j<ND;j++){
+      const c=score(M[i][j],req());
+      if((i!=sel[0]||j!=sel[1])&&c>bb[0])bb=[c,i,j];
+    }
+    if($('cb').options.length>bb[1])$('cb').value=bb[1];
+    if($('cbd').options.length>bb[2])$('cbd').value=bb[2];
+  }
+  cmp();xai();
+};
+
+// --- 5. GAME ---
 const LV=[{d:1.6,c:0,s:0,t:'Sunlight only'},{d:1.6,c:1,s:0,t:'Add Earth contact'},{d:2,c:1,s:50,t:'Tighter power'}];
 let lv=0,sc=3,gt=null;
-function gdraw(p,f){let g='<line x1="0" x2="240" y1="68" y2="68" stroke="#6f7c99" stroke-width=".3"/>';
- if(p.length)g+=`<polyline fill="none" stroke="#e8a24a" stroke-width="1.2" points="${p.map((v,i)=>i+','+(68-v*.66)).join(' ')}"/>`;
- if(f!=null)g+=`<line x1="${f}" x2="${f}" y1="0" y2="70" stroke="#ff7a6b"/>`;$('gsv').innerHTML=g}
-function brief(){const L=LV[lv];$('lvl').textContent=`Level ${lv+1} / 3 · ${L.t}`;
- $('brief').textContent=`Your lander has a small battery. It loses ${L.d}% each dark hour and charges 3% each sunlit hour.`+(L.c?' It must reach Earth at least once every day.':'')+(L.s?` It also needs ${L.s}% sunlight overall.`:'')+' The mission lasts 10 days. Pick a site and a start date.';
- sc=3;$('scout').textContent='Scout (3)';$('scoutOut').textContent='';$('gres').style.display='none';$('nextL').style.display='none';gdraw([])}
-$('scout').onclick=()=>{if(sc<1){$('scoutOut').textContent='No scouts left. Decide now.';return}
- sc--;const m=M[+$('gs').value][+$('gd').value];$('scout').textContent=`Scout (${sc})`;
- $('scoutOut').textContent=`Scout: sunlight ${m.sun.toFixed(0)}% · longest dark ${m.dark} h · Earth contact ${m.cd}% of days`};
+function gdraw(p,f){
+  let g='<line x1="0" x2="240" y1="68" y2="68" stroke="#6f7c99" stroke-width=".3"/>';
+  if(p.length)g+=`<polyline fill="none" stroke="#e8a24a" stroke-width="1.2" points="${p.map((v,i)=>i+','+(68-v*.66)).join(' ')}"/>`;
+  if(f!=null)g+=`<line x1="${f}" x2="${f}" y1="0" y2="70" stroke="#ff7a6b"/>`;
+  $('gsv').innerHTML=g;
+}
+function brief(){
+  const L=LV[lv];
+  $('lvl').textContent=`Level ${lv+1} / 3 · ${L.t}`;
+  $('brief').textContent=`Your lander has a small battery. It loses ${L.d}% each dark hour and charges 3% each sunlit hour.`+(L.c?' It must reach Earth at least once every day.':'')+(L.s?` It also needs ${L.s}% sunlight overall.`:'')+' The mission lasts 10 days. Pick a site and a start date.';
+  sc=3;$('scout').textContent='Scout (3)';$('scoutOut').textContent='';$('gres').style.display='none';$('nextL').style.display='none';gdraw([]);
+}
+$('scout').onclick=()=>{
+  if(sc<1){$('scoutOut').textContent='No scouts left. Decide now.';return}
+  sc--;const m=M[+$('gs').value][+$('gd').value];
+  $('scout').textContent=`Scout (${sc})`;
+  $('scoutOut').textContent=`Scout: sunlight ${m.sun.toFixed(0)}% · longest dark ${m.dark} h · Earth contact ${m.cd}% of days`;
+};
 $('nextL').onclick=()=>{lv++;brief()};
-$('launch').onclick=()=>{clearInterval(gt);const m=M[+$('gs').value][+$('gd').value],L=LV[lv];let b=100,bs=[],fail=null;
- for(let t=0;t<H;t++){b=m.lit[t]?Math.min(100,b+3):b-L.d;bs.push(Math.max(b,0));
-  if(b<=0){fail=[t,'OUT OF POWER'];break}
-  if(L.c&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){fail=[t,'LOST CONTACT'];break}}
- if(!fail&&m.sun<L.s)fail=[H-1,'TOO LITTLE SUNLIGHT'];
- const last=fail?fail[0]:H-1;$('gres').style.display='none';let i=0;
- gt=setInterval(()=>{i+=4;const e=Math.min(i,last);gdraw(bs.slice(0,e+1),fail&&e>=last?last:null);
-  if(e>=last){clearInterval(gt);const o=$('gres');o.style.display='block';
-   if(fail){o.className='res no';o.innerHTML=`<b>${fail[1]}</b> on day ${Math.floor(fail[0]/24)+1}, hour ${fail[0]%24}. That hour decided the mission.`}
-   else{o.className='res';o.innerHTML='<b>MISSION SUCCESS</b> The lander survived all 10 days.';if(lv<2)$('nextL').style.display='inline-block'}}},30)};
-const CN=['Power','Contact','Safe margin','Science*'],SCI=[80,55,70,40,65,50,85,60],WD=[8,6,5,3];
+$('launch').onclick=()=>{
+  clearInterval(gt);const m=M[+$('gs').value][+$('gd').value],L=LV[lv];let b=100,bs=[],fail=null;
+  for(let t=0;t<H;t++){
+    b=m.lit[t]?Math.min(100,b+3):b-L.d;bs.push(Math.max(b,0));
+    if(b<=0){fail=[t,'OUT OF POWER'];break}
+    if(L.c&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){fail=[t,'LOST CONTACT'];break}
+  }
+  if(!fail&&m.sun<L.s)fail=[H-1,'TOO LITTLE SUNLIGHT'];
+  const last=fail?fail[0]:H-1;$('gres').style.display='none';let i=0;
+  gt=setInterval(()=>{
+    i+=4;const e=Math.min(i,last);gdraw(bs.slice(0,e+1),fail&&e>=last?last:null);
+    if(e>=last){
+      clearInterval(gt);const o=$('gres');o.style.display='block';
+      if(fail){o.className='res no';o.innerHTML=`<b>${fail[1]}</b> on day ${Math.floor(fail[0]/24)+1}, hour ${fail[0]%24}. That hour decided the mission.`}
+      else{o.className='res';o.innerHTML='<b>MISSION SUCCESS</b> The lander survived all 10 days.';if(lv<2)$('nextL').style.display='inline-block'}
+    }
+  },30);
+};
+
+// --- 6. DECISION ENGINE ---
+const CN=['Power','Contact','Safe margin','Science*'],SCI_DEMO=[80,55,70,40,65,50,85,60],WD=[8,6,5,3];
 $('wsl').innerHTML=CN.map((n,k)=>`<div class="opt"><b id="wv${k}"></b>${n}<input id="w${k}" type="range" min="0" max="10" value="${WD[k]}"></div>`).join('');
 const wts=()=>CN.map((_,k)=>+$('w'+k).value);
-const comp=(i,m)=>[m.sun,m.cd,Math.max(0,100-m.dark/2.4),SCI[i]];
-const tot=(i,m,w)=>{const t=w.reduce((a,b)=>a+b,0)||1;return comp(i,m).reduce((a,c,k)=>a+c*w[k],0)/t};
-const alt=(i,j,dh,dd=0)=>{DH=dh;const m=sim(i,j+dd/15.2);DH=0;return m};
-function dec(){const w=wts();CN.forEach((_,k)=>$('wv'+k).textContent=w[k]);
- const best=SITES.map((_,i)=>{let b=[-1,0];for(let j=0;j<ND;j++){const t=tot(i,M[i][j],w);if(t>b[0])b=[t,j]}return[b[0],i,b[1]]}).sort((a,b)=>b[0]-a[0]).slice(0,3);
- $('dec').innerHTML=best.map(([t,i,j],n)=>{const m=M[i][j],c=comp(i,m),m2=alt(i,j,.3),dr=m.sun-m2.sun,cert=dr<5?'High':dr<15?'Medium':'Low';
-  const L=f=>c.map((v,k)=>f(v)?CN[k]+' '+v.toFixed(0):'').filter(Boolean).join(', ');
-  return `<div class="opt"><b>${t.toFixed(0)} / 100</b>#${n+1} ${SITES[i].n} · start ${dl(j)}<div class="up">▲ ${L(v=>v>=70)||'no strong factor'}</div><div class="dn">▼ ${L(v=>v<=40)||'no weak factor'}</div><div class="lab" style="margin-top:6px;letter-spacing:.06em">Certainty: ${cert}. If landing shifts about 400 m, sunlight goes ${m.sun.toFixed(0)}% to ${m2.sun.toFixed(0)}%.</div></div>`}).join('');xai()}
+
+const comp=(i,m)=>{
+  if(isRealData){
+    return [m.sun,m.cd,Math.max(0,100-m.dark/2.4),0];
+  }
+  return [m.sun,m.cd,Math.max(0,100-m.dark/2.4),SCI_DEMO[i]];
+};
+
+const tot=(i,m,w)=>{
+  const c=comp(i,m);
+  if(isRealData){
+    const t=(w[0]+w[1]+w[2])||1;
+    return (c[0]*w[0]+c[1]*w[1]+c[2]*w[2])/t;
+  }
+  const t=w.reduce((a,b)=>a+b,0)||1;
+  return c.reduce((a,v,k)=>a+v*w[k],0)/t;
+};
+
+const alt=(i,j,dh,dd=0)=>{
+  if(!isRealData){
+    DH=dh;const m=demo_sim(i,j+dd/15.2);DH=0;return m;
+  }
+  const s=SITES[i];
+  const startIdx=REAL_INDICES[j];
+  const shiftedIdx=Math.max(0,Math.min(s.times.length-H,startIdx+Math.round(dd*24)));
+  const sun_slice=s.sun_el.slice(shiftedIdx,shiftedIdx+H);
+  const earth_slice=s.earth_el.slice(shiftedIdx,shiftedIdx+H);
+  const lit=sun_slice.map(e=>e>dh);
+  const con=earth_slice.map(e=>e>dh);
+  let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
+  let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
+  return{lit,con,sun:100*lit.filter(Boolean).length/H,dark:mx,cd:cd*10};
+};
+
+function dec(){
+  const w=wts();
+  CN.forEach((_,k)=>{
+    if(isRealData&&k===3)$('wv3').textContent='N/A (LRO)';
+    else $('wv'+k).textContent=w[k];
+  });
+  const best=SITES.map((_,i)=>{
+    let b=[-1,0];
+    for(let j=0;j<ND;j++){
+      const t=tot(i,M[i][j],w);
+      if(t>b[0])b=[t,j];
+    }
+    return[b[0],i,b[1]];
+  }).sort((a,b)=>b[0]-a[0]).slice(0,3);
+  
+  $('dec').innerHTML=best.map(([t,i,j],n)=>{
+    const m=M[i][j],c=comp(i,m),m2=alt(i,j,.3),dr=m.sun-m2.sun,cert=dr<5?'High':dr<15?'Medium':'Low';
+    const L=f=>c.map((v,k)=>{
+      if(isRealData&&k===3)return '';
+      return f(v)?CN[k]+' '+v.toFixed(0):'';
+    }).filter(Boolean).join(', ');
+    const srcTag=isRealData?'NASA/JPL':'Demo';
+    return `<div class="opt"><b>${t.toFixed(0)} / 100</b>#${n+1} [${srcTag}] ${SITES[i].n} · start ${dl(j)}<div class="up">▲ ${L(v=>v>=70)||'balanced factor'}</div><div class="dn">▼ ${L(v=>v<=40)||'no weak factor'}</div><div class="lab" style="margin-top:6px;letter-spacing:.06em">Certainty: ${cert}. If landing slope/shift raises horizon 0.3°, sunlight goes ${m.sun.toFixed(0)}% to ${m2.sun.toFixed(0)}%.</div></div>`;
+  }).join('');
+  xai();
+}
 CN.forEach((_,k)=>$('w'+k).oninput=dec);
+
+// --- 7. SCENARIO SIMULATOR ---
 const PF=[{n:'10-day solar lander',d:1,c:3,e:0},{n:'Battery-limited lander',d:2,c:3,e:0},{n:'Comms-critical mission',d:1.2,c:3,e:1}];
 fill('pf',PF.map(p=>p.n));
-function bat(m,d,ch,e){let b=100,mn=100,f=null;for(let t=0;t<H;t++){b=m.lit[t]?Math.min(100,b+ch):b-d;mn=Math.min(mn,b);
- if(b<=0){f=[t,'out of power'];break}
- if(e&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){f=[t,'lost contact'];break}}return{ok:!f,mn:Math.max(mn,0),f}}
-function scn(){const d=+$('a0').value,ch=+$('a1').value,e=$('a2').checked;$('a0v').textContent=d+'% / h';$('a1v').textContent=ch+'% / h';
- const all=[];SITES.forEach((s,i)=>M[i].forEach((m,j)=>all.push([i,j,bat(m,d,ch,e)])));
- const ok=all.filter(x=>x[2].ok).sort((a,b)=>b[2].mn-a[2].mn);
- $('scn').innerHTML=`<div class="res${ok.length?'':' no'}"><b>${ok.length} of ${all.length}</b> site and date choices survive 10 days.</div><div style="height:8px"></div>`+
- (ok.length?ok:all.sort((a,b)=>b[2].f[0]-a[2].f[0])).slice(0,5).map(([i,j,r])=>`<div class="opt">${r.ok?`<b>margin ${r.mn.toFixed(0)}%</b>`:''}${SITES[i].n} · ${dl(j)}<div class="${r.ok?'up':'dn'}">${r.ok?`▲ battery never below ${r.mn.toFixed(0)}%`:`▼ ${r.f[1]} on day ${Math.floor(r.f[0]/24)+1}, hour ${r.f[0]%24}`}</div></div>`).join('')}
+
+function bat(m,d,ch,e){
+  let b=100,mn=100,f=null;
+  for(let t=0;t<H;t++){
+    b=m.lit[t]?Math.min(100,b+ch):b-d;mn=Math.min(mn,b);
+    if(b<=0){f=[t,'out of power'];break}
+    if(e&&t%24==23&&!m.con.slice(t-23,t+1).some(Boolean)){f=[t,'lost contact'];break}
+  }
+  return{ok:!f,mn:Math.max(mn,0),f};
+}
+
+function scn(){
+  const d=+$('a0').value,ch=+$('a1').value,e=$('a2').checked;
+  $('a0v').textContent=d+'% / h';$('a1v').textContent=ch+'% / h';
+  const all=[];
+  SITES.forEach((s,i)=>M[i].forEach((m,j)=>all.push([i,j,bat(m,d,ch,e)])));
+  const ok=all.filter(x=>x[2].ok).sort((a,b)=>b[2].mn-a[2].mn);
+  const srcTag=isRealData?'NASA/JPL Horizons':'Demo model';
+  $('scn').innerHTML=`<div class="res${ok.length?'':' no'}"><b>${ok.length} of ${all.length}</b> site and date choices survive 10 days (${srcTag}).</div><div style="height:8px"></div>`+
+  (ok.length?ok:all.sort((a,b)=>b[2].f[0]-a[2].f[0])).slice(0,5).map(([i,j,r])=>`<div class="opt">${r.ok?`<b>margin ${r.mn.toFixed(0)}%</b>`:''}${SITES[i].n} · ${dl(j)}<div class="${r.ok?'up':'dn'}">${r.ok?`▲ battery never below ${r.mn.toFixed(0)}%`:`▼ ${r.f[1]} on day ${Math.floor(r.f[0]/24)+1}, hour ${r.f[0]%24}`}</div></div>`).join('');
+}
 function pset(){const p=PF[+$('pf').value];$('a0').value=p.d;$('a1').value=p.c;$('a2').checked=!!p.e;scn()}
 $('pf').onchange=pset;['a0','a1','a2'].forEach(id=>$(id).oninput=scn);
-function xai(){const[i,j]=sel,m=M[i][j],w=wts(),sw=w.reduce((a,b)=>a+b,0)||1,c=comp(i,m),r=req();
- $('xt').textContent=`${SITES[i].n} · start ${dl(j)} · score ${tot(i,m,w).toFixed(0)} / 100`;
- $('xb').innerHTML=CN.map((n,k)=>{const v=w[k]/sw*(c[k]-50);return `<div class="xr"><span>${n}</span><span><i style="width:${Math.min(100,Math.abs(v)*3)}%;background:var(--${v>=0?'ok':'bad'})"></i></span><b>${v>=0?'+':''}${v.toFixed(0)}</b></div>`}).join('')+'<p class="lab" style="letter-spacing:.06em;line-height:1.7">Starts at 50. Each bar shows how far a factor pushed the score up or down, using your Decision priorities.</p>';
- const pf=x=>score(x,r)>=1?'<b style="color:var(--ok)">PASS</b>':'<b style="color:var(--bad)">FAIL</b>',row=(a,b)=>`<div class="xr" style="grid-template-columns:1fr auto"><span>${a}</span><span>${b}</span></div>`;
- $('xw').innerHTML=[-6,-3,3,6].map(dd=>[`Start ${dd>0?'+':''}${dd} days`,alt(i,j,0,dd)]).concat([['Horizon 0.3° higher',alt(i,j,.3)]]).map(([l,x])=>row('If: '+l,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark ${pf(x)}`)).join('');
- const ms=[['Sunlight need',(m.sun-r.s)/r.s,`can rise to ${m.sun.toFixed(0)}% (now ${r.s}%)`],['Dark limit',(r.d-m.dark)/r.d,`can fall to ${m.dark} h (now ${r.d} h)`],['Contact need',(m.cd-r.c)/r.c,`can rise to ${m.cd}% (now ${r.c}%)`]].sort((a,b)=>a[1]-b[1]);
- $('xs').innerHTML=ms.map(x=>row(x[0],x[1]<0?'<b style="color:var(--bad)">already failing</b>':x[2])).join('')+`<p class="lab" style="letter-spacing:.06em;line-height:1.7">Most sensitive: ${ms[0][0]}. A small change there flips the verdict first.</p>`;
- const us=[0,.15,.3,.5].map(o=>[o,alt(i,j,o)]),sn=us.map(x=>x[1].sun);
- $('un').innerHTML=us.map(([o,x])=>row(`Horizon +${o}° (~${Math.round(o/.3*400)} m)`,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark`)).join('')+`<p>Sunlight ranges from ${Math.min(...sn).toFixed(0)}% to ${Math.max(...sn).toFixed(0)}% across these shifts.</p>`;
- let t='site,start_date_2027,sunlit_pct,longest_dark_h,earth_contact_pct,meets_needs\n';
- SITES.forEach((s,a)=>M[a].forEach((x,b)=>t+=`${s.n},${dl(b)},${x.sun.toFixed(1)},${x.dark},${x.cd},${score(x,r)>=1}\n`));$('csv').value=t}
-$('cp').onclick=()=>{$('csv').select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}$('cpm').textContent=ok?'Copied':'Press Ctrl+C to copy'};
-pset();atlas();brief();dec();
+
+// --- 8. EXPLAIN & SCIENTIST TOOLS ---
+function xai(){
+  const[i,j]=sel,m=M[i][j],w=wts(),c=comp(i,m),r=req();
+  const sw=isRealData?((w[0]+w[1]+w[2])||1):(w.reduce((a,b)=>a+b,0)||1);
+  const srcTag=isRealData?'NASA/JPL Horizons':'Demo model';
+  $('xt').textContent=`[${srcTag}] ${SITES[i].n} · start ${dl(j)} · score ${tot(i,m,w).toFixed(0)} / 100`;
+  
+  $('xb').innerHTML=CN.map((n,k)=>{
+    if(isRealData&&k===3)return `<div class="xr"><span>${n}</span><span><i>not yet available (needs LRO data)</i></span><b>—</b></div>`;
+    const v=w[k]/sw*(c[k]-50);
+    return `<div class="xr"><span>${n}</span><span><i style="width:${Math.min(100,Math.abs(v)*3)}%;background:var(--${v>=0?'ok':'bad'})"></i></span><b>${v>=0?'+':''}${v.toFixed(0)}</b></div>`;
+  }).join('')+'<p class="lab" style="letter-spacing:.06em;line-height:1.7">Starts at 50. Each bar shows how far a factor pushed the score up or down, using your Decision priorities.</p>';
+  
+  const pf=x=>score(x,r)>=1?'<b style="color:var(--ok)">PASS</b>':'<b style="color:var(--bad)">FAIL</b>',row=(a,b)=>`<div class="xr" style="grid-template-columns:1fr auto"><span>${a}</span><span>${b}</span></div>`;
+  $('xw').innerHTML=[-6,-3,3,6].map(dd=>[`Start ${dd>0?'+':''}${dd} days`,alt(i,j,0,dd)]).concat([['Horizon 0.3° higher (landing error)',alt(i,j,.3)]]).map(([l,x])=>row('If: '+l,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark ${pf(x)}`)).join('');
+  
+  const ms=[['Sunlight need',(m.sun-r.s)/r.s,`can rise to ${m.sun.toFixed(0)}% (now ${r.s}%)`],['Dark limit',(r.d-m.dark)/r.d,`can fall to ${m.dark} h (now ${r.d} h)`],['Contact need',(m.cd-r.c)/r.c,`can rise to ${m.cd}% (now ${r.c}%)`]].sort((a,b)=>a[1]-b[1]);
+  $('xs').innerHTML=ms.map(x=>row(x[0],x[1]<0?'<b style="color:var(--bad)">already failing</b>':x[2])).join('')+`<p class="lab" style="letter-spacing:.06em;line-height:1.7">Most sensitive: ${ms[0][0]}. A small change there flips the verdict first.</p>`;
+  
+  const us=[0,.15,.3,.5].map(o=>[o,alt(i,j,o)]),sn=us.map(x=>x[1].sun);
+  $('un').innerHTML=us.map(([o,x])=>row(`Horizon +${o}° (~${Math.round(o/.3*400)} m shift)`,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark`)).join('')+`<p>Sunlight ranges from ${Math.min(...sn).toFixed(0)}% to ${Math.max(...sn).toFixed(0)}% across these shifts.</p>`;
+  
+  let t=`# Horizon Atlas Export · NASA Space Apps Challenge 2026\n# Source: ${isRealData?'NASA/JPL Horizons API (Center: coord@301, geometric sphere)':'Simplified Demo Model'}\nsite,start_date,sunlit_pct,longest_dark_h,earth_contact_pct,meets_needs,data_source\n`;
+  SITES.forEach((s,a)=>M[a].forEach((x,b)=>t+=`${s.n},${dl(b)},${x.sun.toFixed(1)},${x.dark},${x.cd},${score(x,r)>=1},${isRealData?'NASA/JPL Horizons':'Demo model'}\n`));
+  $('csv').value=t;
+}
+
+$('cp').onclick=()=>{
+  $('csv').select();let ok=false;
+  try{ok=document.execCommand('copy')}catch(e){}
+  $('cpm').textContent=ok?'Copied':'Press Ctrl+C to copy';
+};
+
+$('btnReal').onclick=()=>setDatasetMode(true);
+$('btnDemo').onclick=()=>setDatasetMode(false);
+
+// Startup
+pset();
+brief();
+initData();
 </script></body></html>
