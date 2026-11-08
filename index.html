@@ -1,106 +1,512 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Horizon Atlas – Mission Control</title>
+<title>Horizon Atlas – NASA CLPS Lunar Mission Browser</title>
+<!-- Google Fonts: Anton (Display Headline), Roboto Condensed (Technical Subheads & UI), JetBrains Mono (Telemetry) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#05020a;--pan:rgba(14,6,22,.9);--ink:#cfd8e8;--mut:#6f7c99;--line:rgba(220,70,235,.35);--cy:#e84bf0;--am:#e8a24a;--ok:#4fd08a;--bad:#ff7a6b;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+  --bg:#04080e;                     /* Deep space void */
+  --pan:#0c1524;                    /* Spaced activity card background */
+  --pan-glass:rgba(12,21,36,0.85);  /* Glassmorphism panel */
+  --line-blue:#1c2e46;              /* HUD border blue */
+  --line-light:#5b769b;             /* Technical corner / accent blue */
+  --main-orange:#ef480e;            /* Spaced energetic rocket/solar orange */
+  --electric-blue:#0082f3;          /* Spaced celestial Earth link blue */
+  --ink:#f3f3f3;                    /* High-contrast crisp text */
+  --mut:#7d8ea6;                    /* Technical subtitle text */
+  --line:#1c2e46;                   /* Standard panel border */
+  --cy:#0082f3;                     /* Cyan/Blue primary accent */
+  --am:#ef480e;                     /* Orange secondary accent */
+  --ok:#22c55e;                     /* Mission GO green */
+  --bad:#ea384c;                    /* Mission NO-GO red */
+  --font-anton:'Anton',Impact,sans-serif;
+  --font-cond:'Roboto Condensed',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+html{scroll-padding-top:70px;scroll-behavior:smooth}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;overflow-x:hidden}
-#stars{position:fixed;top:0;left:0;width:1px;height:1px;border-radius:50%;z-index:0}
-.lab{font:11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
-.cy{color:var(--cy)}.am{color:var(--am)}
-#intro{position:relative;z-index:1;min-height:86vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:20px;padding:40px 6vw}
-@media(max-width:820px){#intro{grid-template-columns:1fr;padding-top:30px}}
-#intro h1{font-weight:200;font-size:clamp(44px,8vw,92px);letter-spacing:.12em;margin:10px 0 0;line-height:1}
-#intro .sub{font:13px var(--mono);letter-spacing:.5em;color:var(--cy);margin:8px 0 26px}
-#intro p.d{border-left:2px solid var(--line);padding-left:14px;color:#9aa8c4;max-width:460px}
-.btn{background:#e9eff6;color:#0a0f1c;border:0;padding:16px 46px;font:12px var(--mono);letter-spacing:.25em;cursor:pointer;text-transform:uppercase;margin:18px 0}
-.btn:hover{background:#fff}
-.moonwrap{position:relative;width:min(420px,80vw);aspect-ratio:1;justify-self:center}
-.moon{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),radial-gradient(circle at 70% 55%,rgba(60,60,60,.55) 0 9%,transparent 10%),radial-gradient(circle at 35% 62%,rgba(70,70,70,.5) 0 8%,transparent 9%),radial-gradient(circle at 28% 28%,rgba(90,90,90,.4) 0 6%,transparent 7%),radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#222 100%);box-shadow:inset -40px -30px 70px rgba(0,0,0,.75),0 0 60px rgba(232,75,240,.12)}
-.moonwrap svg{position:absolute;inset:0;width:100%;height:100%}
-#app{display:block;position:relative;z-index:1;max-width:1180px;margin:auto;padding:14px}
-.hud{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:18px;align-items:end;border:1px solid var(--line);background:var(--pan);padding:10px 16px}
+body{
+  margin:0;
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 50% 0%,rgba(0,130,243,0.18) 0%,rgba(239,72,14,0.08) 35%,transparent 65%),
+    linear-gradient(rgba(28,46,70,0.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(28,46,70,0.12) 1px,transparent 1px);
+  background-size:100% 100%, 48px 48px, 48px 48px;
+  color:var(--ink);
+  font:14px/1.6 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::selection{background:var(--main-orange);color:#fff}
+
+/* Dynamic Starfield Animation */
+#stars{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1px 1px at 25px 35px, #fff, transparent 100%),
+    radial-gradient(1px 1px at 85px 145px, rgba(255,255,255,0.7), transparent 100%),
+    radial-gradient(1.5px 1.5px at 180px 70px, rgba(0,130,243,0.9), transparent 100%),
+    radial-gradient(1px 1px at 260px 190px, #fff, transparent 100%),
+    radial-gradient(1.5px 1.5px at 340px 120px, rgba(239,72,14,0.8), transparent 100%),
+    radial-gradient(1px 1px at 420px 40px, #fff, transparent 100%),
+    radial-gradient(1.5px 1.5px at 510px 160px, rgba(255,255,255,0.8), transparent 100%),
+    radial-gradient(1px 1px at 600px 85px, rgba(0,130,243,0.7), transparent 100%),
+    radial-gradient(2px 2px at 720px 220px, rgba(255,255,255,0.9), transparent 100%),
+    radial-gradient(1px 1px at 850px 130px, #fff, transparent 100%),
+    radial-gradient(1px 1px at 960px 55px, rgba(239,72,14,0.7), transparent 100%),
+    radial-gradient(1.5px 1.5px at 1080px 175px, #fff, transparent 100%);
+  background-size: 600px 300px;
+  animation: star-drift 120s linear infinite;
+  opacity: 0.65;
+}
+@keyframes star-drift{
+  0%{background-position:0 0}
+  100%{background-position:600px 600px}
+}
+
+/* Pulsing Status Beacon */
+.beacon-dot{
+  display:inline-block;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 0 0 rgba(34,197,94,0.7);
+  animation:beacon-pulse 2s infinite;
+  margin-right:6px;
+  vertical-align:middle;
+}
+@keyframes beacon-pulse{
+  0%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,197,94,0.7)}
+  70%{transform:scale(1);box-shadow:0 0 0 7px rgba(34,197,94,0)}
+  100%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,197,94,0)}
+}
+
+/* Typography Classes */
+.lab{
+  font:600 11px var(--font-cond);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--mut);
+}
+.cy{color:var(--electric-blue)}
+.am{color:var(--main-orange)}
+h1, h2, h3, h4, h5{
+  font-family:var(--font-anton);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  font-weight:400;
+  margin:4px 0 10px;
+}
+.sh{
+  font-family:var(--font-anton);
+  font-size:clamp(24px,3.5vw,36px);
+  letter-spacing:.05em;
+  color:#fff;
+  margin:6px 0 16px;
+}
+
+/* Navigation - Spaced style */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;justify-content:center;gap:24px;align-items:center;flex-wrap:wrap;
+  padding:14px 4vw;
+  background:rgba(4,8,14,0.88);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line-blue);
+  font:600 12px var(--font-cond);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.nav a{color:var(--mut);text-decoration:none;transition:color .2s,text-shadow .2s}
+.nav a:hover{color:#fff;text-shadow:0 0 12px rgba(0,130,243,0.6)}
+.nav a.active{color:var(--electric-blue)}
+.dd{position:relative}
+.dd>div{
+  display:none;position:absolute;top:100%;left:-14px;min-width:180px;
+  background:#0c1524;border:1px solid var(--line-blue);
+  box-shadow:0 12px 30px rgba(0,0,0,0.8);
+  padding:8px 0;border-radius:2px;
+}
+.dd:hover>div,.dd:focus-within>div{display:block}
+.dd>div a{display:block;padding:8px 18px;color:var(--mut)}
+.dd>div a:hover{color:#fff;background:rgba(0,130,243,0.15)}
+
+/* Hero Header - Spaced "To Space & Back" Design */
+.hero{
+  position:relative;z-index:1;
+  min-height:min(86vh,720px);
+  overflow:hidden;
+  text-align:center;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:40px 20px;
+}
+.hero h1{
+  font-family:var(--font-anton);
+  font-size:clamp(54px,11vw,110px);
+  letter-spacing:.04em;
+  line-height:.92;
+  margin:10px 0 0;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,#ffffff 45%,rgba(255,255,255,0.7) 75%,var(--main-orange) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 35px rgba(239,72,14,0.25));
+}
+.hero .hs{
+  font-family:var(--font-cond);
+  font-size:clamp(16px,2.8vw,26px);
+  letter-spacing:.25em;
+  font-weight:700;
+  color:var(--electric-blue);
+  text-transform:uppercase;
+  margin-top:10px;
+}
+.hero .tag{
+  font:600 12px var(--mono);
+  letter-spacing:.25em;
+  color:var(--mut);
+  margin:8px 0 28px;
+  text-transform:uppercase;
+}
+.limb{
+  position:absolute;left:50%;top:58%;width:180%;aspect-ratio:1;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,130,243,0.3) 0%,rgba(239,72,14,0.12) 20%,#04080e 65%);
+  box-shadow:
+    0 -3px 12px 1px rgba(0,130,243,0.8),
+    0 -8px 45px 4px rgba(0,130,243,0.4),
+    0 -25px 120px 30px rgba(239,72,14,0.2);
+  pointer-events:none;
+}
+.hc{position:relative;z-index:2;max-width:900px}
+.lg{width:84px;height:84px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))}
+
+/* Buttons - Spaced Capsule Buttons */
+.btn{
+  background:linear-gradient(135deg,#fff 0%,#e2e8f0 100%);
+  color:#04080e;
+  border:0;
+  padding:14px 40px;
+  font:700 12px var(--font-cond);
+  letter-spacing:.25em;
+  cursor:pointer;
+  text-transform:uppercase;
+  border-radius:4px;
+  transition:all .25s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 4px 18px rgba(0,0,0,0.5);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn:hover{
+  background:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(255,255,255,0.25),0 0 15px rgba(0,130,243,0.4);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--main-orange) 0%,#c73f10 100%);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,#ff5722 0%,var(--main-orange) 100%);
+  box-shadow:0 8px 25px rgba(239,72,14,0.45);
+}
+
+/* Containers & HUD Cards */
+#app{
+  display:block;position:relative;z-index:1;
+  max-width:1200px;margin:auto;padding:20px;
+}
+.hud{
+  display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;
+  gap:20px;align-items:center;
+  border:1px solid var(--line-blue);
+  background:var(--pan-glass);
+  backdrop-filter:blur(14px);
+  padding:14px 20px;
+  position:relative;
+  border-radius:4px;
+}
 @media(max-width:760px){.hud{grid-template-columns:1fr 1fr}.hud .brand{grid-column:1/-1}}
-.brand{font:600 15px var(--mono);letter-spacing:.12em}.brand span{color:var(--mut);font-weight:400}
-.m b{display:block;font:600 16px var(--mono)}.m .t{height:3px;background:#2a1538;margin-top:3px}.m .t i{display:block;height:100%;background:var(--cy);width:0;transition:width .25s}
-.chip{font:11px var(--mono);letter-spacing:.15em;padding:5px 10px;border:1px solid var(--line)}
-.chip.ok{color:var(--ok);border-color:var(--ok)}.chip.no{color:var(--bad);border-color:var(--bad)}
-.steps{display:flex;gap:18px;flex-wrap:wrap;padding:12px 4px;font:11px var(--mono);letter-spacing:.15em;color:var(--mut)}
-.steps a{cursor:pointer}.steps a:before{content:"○ "}.steps a.on{color:var(--cy)}.steps a.on:before{content:"● "}
-.pan{border:1px solid var(--line);background:var(--pan);padding:16px;margin-bottom:12px;position:relative}
-.pan:before{content:"";position:absolute;top:-1px;left:0;width:60px;height:2px;background:var(--cy)}
-.pan h2{margin:4px 0 10px;font-size:22px;font-weight:400}
-.grid{display:grid;grid-template-columns:290px 1fr;gap:12px}
-@media(max-width:820px){.grid{grid-template-columns:1fr}}
-.opt{border:1px solid var(--line);padding:10px;margin-bottom:8px}
-.opt b{float:right;font:600 13px var(--mono);color:var(--am)}
-.opt .up{color:var(--ok);font-size:12px}.opt .dn{color:var(--bad);font-size:12px}
-input[type=range]{width:100%;accent-color:#e84bf0}
-.sc{overflow-x:auto}table{border-collapse:separate;border-spacing:2px;font-size:11px}
-th{font:10px var(--mono);color:var(--mut);text-align:right;padding-right:6px;white-space:nowrap;font-weight:400}
-.dates th{text-align:center;padding:0;font-size:9px}
-td{width:21px;height:21px;cursor:pointer;padding:0}
-td.pass{outline:1px solid #fff;outline-offset:-2px}td.sel{box-shadow:0 0 0 2px var(--am)}
-.res{margin-top:10px;padding:10px;border:1px solid var(--ok);background:rgba(79,208,138,.07)}
-.res.no{border-color:var(--bad);background:rgba(255,122,107,.06)}.res ul{margin:6px 0 0;padding-left:18px}
-.leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
-svg.sky{width:100%;display:block}
-.bars{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
-.bar{height:6px;background:#2a1538;margin-top:4px}.bar i{display:block;height:100%;width:0;transition:width .2s}
-.foot{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);margin-top:10px}
+.brand{font:700 16px var(--font-cond);letter-spacing:.15em;text-transform:uppercase}
+.brand span{color:var(--electric-blue);font-weight:400}
+.m b{display:block;font:700 18px var(--mono);margin-top:2px;color:#fff}
+.m .t{height:4px;background:#132035;margin-top:4px;border-radius:2px;overflow:hidden}
+.m .t i{display:block;height:100%;background:linear-gradient(90deg,var(--electric-blue),var(--main-orange));width:0;transition:width .25s}
+
+/* Chips & Badges */
+.chip{
+  font:600 11px var(--mono);
+  letter-spacing:.15em;
+  padding:6px 14px;
+  border:1px solid var(--line-blue);
+  background:rgba(12,21,36,0.85);
+  border-radius:3px;
+  text-transform:uppercase;
+}
+.chip.ok{color:var(--ok);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08)}
+.chip.no{color:var(--bad);border-color:rgba(234,56,76,0.4);background:rgba(234,56,76,0.08)}
+
+/* Spaced Panels */
+.pan{
+  border:1px solid var(--line-blue);
+  background:var(--pan-glass);
+  backdrop-filter:blur(12px);
+  padding:20px;
+  margin-bottom:16px;
+  position:relative;
+  border-radius:4px;
+  transition:border-color .25s,box-shadow .25s;
+}
+.pan:hover{
+  border-color:rgba(0,130,243,0.45);
+  box-shadow:0 0 25px rgba(0,130,243,0.12);
+}
+.pan:before{
+  content:"";position:absolute;top:-1px;left:0;width:70px;height:2px;
+  background:linear-gradient(90deg,var(--main-orange),var(--electric-blue));
+}
+.pan h2{margin:4px 0 12px;font-size:24px;color:#fff}
+
+/* Spaced Corner Brackets for HUD feel */
+.corner-tl{position:absolute;top:0;left:0;width:9px;height:9px;border-top:2px solid var(--main-orange);border-left:2px solid var(--main-orange);pointer-events:none}
+.corner-tr{position:absolute;top:0;right:0;width:9px;height:9px;border-top:2px solid var(--electric-blue);border-right:2px solid var(--electric-blue);pointer-events:none}
+.corner-bl{position:absolute;bottom:0;left:0;width:9px;height:9px;border-bottom:2px solid var(--line-light);border-left:2px solid var(--line-light);pointer-events:none}
+.corner-br{position:absolute;bottom:0;right:0;width:9px;height:9px;border-bottom:2px solid var(--line-light);border-right:2px solid var(--line-light);pointer-events:none}
+
+.grid{display:grid;grid-template-columns:310px 1fr;gap:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+/* Sliders & Inputs */
+.opt{
+  border:1px solid var(--line-blue);
+  background:rgba(8,16,28,0.7);
+  padding:12px;margin-bottom:10px;
+  border-radius:3px;
+}
+.opt b{float:right;font:700 14px var(--mono);color:var(--main-orange)}
+.opt .up{color:var(--ok);font-size:12px;font-family:var(--font-cond);font-weight:600}
+.opt .dn{color:var(--bad);font-size:12px;font-family:var(--font-cond);font-weight:600}
+
+input[type=range]{
+  width:100%;
+  accent-color:var(--main-orange);
+  background:#132035;
+  height:6px;
+  border-radius:3px;
+  outline:none;
+}
+select{
+  background:#08101c;
+  color:#fff;
+  border:1px solid var(--line-blue);
+  padding:9px 12px;
+  font:600 12px var(--mono);
+  max-width:100%;
+  border-radius:3px;
+}
+
+/* Atlas Heatmap Table */
+.sc{overflow-x:auto}
+table{border-collapse:separate;border-spacing:3px;font-size:11px}
+th{font:600 11px var(--font-cond);letter-spacing:.08em;color:var(--mut);text-align:right;padding-right:8px;white-space:nowrap;font-weight:600}
+.dates th{text-align:center;padding:0;font-size:9px;font-family:var(--mono)}
+td{width:22px;height:22px;cursor:pointer;padding:0;border-radius:2px;transition:transform .15s,filter .15s}
+td:hover{transform:scale(1.25);z-index:2;filter:brightness(1.3)}
+td.pass{outline:2px solid #fff;outline-offset:-2px}
+td.sel{box-shadow:0 0 0 3px var(--main-orange);transform:scale(1.15)}
+
+/* Telemetry Bars & Footers */
+.res{
+  margin-top:12px;padding:12px 16px;
+  border:1px solid var(--ok);
+  background:rgba(34,197,94,0.08);
+  border-radius:3px;
+}
+.res.no{border-color:var(--bad);background:rgba(234,56,76,0.08)}
+.res ul{margin:8px 0 0;padding-left:18px}
+.leg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+
+svg.sky{
+  width:100%;display:block;
+  background:#02050c;
+  border:1px solid var(--line-blue);
+  border-radius:3px;
+}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.bar{height:8px;background:#132035;margin-top:6px;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;transition:width .2s}
+.foot{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line-blue);
+  background:rgba(8,16,28,0.7);
+  margin-top:14px;border-radius:3px;
+}
 @media(max-width:640px){.foot{grid-template-columns:1fr 1fr}}
-.foot div{padding:10px;border-right:1px solid var(--line)}.foot b{display:block;font:600 20px var(--mono)}
-.ctl{display:flex;gap:12px;align-items:center;margin-top:8px}
-.ctl .btn{padding:8px 20px;margin:0}
-.nav{position:sticky;top:0;z-index:5;display:flex;gap:22px;align-items:center;padding:12px 6vw;background:rgba(5,7,13,.92);border-bottom:1px solid var(--line);font:11px var(--mono);letter-spacing:.18em}
-.nav b{margin-right:auto}.nav a{color:var(--mut);text-decoration:none}.nav a:hover{color:var(--cy)}
-section{scroll-margin-top:50px}#app section{margin-bottom:40px}
-.sh{font-weight:300;font-size:28px;margin:4px 0 14px}
-select{background:#0a0f1c;color:var(--ink);border:1px solid var(--line);padding:8px;font:12px var(--mono);max-width:100%}
-.ctl{flex-wrap:wrap}.ct{border-spacing:0;margin:10px 0}.ct td{width:auto;height:auto;cursor:default;padding:6px 18px 6px 0;font:13px var(--mono)}.good{color:var(--ok)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:820px){.g2{grid-template-columns:1fr}}
-.xr{display:grid;grid-template-columns:100px 1fr 40px;align-items:center;gap:8px;margin:6px 0;font:12px var(--mono)}.xr i{display:block;height:8px}
-textarea{width:100%;height:150px;background:#03050b;color:var(--ink);border:1px solid var(--line);font:11px var(--mono)}
-.nav{justify-content:center;gap:26px;flex-wrap:wrap;background:rgba(5,2,10,.88);padding:12px 3vw}.nav a{color:#cfc3dc}
-.dd{position:relative}.dd>div{display:none;position:absolute;top:100%;left:-14px;min-width:170px;background:rgba(122,31,160,.96);padding:6px 0}
-.dd:hover>div,.dd:focus-within>div{display:block}.dd>div a{display:block;padding:7px 16px;color:#fff}
-.hero{position:relative;z-index:1;height:min(88vh,720px);overflow:hidden;text-align:center;padding-top:50px}.hc{position:relative;z-index:2}.lg{width:92px;height:92px}
-.hero h1{margin:8px 0 0;font-size:clamp(34px,6vw,58px);font-weight:600;letter-spacing:.05em}.hs{font-size:clamp(16px,2.6vw,26px);letter-spacing:.14em;font-weight:500}
-.tag{font:12px var(--mono);letter-spacing:.2em;color:#c9a6d6;margin:6px 0 24px}
-.limb{position:absolute;left:50%;top:50%;width:170%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 50% 0,rgba(255,60,255,.3),transparent 22%),#07030d;box-shadow:0 -4px 14px 1px rgba(255,200,255,.9),0 -10px 60px 8px rgba(230,50,240,.55),0 -30px 160px 40px rgba(110,30,160,.35)}
-.wrap{position:relative;z-index:1;max-width:1100px;margin:auto;padding:70px 20px}
-.big{font-size:clamp(26px,4vw,38px);font-weight:600;margin:0 0 10px}.cen{text-align:center}.s{color:#a794b8;max-width:560px;margin:0 auto 30px}.s2{color:#a794b8;font-size:13px}
-.about{display:grid;grid-template-columns:340px 1fr;gap:50px;align-items:center}.about.r{grid-template-columns:1fr 340px}
+.foot div{padding:12px;border-right:1px solid var(--line-blue)}
+.foot div:last-child{border-right:none}
+.foot b{display:block;font:700 22px var(--mono);color:#fff;margin-top:2px}
+
+.ctl{display:flex;gap:12px;align-items:center;margin-top:10px}
+.ctl .btn{padding:10px 24px;margin:0}
+
+/* General Layout & Sections */
+section{scroll-margin-top:80px}
+#app section{margin-bottom:48px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:820px){.g2{grid-template-columns:1fr}}
+.xr{display:grid;grid-template-columns:110px 1fr 45px;align-items:center;gap:10px;margin:8px 0;font:12px var(--mono)}
+.xr i{display:block;height:8px;border-radius:2px}
+textarea{
+  width:100%;height:150px;
+  background:#050a14;color:#fff;
+  border:1px solid var(--line-blue);
+  font:11px var(--mono);padding:10px;border-radius:3px;
+}
+
+/* Feature Cards & How it Works (Spaced Styling) */
+.wrap{position:relative;z-index:1;max-width:1150px;margin:auto;padding:70px 20px}
+.big{font-family:var(--font-anton);font-size:clamp(32px,5vw,52px);letter-spacing:.04em;margin:0 0 10px;color:#fff}
+.cen{text-align:center}
+.s{color:var(--mut);max-width:600px;margin:0 auto 36px;font-size:15px}
+.s2{color:var(--mut);font-size:13px}
+.about{display:grid;grid-template-columns:340px 1fr;gap:50px;align-items:center}
+.about.r{grid-template-columns:1fr 340px}
 @media(max-width:820px){.about,.about.r{grid-template-columns:1fr;justify-items:center}}
-.disc{width:min(300px,80vw);aspect-ratio:1;border-radius:50%;padding:6px;background:linear-gradient(135deg,#ff3dff,#3a0b55)}
-.disc i{display:block;height:100%;border-radius:50%;background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),radial-gradient(circle at 70% 58%,rgba(60,60,60,.55) 0 9%,transparent 10%),radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#222 100%);box-shadow:inset -30px -20px 50px rgba(0,0,0,.7)}
-.disc.e i{background:radial-gradient(circle at 35% 30%,#7fd0ff,#1b5aa8 45%,#061a3a 100%)}
-.arc{position:relative}.arc:before{content:"";position:absolute;left:3%;right:3%;top:40px;height:420px;border:1px solid var(--line);border-bottom:0;border-radius:50% 50% 0 0}
-.fg{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;position:relative}.fg>div{font-size:13px;color:#a794b8}
-.fg>div:nth-child(1),.fg>div:nth-child(6){margin-top:150px}.fg>div:nth-child(2),.fg>div:nth-child(5){margin-top:70px}
-h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
-.ic{width:62px;height:62px;border-radius:50%;border:1px solid var(--cy);display:grid;place-items:center;margin:auto;color:var(--cy);font-size:24px;background:#07030d;box-shadow:0 0 18px rgba(232,75,240,.35)}
-.rm{display:inline-block;border:1px solid #fff;padding:2px 12px;font-size:11px;color:#fff;text-decoration:none;margin-top:8px}
+
+.disc{
+  width:min(300px,80vw);aspect-ratio:1;border-radius:50%;padding:8px;
+  background:linear-gradient(135deg,var(--main-orange),var(--electric-blue));
+  box-shadow:0 0 50px rgba(0,130,243,0.3);
+  animation:float-disc 6s ease-in-out infinite;
+}
+@keyframes float-disc{
+  0%,100%{transform:translateY(0px)}
+  50%{transform:translateY(-8px)}
+}
+.disc i{
+  display:block;height:100%;border-radius:50%;
+  background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),
+             radial-gradient(circle at 70% 58%,rgba(60,60,60,.55) 0 9%,transparent 10%),
+             radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#111 100%);
+  box-shadow:inset -30px -20px 50px rgba(0,0,0,.85);
+}
+
+.arc{position:relative}
+.fg{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;position:relative}
+.fg>div{
+  background:var(--pan-glass);
+  border:1px solid var(--line-blue);
+  padding:20px 14px;
+  border-radius:4px;
+  font-size:13px;color:var(--mut);
+  text-align:center;
+  transition:all .3s cubic-bezier(0.16,1,0.3,1);
+  position:relative;
+}
+.fg>div:hover{
+  transform:translateY(-6px);
+  border-color:var(--electric-blue);
+  box-shadow:0 10px 30px rgba(0,130,243,0.2);
+}
+.fg>div h4{color:#fff;font-size:16px;margin:10px 0 6px}
+.ic{
+  width:58px;height:58px;border-radius:50%;
+  border:1px solid var(--electric-blue);
+  display:grid;place-items:center;margin:auto;
+  color:var(--electric-blue);font-size:22px;
+  background:#08101c;
+  box-shadow:0 0 20px rgba(0,130,243,0.25);
+}
+.rm{
+  display:inline-block;
+  border:1px solid var(--line-light);
+  padding:4px 14px;font:700 11px var(--font-cond);letter-spacing:.12em;
+  color:#fff;text-decoration:none;margin-top:12px;border-radius:2px;
+  transition:all .2s;
+}
+.rm:hover{background:var(--electric-blue);border-color:var(--electric-blue)}
 .cb{display:block;margin:30px auto 0;width:min(260px,60vw);height:min(260px,60vw)}
-@media(max-width:900px){.fg{grid-template-columns:1fr 1fr}.fg>div{margin-top:20px!important}.arc:before{display:none}}
-.tl{display:grid;grid-template-columns:repeat(5,1fr);align-items:start}.tl .ti{padding:10px 12px;font-size:13px;color:#a794b8}
-.tl .n{grid-row:2;background:linear-gradient(#c01cc8,#7a1fa0);font:600 16px var(--mono);padding:8px 0;border-left:1px solid rgba(0,0,0,.25)}.tl .a{grid-row:1;align-self:end}.tl .b{grid-row:3}
+@media(max-width:900px){.fg{grid-template-columns:1fr 1fr}}
+
+/* Timeline */
+.tl{display:grid;grid-template-columns:repeat(5,1fr);align-items:start;gap:6px}
+.tl .ti{
+  padding:16px 14px;font-size:13px;color:var(--mut);
+  background:var(--pan-glass);border:1px solid var(--line-blue);border-radius:3px;
+}
+.tl .n{
+  grid-row:2;
+  background:linear-gradient(90deg,var(--main-orange),var(--electric-blue));
+  font:700 18px var(--font-anton);color:#fff;
+  padding:8px 0;text-align:center;border-radius:2px;margin:6px 0;
+}
+.tl .a{grid-row:1;align-self:end}
+.tl .b{grid-row:3}
 @media(max-width:820px){.tl{grid-template-columns:1fr}.tl>*{grid-column:1!important;grid-row:auto!important}}
-.ck{list-style:none;padding:0}.ck li{margin:14px 0;padding-left:32px;position:relative}.ck li:before{content:"✓";position:absolute;left:0;top:1px;width:18px;height:18px;border:1px solid #fff;font-size:12px;display:grid;place-items:center}
-.wg{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}@media(max-width:820px){.wg{grid-template-columns:1fr}}
-.wc{border:1px solid var(--line);padding:26px 20px;background:radial-gradient(circle,#fff 0 3px,transparent 4px) 0 0/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 100% 0/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 0 100%/12px 12px no-repeat,radial-gradient(circle,#fff 0 3px,transparent 4px) 100% 100%/12px 12px no-repeat}
-.av{width:84px;height:84px;border-radius:50%;margin:auto;display:grid;place-items:center;font-size:38px;background:radial-gradient(circle at 35% 30%,#7a3a8a,#25102f);border:3px solid #3a2147}
-.cs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:10px 0 40px}.cs>div{display:flex;gap:14px;align-items:center}.cs .ic{margin:0;flex:none;border-color:#fff;color:#fff}
-.fc{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;font-size:13px;color:#a794b8;border-top:1px solid var(--line);padding-top:30px}.fc h5{color:#fff;font-size:16px;margin:0 0 10px}.fc a{display:block;color:#a794b8;text-decoration:none;margin:6px 0}
+
+.ck{list-style:none;padding:0}
+.ck li{margin:14px 0;padding-left:34px;position:relative}
+.ck li:before{
+  content:"✓";position:absolute;left:0;top:2px;
+  width:20px;height:20px;border:1px solid var(--electric-blue);
+  color:var(--electric-blue);font-weight:700;font-size:11px;
+  display:grid;place-items:center;border-radius:2px;
+}
+.wg{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:820px){.wg{grid-template-columns:1fr}}
+.wc{
+  border:1px solid var(--line-blue);
+  padding:26px 20px;
+  background:var(--pan-glass);
+  border-radius:4px;
+  position:relative;
+}
+.av{
+  width:84px;height:84px;border-radius:50%;margin:auto;
+  display:grid;place-items:center;font-size:38px;
+  background:radial-gradient(circle at 35% 30%,#1c2e46,#0c1524);
+  border:2px solid var(--electric-blue);
+  box-shadow:0 0 20px rgba(0,130,243,0.3);
+}
+.cs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:10px 0 40px}
+.cs>div{display:flex;gap:14px;align-items:center}
+.fc{
+  display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;
+  font-size:13px;color:var(--mut);border-top:1px solid var(--line-blue);padding-top:30px;
+}
+.fc h5{color:#fff;font-size:16px;margin:0 0 10px}
+.fc a{display:block;color:var(--mut);text-decoration:none;margin:6px 0;transition:color .2s}
+.fc a:hover{color:#fff}
 @media(max-width:820px){.cs,.fc{grid-template-columns:1fr}}
 </style></head><body>
 <div id="stars"></div>
-<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#05020a" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ef480e"/><stop offset="1" stop-color="#0082f3"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#04080e" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
 <nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#data-method">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
 
-<header class="hero"><div class="limb"></div><div class="hc"><svg class="lg"><use href="#lg"/></svg><h1>HORIZON ATLAS</h1><div class="hs">LUNAR MISSION PLANNER</div><div class="tag">— WHERE AND WHEN CAN YOUR LANDER WORK —</div><button class="btn" id="go">Start Planning</button></div></header>
+<header class="hero">
+  <div class="limb"></div>
+  <div class="hc">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(12,21,36,0.85);border:1px solid var(--line-blue);border-radius:20px;margin-bottom:16px">
+      <span class="beacon-dot"></span>
+      <span class="lab" style="color:#fff;letter-spacing:.2em">NASA HORIZONS API & LOLA 80M DEM ACTIVE</span>
+    </div>
+    <svg class="lg"><use href="#lg"/></svg>
+    <h1>HORIZON ATLAS</h1>
+    <div class="hs">TO THE MOON & BEYOND</div>
+    <div class="tag">— NASA CLPS & ARTEMIS III LUNAR MISSION BROWSER —</div>
+    <button class="btn btn-primary" id="go">Launch Mission Control →</button>
+  </div>
+</header>
 
 <section id="about" class="wrap about"><div class="disc"><i></i></div><div><h2 class="big">About Horizon Atlas</h2>
 <p>NASA wants to land spacecraft near the Moon's south pole. There the Sun sits very low, ridges can hide it, and Earth is sometimes below the horizon. Both decide a lander's power and contact.</p>
@@ -114,15 +520,16 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
   <div id="loadMsg" style="font:600 14px var(--mono);margin-top:4px">Connecting to NASA Horizons ephemeris repository...</div>
  </div>
 
- <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-  <span class="lab" style="font-weight:600">Active Dataset:</span>
-  <button id="btnReal" class="btn" style="padding:7px 18px;margin:0;background:var(--cy);color:#fff">NASA/JPL Horizons (4 Real Sites)</button>
-  <button id="btnDemo" class="btn" style="padding:7px 18px;margin:0;background:#170b24;color:var(--ink);border:1px solid var(--line)">Demo Model (8 Illustrative Sites)</button>
-  <span id="dsBadge" class="chip ok" style="margin-left:auto">NASA/JPL Horizons data</span>
+ <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
+  <span class="lab" style="font-weight:700;color:#fff"><span class="beacon-dot"></span>Active Telemetry:</span>
+  <button id="btnReal" class="btn" style="padding:8px 22px;margin:0;border-radius:24px;background:var(--main-orange);color:#fff;border:1px solid var(--main-orange);box-shadow:0 0 15px rgba(239,72,14,0.3)">NASA Horizons + LOLA (4 Real Sites)</button>
+  <button id="btnDemo" class="btn" style="padding:8px 22px;margin:0;border-radius:24px;background:#0c1524;color:var(--mut);border:1px solid var(--line-blue)">Demo Model (8 Illustrative Sites)</button>
+  <span id="dsBadge" class="chip ok" style="margin-left:auto"><span class="beacon-dot"></span>NASA/JPL Horizons + LOLA</span>
  </div>
 
- <section id="s1"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Explore: what does your lander need?</h3>
+ <section id="s1"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Explore: what does your lander need?</h3>
  <div class="hud">
+  <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
   <div class="brand">HORIZON <span>MISSION CONTROL</span></div>
   <div class="m"><span class="lab">Sunlit</span><b id="hs">–</b><div class="t"><i id="hsb"></i></div></div>
   <div class="m"><span class="lab">Longest dark</span><b id="hd">–</b><div class="t"><i id="hdb"></i></div></div>
@@ -132,38 +539,44 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
  
 
  <div class="grid">
-  <div class="pan" id="p1"><div class="lab cy">Requirements</div><h2>Lander needs</h2>
-   <div class="opt"><b id="vs"></b>Sunlight at least<div class="up">▲ more power</div><input id="rs" type="range" min="20" max="95" value="55"></div>
-   <div class="opt"><b id="vd"></b>Longest dark under<div class="dn">▼ battery must survive it</div><input id="rd" type="range" min="10" max="200" value="90"></div>
-   <div class="opt"><b id="vc"></b>Days with Earth contact<div class="up">▲ direct link to Earth</div><input id="rc" type="range" min="10" max="100" value="70"></div>
-   <div class="lab" id="reqNote" style="line-height:1.7;letter-spacing:.08em">Sun & Earth count when above local 0° horizon. Terrain mask (LRO LOLA) not applied yet.</div>
+  <div class="pan" id="p1">
+   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+   <div class="lab cy">Mission Requirements</div><h2>Lander needs</h2>
+   <div class="opt"><b id="vs"></b>Sunlight at least<div class="up">▲ more power generation</div><input id="rs" type="range" min="20" max="95" value="55"></div>
+   <div class="opt"><b id="vd"></b>Longest dark under<div class="dn">▼ battery must survive darkness</div><input id="rd" type="range" min="10" max="200" value="90"></div>
+   <div class="opt"><b id="vc"></b>Days with Earth contact<div class="up">▲ direct communications link</div><input id="rc" type="range" min="10" max="100" value="70"></div>
+   <div class="lab" id="reqNote" style="line-height:1.7;letter-spacing:.08em">Sun & Earth visibility masked by LRO LOLA 80m topographic horizon profile (30 km radius).</div>
   </div>
-  <div class="pan" id="p2"><div class="lab cy" id="atlasTag">Atlas · NASA/JPL Horizons</div><h2>Landing Window Atlas</h2>
+  <div class="pan" id="p2">
+   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+   <div class="lab cy" id="atlasTag">Atlas · NASA/JPL Horizons + LOLA</div><h2>Landing Window Atlas</h2>
    <div class="sc"><table id="atlas"></table></div>
-   <div class="leg lab"><span class="am">■</span> selected <span>▢ passes all needs</span><span>red → green = far → meets</span><span>click a square</span></div>
+   <div class="leg lab"><span class="am">■</span> selected <span>▢ passes all needs</span><span>red → green = far → meets</span><span>click any square to inspect</span></div>
    <div id="result"></div>
   </div>
  </div>
 
  </section>
-<section id="s2"><div class="lab cy">01 · Explore · MUST</div><h3 class="sh">Sky view and compare mode</h3>
- <div class="pan" id="p3"><div class="lab cy">Sky view</div><h2 id="skyT">Sky view</h2>
-  <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:6px 10px;border-left:2px solid var(--am);background:rgba(232,162,74,.08);line-height:1.6">Sun/Earth positions: real NASA/JPL Horizons data. Terrain mask (LRO LOLA) not applied yet.</div>
+<section id="s2"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Sky view and compare mode</h3>
+ <div class="pan" id="p3">
+  <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+  <div class="lab cy">Sky view & Ephemeris</div><h2 id="skyT">Sky view</h2>
+  <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:8px 12px;border-left:3px solid var(--am);background:rgba(239,72,14,.08);line-height:1.6">Sun/Earth: NASA/JPL Horizons API. Topographic horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).</div>
   <svg class="sky" id="sky" viewBox="0 0 720 220"></svg>
-  <div class="lab" style="display:flex;justify-content:space-between"><span>N</span><span>E</span><span>S</span><span>W</span><span>N</span></div>
+  <div class="lab" style="display:flex;justify-content:space-between;padding:4px 6px"><span>N (0°)</span><span>E (90°)</span><span>S (180°)</span><span>W (270°)</span><span>N (360°)</span></div>
   <div class="bars">
-   <div><span class="lab">Power now</span> <b id="pw" style="font:600 12px var(--mono)"></b><div class="bar"><i id="pwb" style="background:var(--am)"></i></div></div>
-   <div><span class="lab">Contact now</span> <b id="ct" style="font:600 12px var(--mono)"></b><div class="bar"><i id="ctb" style="background:#5ab0ff"></i></div></div>
+   <div><span class="lab">Power now</span> <b id="pw" style="font:700 13px var(--mono)"></b><div class="bar"><i id="pwb" style="background:var(--am)"></i></div></div>
+   <div><span class="lab">Contact now</span> <b id="ct" style="font:700 13px var(--mono)"></b><div class="bar"><i id="ctb" style="background:var(--cy)"></i></div></div>
   </div>
-  <svg id="strips" viewBox="0 0 240 36" preserveAspectRatio="none" style="width:100%;height:42px;display:block"></svg>
-  <div class="lab" style="margin-top:4px">Top: sunlight · Bottom: Earth contact · 10 days</div>
-  <input id="time" type="range" min="0" max="239" value="0" style="margin-top:8px">
+  <svg id="strips" viewBox="0 0 240 36" preserveAspectRatio="none" style="width:100%;height:42px;display:block;border-radius:2px"></svg>
+  <div class="lab" style="margin-top:6px">Top: sunlight · Bottom: Earth contact · 10 days timeline</div>
+  <input id="time" type="range" min="0" max="239" value="0" style="margin-top:10px">
   <div class="ctl" style="justify-content:space-between;align-items:center">
    <div style="display:flex;gap:12px;align-items:center">
-    <button class="btn" id="play">▶ Play</button><span class="lab" id="tl"></span>
+    <button class="btn btn-primary" id="play" style="padding:10px 24px">▶ Play</button><span class="lab" id="tl" style="font-weight:700;color:#fff"></span>
    </div>
    <div>
-    <label class="lab" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="terrainToggle" checked> <span id="terrainLabel">Terrain mask (LOLA 80m): ON</span></label>
+    <label class="lab" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:rgba(8,16,28,0.8);padding:6px 14px;border:1px solid var(--line-blue);border-radius:20px"><input type="checkbox" id="terrainToggle" checked> <span id="terrainLabel" style="color:#fff">Terrain mask (LOLA 80m): ON</span></label>
    </div>
   </div>
   <div class="foot">
@@ -171,7 +584,9 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
    <div><span class="lab">Contact days</span><b id="f3"></b></div><div><span class="lab">Verdict</span><b id="f4"></b></div>
   </div>
  </div>
-<div class="pan" id="cmp"><div class="lab cy">Compare mode</div><h2>Compare two choices</h2>
+<div class="pan" id="cmp">
+  <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+  <div class="lab cy">Compare mode</div><h2>Compare two choices</h2>
   <div class="ctl"><select id="ca"></select><select id="cad"></select><span class="lab">vs</span><select id="cb"></select><select id="cbd"></select></div>
   <div id="cmpT"></div><p id="cmpS"></p></div>
 </section>
@@ -377,11 +792,15 @@ function setDatasetMode(useReal){
     SITES=REAL_SITES;
     M=REAL_M;
     DATES=REAL_DATES;
-    $('btnReal').style.background='var(--cy)';
+    $('btnReal').style.background='var(--main-orange)';
+    $('btnReal').style.borderColor='var(--main-orange)';
     $('btnReal').style.color='#fff';
-    $('btnDemo').style.background='#170b24';
-    $('btnDemo').style.color='var(--ink)';
-    $('dsBadge').textContent='NASA/JPL Horizons + LOLA';
+    $('btnReal').style.boxShadow='0 0 15px rgba(239,72,14,0.35)';
+    $('btnDemo').style.background='#0c1524';
+    $('btnDemo').style.borderColor='var(--line-blue)';
+    $('btnDemo').style.color='var(--mut)';
+    $('btnDemo').style.boxShadow='none';
+    $('dsBadge').innerHTML='<span class="beacon-dot"></span>NASA/JPL Horizons + LOLA';
     $('dsBadge').className='chip ok';
     $('atlasTag').textContent='Atlas · NASA/JPL Horizons + LOLA';
     $('terrainToggle').disabled=false;
@@ -402,10 +821,14 @@ function setDatasetMode(useReal){
     SITES=DEMO_SITES;
     M=DEMO_M;
     DATES=DEMO_DATES;
-    $('btnDemo').style.background='var(--cy)';
+    $('btnDemo').style.background='var(--electric-blue)';
+    $('btnDemo').style.borderColor='var(--electric-blue)';
     $('btnDemo').style.color='#fff';
-    $('btnReal').style.background='#170b24';
-    $('btnReal').style.color='var(--ink)';
+    $('btnDemo').style.boxShadow='0 0 15px rgba(0,130,243,0.35)';
+    $('btnReal').style.background='#0c1524';
+    $('btnReal').style.borderColor='var(--line-blue)';
+    $('btnReal').style.color='var(--mut)';
+    $('btnReal').style.boxShadow='none';
     $('dsBadge').textContent='Demo model (illustrative)';
     $('dsBadge').className='chip';
     $('atlasTag').textContent='Atlas · Demo model';
@@ -539,8 +962,8 @@ function sky(){
     pts='0,220';for(let a=0;a<=360;a+=2)pts+=` ${X(a)},${Y(hor(s,a))}`;pts+=' 720,220';
   }
   
-  let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(232,75,240,.12)"/><text x="4" y="${Y(e)-2}" fill="#6f7c99" font-size="9" font-family="monospace">${e}°</text>`;
-  $('sky').innerHTML=`<rect width="720" height="220" fill="#03050b"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#e8a24a"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#5ab0ff"/><polygon points="${pts}" fill="#2a3042"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#e8a24a" font-size="11" font-family="monospace">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#5ab0ff" font-size="11" font-family="monospace">EARTH</text>`;
+  let g='';for(let e=0;e<=10;e+=2)g+=`<line x1="0" x2="720" y1="${Y(e)}" y2="${Y(e)}" stroke="rgba(0,130,243,0.18)" stroke-dasharray="3,3"/><text x="6" y="${Y(e)-3}" fill="#5b769b" font-size="9" font-family="'JetBrains Mono',monospace">${e}°</text>`;
+  $('sky').innerHTML=`<rect width="720" height="220" fill="#020409"/>${g}<circle cx="${X(sa)}" cy="${Y(se)}" r="10" fill="#ef480e" filter="drop-shadow(0 0 8px rgba(239,72,14,0.8))"/><circle cx="${X(ea)}" cy="${Y(ee)}" r="7" fill="#0082f3" filter="drop-shadow(0 0 8px rgba(0,130,243,0.8))"/><polygon points="${pts}" fill="#08101c" stroke="#1c2e46" stroke-width="1.5"/><text x="${X(sa)+14}" y="${Y(se)-8}" fill="#ef480e" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">SUN</text><text x="${X(ea)+11}" y="${Y(ee)-8}" fill="#0082f3" font-size="11" font-weight="700" font-family="'Roboto Condensed',sans-serif" letter-spacing="1px">EARTH</text>`;
   
   const curTimeStr=isRealData&&m.times?` · ${m.times[t]}`:``;
   $('skyT').textContent=`${s.n} · start ${dl(j)}${curTimeStr}`;
@@ -548,8 +971,8 @@ function sky(){
   $('pw').textContent=l?'SUNLIT':'DARK';$('pwb').style.width=l?'100%':'4%';
   $('ct').textContent=c?'EARTH VISIBLE':'NO CONTACT';$('ctb').style.width=c?'100%':'4%';
   
-  let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="14" fill="${m.lit[k]?'#e8a24a':'#2a1538'}"/><rect x="${k}" y="20" width="1.05" height="14" fill="${m.con[k]?'#5ab0ff':'#2a1538'}"/>`;
-  $('strips').innerHTML=st+`<rect x="${t}" y="0" width="1.5" height="36" fill="#fff"/>`;
+  let st='';for(let k=0;k<H;k++)st+=`<rect x="${k}" y="0" width="1.05" height="15" fill="${m.lit[k]?'#ef480e':'#0c1524'}"/><rect x="${k}" y="20" width="1.05" height="15" fill="${m.con[k]?'#0082f3':'#0c1524'}"/>`;
+  $('strips').innerHTML=st+`<rect x="${t}" y="0" width="2" height="36" fill="#fff" filter="drop-shadow(0 0 4px #fff)"/>`;
   $('tl').textContent=`Day ${Math.floor(t/24)+1} · hour ${t%24}`;
   $('hs').textContent=m.sun.toFixed(0)+'%';$('hsb').style.width=m.sun+'%';
   $('hd').textContent=m.dark+' h';$('hdb').style.width=Math.min(100,m.dark/2)+'%';
