@@ -40,14 +40,17 @@ All coordinates are derived strictly from official NASA publication databases an
 | Parameter | Specification |
 | :--- | :--- |
 | **Dataset Name** | Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Model (DEM) |
-| **Provider** | NASA Planetary Geodynamics Data Archive (PGDA) / LOLA Science Team |
+| **Provider** | NASA Planetary Geodynamics Data Archive (PGDA) / LOLA Science Team (NASA GSFC / MIT) |
 | **Product Nodes** | [https://pgda.gsfc.nasa.gov/products/90](https://pgda.gsfc.nasa.gov/products/90) (South Pole DEMs, >80°S)<br>[https://imbrium.mit.edu/](https://imbrium.mit.edu/) (LOLA Data Node)<br>[https://pgda.gsfc.nasa.gov/products/78](https://pgda.gsfc.nasa.gov/products/78) (High-Resolution Site DEMs) |
-| **Target Files** | `LDEM_80S_80MPP_ADJ.TIF` (80 m/pixel, South Polar Stereographic) |
-| **Projection & Datum** | Polar Stereographic, center latitude -90°, center longitude 0°, reference radius 1737.4 km |
-| **Vertical Reference**| Elevation in meters relative to 1737.4 km lunar sphere |
+| **Target Files** | `LDEM_80S_80MPP_ADJ.TIF` (7600 x 7600 pixels, 80.0 m/pixel resolution, float32) |
+| **Projection & Datum** | Moon (2015) South Polar Stereographic (`IAU:30135`), center latitude -90°, center longitude 0°, reference radius 1737.4 km |
+| **Vertical Reference**| Elevation in meters relative to 1737.4 km reference lunar sphere |
+| **Ray-Marching Parameters** | Max distance: 30 km (30,000 m); Step size: 80 m (matching pixel resolution); Azimuth range: 0° to 359° in 1° steps; Observer height: 0.0 m (ground level) |
+| **Lunar Curvature Drop** | $\Delta z = (h_{\text{terrain}} - h_{\text{observer}}) - \frac{d^2}{2R}$, with $R = 1737.4\text{ km}$ |
 | **Date Accessed** | November 2026 |
-| **Processing** | Executed via `data_pipeline/build_horizon_profile.py`. Converts geographic lunar coordinates to polar stereographic coordinates, crops local elevation bounding box around target landing sites, and executes radial ray-marching across 360° azimuth (1° steps) accounting for lunar curvature to derive maximum horizon elevation angles. |
-| **Usage in Project** | Constructs local 360° terrain horizon masks (`data/horizon_<site>.json`) to determine when topography (crater rims, ridges, massifs) blocks direct solar illumination or Earth line-of-sight. |
+| **Processing** | Executed via `data_pipeline/build_horizon_profile.py`. Projects geodetic landing site coordinates to DEM polar stereographic raster coordinates, evaluates ground elevation, and marches radially along 360 azimuth rays outward to 30 km. For each ray, the maximum terrain elevation angle above the local tangent plane is computed and saved to `data/horizon_<site>.json`. |
+| **Horizon Stats** | - Connecting Ridge: Min 0.00°, Mean 3.83°, Max 7.80°<br>- Peak Near Shackleton: Min 0.00°, Mean 0.00°, Max 0.01°<br>- Malapert Massif: Min 0.00°, Mean 4.12°, Max 15.90°<br>- Haworth: Min 3.65°, Mean 8.83°, Max 12.34° |
+| **Usage in Project** | Provides authentic local topographic horizon elevation profiles used to mask solar illumination and Earth line-of-sight in `index.html`. |
 
 ---
 

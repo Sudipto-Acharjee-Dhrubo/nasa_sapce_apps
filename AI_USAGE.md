@@ -50,5 +50,18 @@ In compliance with NASA Space Apps Challenge regulations, this document records 
   - Excluded placeholder Science score from Decision scoring for real sites.
   - Added comprehensive "Data & Method" section documenting sources, assumptions, and coordinate references.
 
+---
+
+### Step 4: Topographic Horizon Mask from NASA LRO LOLA DEM
+- **Date**: 2026-11-09
+- **Tool**: Antigravity (Gemini 3.8 Flash)
+- **Prompt Summary**: Create `data_pipeline/build_horizon_profile.py` using `rasterio`, `numpy`, and `pyproj` to process the official LRO LOLA 80 m south polar DEM (`LDEM_80S_80MPP_ADJ.TIF`). Ray-march 360° outward to 30 km at 1° steps accounting for lunar curvature drop ($\Delta z = d^2 / (2R)$) to compute maximum horizon elevation angles. Integrate the generated `data/horizon_<site>.json` into `index.html` with an interactive toggle, interpolate visibility, render the horizon profile in Sky View, and update all project documentation.
+- **Output / Deliverables**:
+  - Authored `data_pipeline/build_horizon_profile.py`, verifying DEM dimensions (7600x7600), resolution (80 m/px), polar stereographic projection, and 1737.4 km radius.
+  - Computed 360° horizon profiles: `data/horizon_connecting_ridge.json`, `data/horizon_peak_near_shackleton.json`, `data/horizon_malapert_massif.json`, and `data/horizon_haworth.json`.
+  - Updated `index.html` with linear azimuth interpolation (`getHorizonElev`), real-time terrain mask toggle (ON by default), sensitivity analysis integration, and dynamic SVG horizon silhouette.
+  - Updated `docs/DATA_SOURCES.md`, `README.md`, and `AI_USAGE.md`.
+
+
 
 

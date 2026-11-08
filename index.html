@@ -163,7 +163,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
     <button class="btn" id="play">▶ Play</button><span class="lab" id="tl"></span>
    </div>
    <div>
-    <label class="lab" style="display:inline-flex;align-items:center;gap:6px;cursor:not-allowed;opacity:.7"><input type="checkbox" id="terrainToggle" disabled> Terrain mask: coming (LOLA)</label>
+    <label class="lab" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="terrainToggle" checked> <span id="terrainLabel">Terrain mask (LOLA 80m): ON</span></label>
    </div>
   </div>
   <div class="foot">
@@ -217,8 +217,8 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
     <p class="s2">Apparent hourly azimuth and elevation for the Sun (Body 10) and Earth (Body 399) are fetched via the official <a href="https://ssd.jpl.nasa.gov/api/horizons.api" target="_blank" style="color:#fff">JPL Horizons API</a> using lunar surface geodetic coordinates (<code>CENTER='coord@301'</code>). Window: <b>2026-12-01 to 2027-12-31</b> (9,481 hourly ephemeris steps per site).</p>
    </div>
    <div>
-    <h4 style="color:var(--cy)">2. Terrain & Topography: LRO LOLA</h4>
-    <p class="s2">Lunar topography is referenced to the Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) products (NASA PGDA / GSFC). <i>Note: In this version, Sun and Earth positions are real NASA data; local LOLA topographic horizon masking is currently pending Step 4.</i></p>
+    <h4 style="color:var(--cy)">2. Topography & Terrain: NASA LRO LOLA (80 m/px)</h4>
+    <p class="s2">Lunar topography is computed directly from the Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Model <b><code>LDEM_80S_80MPP_ADJ.TIF</code></b> (80 m/pixel resolution, South Polar Stereographic projection, NASA PGDA / GSFC). Local 360° horizon elevation profiles are ray-marched outward to 30 km.</p>
    </div>
   </div>
 
@@ -260,8 +260,10 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 
   <h4 style="margin:20px 0 8px">Model Assumptions & Limitations</h4>
   <ul class="ck" style="font-size:13px;color:#a794b8">
-   <li><b>Local Horizon:</b> Calculated relative to the smooth geometric lunar sphere (elevation &gt; 0°). Topographic terrain mask (LRO LOLA) in progress.</li>
-   <li><b>Solar & Earth Disks:</b> Measured from apparent disk center. Solar semi-diameter (~0.26°) and Earth semi-diameter (~0.95°) are noted.</li>
+   <li><b>Topographic Horizon Mask:</b> Computed from LRO LOLA 80 m DEM (<code>LDEM_80S_80MPP_ADJ.TIF</code>). For each azimuth (0°–359° in 1° steps), rays are marched outward to a maximum distance of 30 km to determine the maximum terrain elevation angle.</li>
+   <li><b>Lunar Curvature:</b> Evaluated rigorously accounting for lunar sphericity drop: \(\Delta z_{\text{drop}} = d^2 / (2R)\), where \(R = 1737.4\text{ km}\) is the reference lunar radius.</li>
+   <li><b>Resolution Limits:</b> At 80 m/pixel resolution, sub-pixel rocks, boulders, and micro-crater topography are smoothed. Observer height is modeled at ground level (0 m).</li>
+   <li><b>Solar & Earth Apparent Disks:</b> Measured from apparent disk centers. Solar semi-diameter is ~0.26°; Earth semi-diameter is ~0.95°. The Sun or Earth is considered unblocked when its disk center exceeds the horizon elevation mask.</li>
    <li><b>Mission Windows:</b> Evaluated across 24 start dates spanning the full 13-month operational ephemeris window, simulating 240 continuous hours (10 Earth days) per mission.</li>
    <li><b>Science Score:</b> Explicitly marked as a placeholder until permanently shadowed region (PSR) volatile distribution data is incorporated.</li>
   </ul>
@@ -318,9 +320,20 @@ let REAL_M=[];
 let REAL_DATES=[];
 let REAL_INDICES=[];
 let isRealData=true;
+let useTerrainMask=true;
 let SITES=DEMO_SITES;
 let M=DEMO_M;
 let DATES=DEMO_DATES;
+
+function getHorizonElev(s, az){
+  if(!useTerrainMask || !s.horizon || !s.horizon.horizon_elevations_deg) return 0.0;
+  const azNorm = ((az % 360) + 360) % 360;
+  const i0 = Math.floor(azNorm);
+  const i1 = (i0 + 1) % 360;
+  const f = azNorm - i0;
+  const arr = s.horizon.horizon_elevations_deg;
+  return arr[i0] * (1 - f) + arr[i1] * f;
+}
 
 function buildRealMatrix(sitesList){
   const N=sitesList[0].times.length;
@@ -338,8 +351,8 @@ function buildRealMatrix(sitesList){
       const w_sun_az=s.sun_az.slice(startIdx,startIdx+H);
       const w_earth_az=s.earth_az.slice(startIdx,startIdx+H);
       const w_times=s.times.slice(startIdx,startIdx+H);
-      const lit=w_sun_el.map(e=>e>0.0);
-      const con=w_earth_el.map(e=>e>0.0);
+      const lit=w_sun_el.map((e, idx)=>e > getHorizonElev(s, w_sun_az[idx]));
+      const con=w_earth_el.map((e, idx)=>e > getHorizonElev(s, w_earth_az[idx]));
       let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
       let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
       return{
@@ -368,17 +381,23 @@ function setDatasetMode(useReal){
     $('btnReal').style.color='#fff';
     $('btnDemo').style.background='#170b24';
     $('btnDemo').style.color='var(--ink)';
-    $('dsBadge').textContent='NASA/JPL Horizons data';
+    $('dsBadge').textContent='NASA/JPL Horizons + LOLA';
     $('dsBadge').className='chip ok';
-    $('atlasTag').textContent='Atlas · NASA/JPL Horizons';
-    $('skyDataNote').textContent='Sun/Earth positions: real NASA/JPL Horizons data. Horizon: 0° reference sphere. Terrain mask (LRO LOLA) not applied yet.';
-    $('reqNote').textContent='Sun & Earth count when above local 0° horizon. Terrain mask (LRO LOLA) not applied yet.';
+    $('atlasTag').textContent='Atlas · NASA/JPL Horizons + LOLA';
+    $('terrainToggle').disabled=false;
+    $('terrainLabel').textContent=useTerrainMask?'Terrain mask (LOLA 80m): ON':'Terrain mask (LOLA 80m): OFF';
+    $('skyDataNote').textContent=useTerrainMask?
+      'Sun/Earth: NASA/JPL Horizons API. Horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).' :
+      'Sun/Earth: NASA/JPL Horizons API. Horizon: 0° geometric sphere (terrain mask toggled OFF).';
+    $('reqNote').textContent=useTerrainMask?
+      'Sun & Earth visibility masked by LRO LOLA 80m topographic horizon profile.' :
+      'Sun & Earth count when above local 0° horizon (terrain mask toggled OFF).';
     $('w3').disabled=true;
     $('wv3').textContent='N/A';
     $('sciNote').textContent='*Science score: not yet available (needs LRO shadow data). Excluded from decision score in Real Data mode.';
-    if($('exportSourceNote'))$('exportSourceNote').textContent='Source: NASA/JPL Horizons API (Center: coord@301, geometric sphere). Local terrain mask: in progress.';
-    if($('accuracyWarning')){$('accuracyWarning').className='res';$('accuracyWarning').innerHTML='<b>NASA Ephemeris Active:</b> Sun and Earth positions are authentic NASA/JPL Horizons data. Terrain mask (LRO LOLA) in progress.';}
-    if($('footerModelDesc'))$('footerModelDesc').textContent='A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.';
+    if($('exportSourceNote'))$('exportSourceNote').textContent='Source: NASA/JPL Horizons API (Center: coord@301) + LRO LOLA 80m DEM topographic mask.';
+    if($('accuracyWarning')){$('accuracyWarning').className='res';$('accuracyWarning').innerHTML='<b>NASA Data Active:</b> JPL Horizons ephemerides + LRO LOLA 80m topographic horizon mask applied.';}
+    if($('footerModelDesc'))$('footerModelDesc').textContent='A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides & LRO LOLA DEM.';
   }else{
     SITES=DEMO_SITES;
     M=DEMO_M;
@@ -390,6 +409,8 @@ function setDatasetMode(useReal){
     $('dsBadge').textContent='Demo model (illustrative)';
     $('dsBadge').className='chip';
     $('atlasTag').textContent='Atlas · Demo model';
+    $('terrainToggle').disabled=true;
+    $('terrainLabel').textContent='Terrain mask: N/A (Demo mode)';
     $('skyDataNote').textContent='Sun/Earth positions & terrain: synthetic demo model (illustrative numbers).';
     $('reqNote').textContent='Synthetic demo model: sinusoidal horizon profile and simplified ephemerides.';
     $('w3').disabled=false;
@@ -431,6 +452,10 @@ async function initData(){
       const sJson=await sRes.json();
       sJson.n=s.name;
       sJson.isReal=true;
+      try{
+        const hRes=await fetch(`data/horizon_${s.id}.json`);
+        if(hRes.ok) sJson.horizon=await hRes.json();
+      }catch(e){}
       REAL_SITES.push(sJson);
     }
     buildRealMatrix(REAL_SITES);
@@ -500,8 +525,13 @@ function sky(){
   if(isRealData){
     sa=m.sun_az[t];se=m.sun_el[t];
     ea=m.earth_az[t];ee=m.earth_el[t];
-    // 0 deg smooth reference horizon
-    pts=`0,220 0,${Y(0)} 720,${Y(0)} 720,220`;
+    if(useTerrainMask && s.horizon){
+      pts='0,220';
+      for(let a=0;a<=360;a+=2) pts+=` ${X(a)},${Y(getHorizonElev(s,a))}`;
+      pts+=' 720,220';
+    }else{
+      pts=`0,220 0,${Y(0)} 720,${Y(0)} 720,220`;
+    }
   }else{
     const d0=j*15.2;
     [sa,se]=demo_sun(s,d0,t);
@@ -640,9 +670,11 @@ const alt=(i,j,dh,dd=0)=>{
   const startIdx=REAL_INDICES[j];
   const shiftedIdx=Math.max(0,Math.min(s.times.length-H,startIdx+Math.round(dd*24)));
   const sun_slice=s.sun_el.slice(shiftedIdx,shiftedIdx+H);
+  const sun_az_slice=s.sun_az.slice(shiftedIdx,shiftedIdx+H);
   const earth_slice=s.earth_el.slice(shiftedIdx,shiftedIdx+H);
-  const lit=sun_slice.map(e=>e>dh);
-  const con=earth_slice.map(e=>e>dh);
+  const earth_az_slice=s.earth_az.slice(shiftedIdx,shiftedIdx+H);
+  const lit=sun_slice.map((e,idx)=>e>(getHorizonElev(s,sun_az_slice[idx])+dh));
+  const con=earth_slice.map((e,idx)=>e>(getHorizonElev(s,earth_az_slice[idx])+dh));
   let run=0,mx=0;lit.forEach(v=>{run=v?0:run+1;mx=Math.max(mx,run)});
   let cd=0;for(let d=0;d<10;d++)if(con.slice(d*24,d*24+24).some(Boolean))cd++;
   return{lit,con,sun:100*lit.filter(Boolean).length/H,dark:mx,cd:cd*10};
@@ -738,6 +770,24 @@ $('cp').onclick=()=>{
 
 $('btnReal').onclick=()=>setDatasetMode(true);
 $('btnDemo').onclick=()=>setDatasetMode(false);
+$('terrainToggle').onchange=()=>{
+  useTerrainMask=$('terrainToggle').checked;
+  $('terrainLabel').textContent=useTerrainMask?'Terrain mask (LOLA 80m): ON':'Terrain mask (LOLA 80m): OFF';
+  if(isRealData){
+    $('skyDataNote').textContent=useTerrainMask?
+      'Sun/Earth: NASA/JPL Horizons API. Horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).' :
+      'Sun/Earth: NASA/JPL Horizons API. Horizon: 0° geometric sphere (terrain mask toggled OFF).';
+    $('reqNote').textContent=useTerrainMask?
+      'Sun & Earth visibility masked by LRO LOLA 80m topographic horizon profile.' :
+      'Sun & Earth count when above local 0° horizon (terrain mask toggled OFF).';
+    buildRealMatrix(REAL_SITES);
+    dec();
+    scn();
+    atlas();
+    sky();
+    cmp();
+  }
+};
 
 // Startup
 pset();
