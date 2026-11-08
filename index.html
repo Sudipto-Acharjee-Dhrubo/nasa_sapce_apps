@@ -191,9 +191,9 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 <section id="ss"><div class="lab cy">05 · Scientist tools · COULD</div><h3 class="sh">Scientists: check the numbers, export the data</h3>
  <div class="g2"><div class="pan"><h2>Uncertainty for the selected choice</h2><div id="un"></div><p class="lab" style="letter-spacing:.06em;line-height:1.7">A landing offset is modelled as a higher horizon (0.3° is about 400 m here, an assumption).</p>
   <h2>Science target</h2><p>Permanent-shadow areas near a site (possible ice) need LRO data. Planned.</p></div>
- <div class="pan"><h2>Data and export</h2><p class="lab" style="letter-spacing:.06em;line-height:1.7">Source now: simplified demo model. Planned: NASA SPICE (Sun, Earth) and LRO (terrain).</p>
+ <div class="pan"><h2>Data and export</h2><p id="exportSourceNote" class="lab" style="letter-spacing:.06em;line-height:1.7">Source: NASA/JPL Horizons API (Center: coord@301, geometric sphere). Local terrain mask: in progress.</p>
   <textarea id="csv" readonly></textarea><div class="ctl"><button class="btn" id="cp">Copy CSV</button><span class="lab" id="cpm"></span></div></div></div>
- <div class="res no">Accuracy warning: do not use these results for science claims until SPICE and LRO data replace the demo model.</div></section>
+ <div id="accuracyWarning" class="res"><b>NASA Ephemeris Active:</b> Sun and Earth positions are authentic NASA/JPL Horizons data. Terrain mask (LRO LOLA) in progress.</div></section>
 <section id="s3"><div class="lab cy">06 · Game · COULD</div><h3 class="sh">Polar Window: the playable form of the simulator</h3>
  <div class="pan"><div class="lab cy" id="lvl"></div><h2>You choose where and when</h2><p id="brief"></p>
   <div class="ctl"><select id="gs"></select><select id="gd"></select><button class="btn" id="scout">Scout (3)</button><button class="btn" id="launch">Launch</button></div>
@@ -209,7 +209,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
  <div class="pan" style="padding:28px 24px">
   <div class="lab cy">NASA DATA & METHODOLOGY</div>
   <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
-  <p class="s2" style="margin-bottom:20px">In accordance with NASA Open Science principles, Horizon Atlas uses authentic NASA data endpoints and discloses all calculation parameters and limitations.</p>
+  <p class="s2" style="margin-bottom:20px">In accordance with NASA Open Science principles, Horizon Atlas uses the NASA/JPL Horizons API and discloses all calculation parameters and limitations.</p>
   
   <div class="g2" style="margin-bottom:20px">
    <div>
@@ -260,7 +260,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 
   <h4 style="margin:20px 0 8px">Model Assumptions & Limitations</h4>
   <ul class="ck" style="font-size:13px;color:#a794b8">
-   <li><b>Local Horizon:</b> Calculated relative to the smooth geometric lunar sphere (elevation &gt; 0°). Terrain horizon profiling (ray-marching across LRO LOLA DEMs) will be applied in Step 4.</li>
+   <li><b>Local Horizon:</b> Calculated relative to the smooth geometric lunar sphere (elevation &gt; 0°). Topographic terrain mask (LRO LOLA) in progress.</li>
    <li><b>Solar & Earth Disks:</b> Measured from apparent disk center. Solar semi-diameter (~0.26°) and Earth semi-diameter (~0.95°) are noted.</li>
    <li><b>Mission Windows:</b> Evaluated across 24 start dates spanning the full 13-month operational ephemeris window, simulating 240 continuous hours (10 Earth days) per mission.</li>
    <li><b>Science Score:</b> Explicitly marked as a placeholder until permanently shadowed region (PSR) volatile distribution data is incorporated.</li>
@@ -275,7 +275,7 @@ h4{margin:8px 0 4px;color:#fff;font-size:16px;font-weight:500}
 <div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
 <div class="wc"><div class="av">🔬</div><h4>Lunar scientists</h4><div class="am">Check the numbers</div><p class="s2">Uncertainty ranges, data export and clear sources. Accuracy needs SPICE and LRO.</p></div></div></section>
 <footer id="contact" class="wrap"><div class="cs"><div><div class="ic">★</div><div><b>NASA Space Apps Challenge</b><br><span class="s2">Bangladesh 2026</span></div></div><div><div class="ic">◎</div><div><b>Challenge</b><br><span class="s2">CLPS Lunar Mission Browser</span></div></div><div><div class="ic">☰</div><div><b>Team</b><br><span class="s2">[Team name]</span></div></div></div>
-<div class="fc"><div><svg class="lg" style="width:60px;height:60px"><use href="#lg"/></svg><br><b>HORIZON ATLAS</b><p>A planning and learning tool, not software for real missions. Demo model.</p></div>
+<div class="fc"><div><svg class="lg" style="width:60px;height:60px"><use href="#lg"/></svg><br><b>HORIZON ATLAS</b><p id="footerModelDesc">A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.</p></div>
 <div><h5>Quick Links</h5><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><a href="#who">Who it helps</a></div>
 <div><h5>Tools</h5><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a></div>
 <div><h5>Data</h5><span>NASA SPICE (planned)</span><br><span>NASA LRO (planned)</span><br><span>NASA CLPS records</span></div></div>
@@ -376,6 +376,9 @@ function setDatasetMode(useReal){
     $('w3').disabled=true;
     $('wv3').textContent='N/A';
     $('sciNote').textContent='*Science score: not yet available (needs LRO shadow data). Excluded from decision score in Real Data mode.';
+    if($('exportSourceNote'))$('exportSourceNote').textContent='Source: NASA/JPL Horizons API (Center: coord@301, geometric sphere). Local terrain mask: in progress.';
+    if($('accuracyWarning')){$('accuracyWarning').className='res';$('accuracyWarning').innerHTML='<b>NASA Ephemeris Active:</b> Sun and Earth positions are authentic NASA/JPL Horizons data. Terrain mask (LRO LOLA) in progress.';}
+    if($('footerModelDesc'))$('footerModelDesc').textContent='A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.';
   }else{
     SITES=DEMO_SITES;
     M=DEMO_M;
@@ -392,6 +395,9 @@ function setDatasetMode(useReal){
     $('w3').disabled=false;
     $('wv3').textContent=$('w3').value;
     $('sciNote').textContent='*Science is an illustrative placeholder score.';
+    if($('exportSourceNote'))$('exportSourceNote').textContent='Source now: simplified demo model. Planned: NASA SPICE (Sun, Earth) and LRO (terrain).';
+    if($('accuracyWarning')){$('accuracyWarning').className='res no';$('accuracyWarning').innerHTML='Accuracy warning: do not use these results for science claims until SPICE and LRO data replace the demo model.';}
+    if($('footerModelDesc'))$('footerModelDesc').textContent='A planning and learning tool, not software for real missions. Demo model (illustrative).';
   }
   sel=[0,0];
   updateSelectOptions();
