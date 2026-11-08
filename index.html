@@ -196,6 +196,17 @@ h1, h2, h3, h4, h5{
 }
 .hc{position:relative;z-index:2;max-width:680px;text-align:left}
 .lg{width:76px;height:76px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))}
+.team-hero-logo{
+  width:96px;height:96px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 20px rgba(0,130,243,0.6)) drop-shadow(0 0 35px rgba(232,75,240,0.4));
+  margin-bottom:8px;
+  transition:transform .3s ease;
+  display:inline-block;
+}
+.team-hero-logo:hover{
+  transform:scale(1.08) rotate(2deg);
+}
 
 /* Spacecraft Lander Animated Presentation */
 .hero-craft-container{
@@ -702,7 +713,7 @@ textarea{
         <span class="beacon-dot"></span>
         <span class="lab" style="color:#fff;letter-spacing:.2em">NASA HORIZONS API & LOLA 80M DEM ACTIVE</span>
       </div>
-      <div><svg class="lg"><use href="#lg"/></svg></div>
+      <div><img src="assets/team_logo.png" alt="Team VOIDBRONE" class="team-hero-logo"></div>
       <h1>HORIZON ATLAS</h1>
       <div class="hs">LUNAR LANDING SITE NAVIGATOR</div>
       <div class="tag">— NASA ARTEMIS III & CLPS MISSION PLANNING SYSTEM —</div>
@@ -957,12 +968,12 @@ textarea{
 <div class="wc"><div class="av">🛰</div><h4>Mission planners</h4><div class="am">Compare many options fast</div><p class="s2">Get a ranked shortlist with strengths, risks and certainty.</p></div>
 <div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
 <div class="wc"><div class="av">🔬</div><h4>Lunar scientists</h4><div class="am">Check the numbers</div><p class="s2">Uncertainty ranges, data export and clear sources. Accuracy needs SPICE and LRO.</p></div></div></section>
-<footer id="contact" class="wrap"><div class="cs"><div><div class="ic">★</div><div><b>NASA Space Apps Challenge</b><br><span class="s2">Bangladesh 2026</span></div></div><div><div class="ic">◎</div><div><b>Challenge</b><br><span class="s2">Lunar Landing Site Navigator</span></div></div><div><div class="ic">☰</div><div><b>Team</b><br><span class="s2">[Team name]</span></div></div></div>
-<div class="fc"><div><svg class="lg" style="width:60px;height:60px"><use href="#lg"/></svg><br><b>HORIZON ATLAS</b><p id="footerModelDesc">A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.</p></div>
+<footer id="contact" class="wrap"><div class="cs"><div><div class="ic">★</div><div><b>NASA Space Apps Challenge</b><br><span class="s2">Bangladesh 2026</span></div></div><div><div class="ic">◎</div><div><b>Challenge</b><br><span class="s2">Lunar Landing Site Navigator</span></div></div><div><div class="ic" style="overflow:hidden;padding:2px"><img src="assets/team_logo.png" alt="Team VOIDBRONE" style="width:100%;height:100%;object-fit:contain"></div><div><b>Team</b><br><span class="s2" style="color:#fff;font-weight:700">Team VOIDBRONE</span></div></div></div>
+<div class="fc"><div><img src="assets/team_logo.png" alt="Team VOIDBRONE" style="width:68px;height:68px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))"><br><b>HORIZON ATLAS</b><p id="footerModelDesc">A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.</p></div>
 <div><h5>Quick Links</h5><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><a href="#who">Who it helps</a></div>
 <div><h5>Tools</h5><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a></div>
 <div><h5>Data</h5><span>NASA SPICE (planned)</span><br><span>NASA LRO (planned)</span><br><span>NASA CLPS records</span></div></div>
-<p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · NASA Space Apps Challenge Bangladesh 2026</p></footer>
+<p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · Team VOIDBRONE · NASA Space Apps Challenge Bangladesh 2026</p></footer>
 
 <script>
 let sh='';for(let i=0;i<240;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
