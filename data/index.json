@@ -1,0 +1,17 @@
+{
+  "sites": [
+    {
+      "id": "site_example",
+      "name": "Site Example",
+      "lat": -89.5,
+      "lon": 0.0,
+      "alt_km": 0.0,
+      "file": "site_example.json",
+      "source": "NASA/JPL Horizons"
+    }
+  ],
+  "window": [
+    "2026-12-01 00:00",
+    "2026-12-11 00:00"
+  ]
+}
