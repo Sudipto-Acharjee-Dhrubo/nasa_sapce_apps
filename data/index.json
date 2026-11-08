@@ -1,17 +1,218 @@
 {
-  "sites": [
-    {
-      "id": "site_example",
-      "name": "Site Example",
-      "lat": -89.5,
-      "lon": 0.0,
-      "alt_km": 0.0,
-      "file": "site_example.json",
-      "source": "NASA/JPL Horizons"
-    }
-  ],
+  "updated": "2026-11-09T01:12:11.754079",
+  "source": "NASA/JPL Horizons",
   "window": [
     "2026-12-01 00:00",
-    "2026-12-11 00:00"
+    "2027-12-31 00:00"
+  ],
+  "sites": [
+    {
+      "id": "connecting_ridge",
+      "name": "Connecting Ridge (Site 01)",
+      "lat": -89.46,
+      "lon": 222.51,
+      "alt_km": 0.0,
+      "file": "connecting_ridge.json",
+      "source": "NASA/JPL Horizons",
+      "source_ref": "NASA PGDA Product 78 (Barker et al. 2021 Site 01)",
+      "overall_stats": {
+        "sunlight_pct": 55.7,
+        "longest_darkness_h": 2208,
+        "earth_contact_days_pct": 48.6
+      },
+      "sample_windows_10d": [
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 0.0,
+          "start": "2026-Dec-01 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 0.0,
+          "longest_darkness_h": 240,
+          "earth_contact_days_pct": 50.0,
+          "start": "2027-Mar-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 0.0,
+          "longest_darkness_h": 240,
+          "earth_contact_days_pct": 20.0,
+          "start": "2027-Jun-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Sep-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 80.0,
+          "start": "2027-Dec-01 00:00",
+          "hours": 240
+        }
+      ]
+    },
+    {
+      "id": "peak_near_shackleton",
+      "name": "Peak Near Shackleton (Site 07)",
+      "lat": -88.81,
+      "lon": 123.69,
+      "alt_km": 0.0,
+      "file": "peak_near_shackleton.json",
+      "source": "NASA/JPL Horizons",
+      "source_ref": "NASA PGDA Product 78 (Barker et al. 2021 Site 07)",
+      "overall_stats": {
+        "sunlight_pct": 53.7,
+        "longest_darkness_h": 1125,
+        "earth_contact_days_pct": 47.6
+      },
+      "sample_windows_10d": [
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 0.0,
+          "start": "2026-Dec-01 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 11.2,
+          "longest_darkness_h": 213,
+          "earth_contact_days_pct": 40.0,
+          "start": "2027-Mar-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 0.0,
+          "longest_darkness_h": 240,
+          "earth_contact_days_pct": 20.0,
+          "start": "2027-Jun-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 73.3,
+          "longest_darkness_h": 64,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Sep-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 80.0,
+          "start": "2027-Dec-01 00:00",
+          "hours": 240
+        }
+      ]
+    },
+    {
+      "id": "malapert_massif",
+      "name": "Malapert Massif",
+      "lat": -85.99,
+      "lon": 357.07,
+      "alt_km": 0.0,
+      "file": "malapert_massif.json",
+      "source": "NASA/JPL Horizons",
+      "source_ref": "NASA Artemis III Candidate Regions (NASA GSFC / USGS)",
+      "overall_stats": {
+        "sunlight_pct": 50.1,
+        "longest_darkness_h": 533,
+        "earth_contact_days_pct": 71.9
+      },
+      "sample_windows_10d": [
+        {
+          "sunlight_pct": 28.3,
+          "longest_darkness_h": 172,
+          "earth_contact_days_pct": 20.0,
+          "start": "2026-Dec-01 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 82.9,
+          "longest_darkness_h": 41,
+          "earth_contact_days_pct": 70.0,
+          "start": "2027-Mar-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 60.0,
+          "start": "2027-Jun-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 97.5,
+          "longest_darkness_h": 6,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Sep-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 62.9,
+          "longest_darkness_h": 89,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Dec-01 00:00",
+          "hours": 240
+        }
+      ]
+    },
+    {
+      "id": "haworth",
+      "name": "Haworth",
+      "lat": -87.45,
+      "lon": 354.83,
+      "alt_km": 0.0,
+      "file": "haworth.json",
+      "source": "NASA/JPL Horizons",
+      "source_ref": "NASA Artemis III Candidate Regions / IAU Gazetteer",
+      "overall_stats": {
+        "sunlight_pct": 50.8,
+        "longest_darkness_h": 538,
+        "earth_contact_days_pct": 63.3
+      },
+      "sample_windows_10d": [
+        {
+          "sunlight_pct": 41.2,
+          "longest_darkness_h": 141,
+          "earth_contact_days_pct": 10.0,
+          "start": "2026-Dec-01 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 74.2,
+          "longest_darkness_h": 62,
+          "earth_contact_days_pct": 60.0,
+          "start": "2027-Mar-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 40.0,
+          "start": "2027-Jun-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 100.0,
+          "longest_darkness_h": 0,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Sep-15 00:00",
+          "hours": 240
+        },
+        {
+          "sunlight_pct": 70.4,
+          "longest_darkness_h": 71,
+          "earth_contact_days_pct": 100.0,
+          "start": "2027-Dec-01 00:00",
+          "hours": 240
+        }
+      ]
+    }
   ]
 }

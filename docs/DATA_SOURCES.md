@@ -22,6 +22,19 @@ This document registers every NASA open dataset utilized in **Horizon Atlas** (`
 
 ---
 
+## 1.1 Target Artemis III Candidate Landing Sites & Coordinates
+
+All coordinates are derived strictly from official NASA publication databases and LRO LOLA landing site cartography products (no invented coordinates):
+
+| Site Key | Candidate Region Name | Latitude (°N/S) | Longitude (°E) | Alt (km) | Official NASA Source & Reference |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `connecting_ridge` | Connecting Ridge (Site 01) | -89.46° | 222.51° (-137.49°) | 0.0 | **NASA PGDA Product 78** / Barker et al. (2021), *Planetary and Space Science* 203, 105119 (Site 01 LDEM). [https://pgda.gsfc.nasa.gov/products/78](https://pgda.gsfc.nasa.gov/products/78) |
+| `peak_near_shackleton` | Peak Near Shackleton (Site 07) | -88.81° | 123.69° | 0.0 | **NASA PGDA Product 78** / Barker et al. (2021), *Planetary and Space Science* 203, 105119 (Site 07 LDEM). [https://pgda.gsfc.nasa.gov/products/78](https://pgda.gsfc.nasa.gov/products/78) |
+| `malapert_massif` | Malapert Massif | -85.99° | 357.07° (-2.93°) | 0.0 | **NASA Artemis III Candidate Regions** (NASA GSFC / USGS LGRS cartographic benchmarks). [https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-Moon/](https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-Moon/) |
+| `haworth` | Haworth Crater Region | -87.45° | 354.83° (-5.17°) | 0.0 | **NASA Artemis III Candidate Regions** / IAU Gazetteer of Planetary Nomenclature, USGS Astrogeology. [https://planetarynames.wr.usgs.gov/Feature/2390](https://planetarynames.wr.usgs.gov/Feature/2390) |
+
+---
+
 ## 2. Lunar Surface Topography (LRO LOLA)
 
 | Parameter | Specification |
