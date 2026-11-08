@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Horizon Atlas – NASA CLPS Lunar Mission Browser</title>
+<title>Horizon Atlas – Lunar Landing Site Navigator</title>
 <!-- Google Fonts: Anton (Display Headline), Roboto Condensed (Technical Subheads & UI), JetBrains Mono (Telemetry) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -488,13 +488,84 @@ textarea{
 .fc a{display:block;color:var(--mut);text-decoration:none;margin:6px 0;transition:color .2s}
 .fc a:hover{color:#fff}
 @media(max-width:820px){.cs,.fc{grid-template-columns:1fr}}
+
+/* --- Scroll Progress Bar --- */
+#scrollBar{
+  position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--cy),var(--electric-blue));
+  z-index:999;width:0%;
+  box-shadow:0 0 10px rgba(232,75,240,0.7);
+  transition:width .1s linear;
+}
+
+/* --- Hero Parallax Moon (Spaced Style) --- */
+.the-moon-parallax{
+  position:absolute;
+  right:6vw;top:10%;
+  width:min(440px,45vw);
+  aspect-ratio:1;
+  pointer-events:none;
+  z-index:1;
+  border-radius:50%;
+  will-change:transform,opacity;
+  box-shadow:
+    0 0 60px rgba(232,75,240,0.3),
+    0 0 140px rgba(0,130,243,0.25);
+  transition:transform .12s cubic-bezier(0.2,0,0,1);
+}
+@media(max-width:820px){
+  .the-moon-parallax{
+    width:min(260px,55vw);
+    right:50%;
+    transform:translateX(50%)!important;
+    top:6%;
+    opacity:.35;
+  }
+}
+.hero-moon-img{
+  width:100%;height:100%;
+  object-fit:cover;border-radius:50%;
+  filter:brightness(1.06) contrast(1.15);
+  display:block;
+  animation:ambient-spin 180s linear infinite;
+}
+@keyframes ambient-spin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+/* --- About Section Moon Image --- */
+.about-moon-img{
+  width:100%;height:100%;
+  border-radius:50%;object-fit:cover;
+  display:block;
+  filter:brightness(1.08) contrast(1.15);
+  box-shadow:inset -25px -15px 50px rgba(0,0,0,.9);
+  animation:ambient-spin 120s linear infinite;
+}
+
+/* --- Scroll-Triggered Reveal Animations --- */
+.reveal-on-scroll{
+  opacity:0;
+  transform:translateY(35px);
+  transition:opacity .7s cubic-bezier(0.16,1,0.3,1),transform .7s cubic-bezier(0.16,1,0.3,1);
+  will-change:opacity,transform;
+}
+.reveal-on-scroll.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
 </style></head><body>
+<div id="scrollBar"></div>
 <div id="stars"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#04060e" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
 <nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#data-method">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
 
 <header class="hero">
   <div class="limb"></div>
+  <div class="the-moon-parallax" id="heroMoon">
+    <img src="assets/moon.jpg" alt="Lunar Surface" class="hero-moon-img">
+  </div>
   <div class="hc">
     <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(12,21,36,0.85);border:1px solid var(--line-blue);border-radius:20px;margin-bottom:16px">
       <span class="beacon-dot"></span>
@@ -502,18 +573,25 @@ textarea{
     </div>
     <svg class="lg"><use href="#lg"/></svg>
     <h1>HORIZON ATLAS</h1>
-    <div class="hs">TO THE MOON & BEYOND</div>
-    <div class="tag">— NASA CLPS & ARTEMIS III LUNAR MISSION BROWSER —</div>
+    <div class="hs">LUNAR LANDING SITE NAVIGATOR</div>
+    <div class="tag">— NASA ARTEMIS III & CLPS MISSION PLANNING SYSTEM —</div>
     <button class="btn btn-primary" id="go">Launch Mission Control →</button>
   </div>
 </header>
 
-<section id="about" class="wrap about"><div class="disc"><i></i></div><div><h2 class="big">About Horizon Atlas</h2>
-<p>NASA wants to land spacecraft near the Moon's south pole. There the Sun sits very low, ridges can hide it, and Earth is sometimes below the horizon. Both decide a lander's power and contact.</p>
-<p>Most tools start with a site and show what happens there. We turn it around: you tell us what the lander needs, and Horizon Atlas shows where and when it can work.</p></div></section>
-<section id="feat" class="wrap cen"><h2 class="big">Our Features</h2><p class="s">Six tools, one calculation engine, built for the CLPS Lunar Mission Browser challenge.</p>
+<section id="about" class="wrap about reveal-on-scroll">
+  <div class="disc">
+    <img src="assets/moon.jpg" alt="Lunar Surface" class="about-moon-img">
+  </div>
+  <div>
+    <h2 class="big">About Lunar Landing Site Navigator</h2>
+    <p>NASA wants to land spacecraft near the Moon's south pole. There the Sun sits very low, ridges can hide it, and Earth is sometimes below the horizon. Both decide a lander's power and contact.</p>
+    <p>Most tools start with a site and show what happens there. We turn it around: you tell us what the lander needs, and Lunar Landing Site Navigator shows where and when it can work.</p>
+  </div>
+</section>
+<section id="feat" class="wrap cen reveal-on-scroll"><h2 class="big">Our Features</h2><p class="s">Six tools, one calculation engine, built for the Lunar Landing Site Navigator challenge.</p>
 <div class="arc"><div class="fg"><div><div class="ic">▦</div><h4>Explore</h4>Atlas heatmap of every site and date, plus the sky view.<br><a class="rm" href="#s1">Read More &gt;</a></div><div><div class="ic">⚖</div><h4>Decision</h4>Set priorities. Get the top 3 with strengths and risks.<br><a class="rm" href="#sd">Read More &gt;</a></div><div><div class="ic">⏲</div><h4>Scenario</h4>Which site is best for one specific mission?<br><a class="rm" href="#sc">Read More &gt;</a></div><div><div class="ic">✦</div><h4>Explain</h4>Why a choice scored this way, and what would change it.<br><a class="rm" href="#sx">Read More &gt;</a></div><div><div class="ic">⚗</div><h4>Scientist</h4>Uncertainty range and CSV data for checking results.<br><a class="rm" href="#ss">Read More &gt;</a></div><div><div class="ic">◈</div><h4>Game</h4>Polar Window: choose where and when it lands.<br><a class="rm" href="#s3">Read More &gt;</a></div></div><svg class="cb" viewBox="0 0 100 100"><use href="#lg"/></svg></div></section>
-<section id="how" class="wrap cen"><h2 class="big">How It Works</h2><p class="s">From a lander's needs to an explained decision in five steps.</p><div class="tl"><div class="ti a" style="grid-column:1"><h4>Set your needs</h4>Sunlight, darkness limit and Earth contact.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:1">1</div><div class="ti b" style="grid-column:2"><h4>Scan the Atlas</h4>See every site and date at once.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:2">2</div><div class="ti a" style="grid-column:3"><h4>Check the sky</h4>Watch the Sun and Earth over the horizon.<br><a class="rm" href="#s2">Read More &gt;</a></div><div class="n" style="grid-column:3">3</div><div class="ti b" style="grid-column:4"><h4>Decide and simulate</h4>Rank options for your mission.<br><a class="rm" href="#sd">Read More &gt;</a></div><div class="n" style="grid-column:4">4</div><div class="ti a" style="grid-column:5"><h4>Explain and export</h4>See why, then take the data.<br><a class="rm" href="#sx">Read More &gt;</a></div><div class="n" style="grid-column:5">5</div></div></section>
+<section id="how" class="wrap cen reveal-on-scroll"><h2 class="big">How It Works</h2><p class="s">From a lander's needs to an explained decision in five steps.</p><div class="tl"><div class="ti a" style="grid-column:1"><h4>Set your needs</h4>Sunlight, darkness limit and Earth contact.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:1">1</div><div class="ti b" style="grid-column:2"><h4>Scan the Atlas</h4>See every site and date at once.<br><a class="rm" href="#s1">Read More &gt;</a></div><div class="n" style="grid-column:2">2</div><div class="ti a" style="grid-column:3"><h4>Check the sky</h4>Watch the Sun and Earth over the horizon.<br><a class="rm" href="#s2">Read More &gt;</a></div><div class="n" style="grid-column:3">3</div><div class="ti b" style="grid-column:4"><h4>Decide and simulate</h4>Rank options for your mission.<br><a class="rm" href="#sd">Read More &gt;</a></div><div class="n" style="grid-column:4">4</div><div class="ti a" style="grid-column:5"><h4>Explain and export</h4>See why, then take the data.<br><a class="rm" href="#sx">Read More &gt;</a></div><div class="n" style="grid-column:5">5</div></div></section>
 <main id="app">
  <div id="loadStatus" class="pan" style="display:none;margin-bottom:14px;border-color:var(--cy)">
   <div class="lab cy">SYSTEM INITIALIZATION</div>
@@ -527,10 +605,10 @@ textarea{
   <span id="dsBadge" class="chip ok" style="margin-left:auto"><span class="beacon-dot"></span>NASA/JPL Horizons + LOLA</span>
  </div>
 
- <section id="s1"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Explore: what does your lander need?</h3>
+ <section id="s1" class="reveal-on-scroll"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Explore: what does your lander need?</h3>
  <div class="hud">
   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-  <div class="brand">HORIZON <span>MISSION CONTROL</span></div>
+  <div class="brand">HORIZON <span>SITE NAVIGATOR</span></div>
   <div class="m"><span class="lab">Sunlit</span><b id="hs">–</b><div class="t"><i id="hsb"></i></div></div>
   <div class="m"><span class="lab">Longest dark</span><b id="hd">–</b><div class="t"><i id="hdb"></i></div></div>
   <div class="m"><span class="lab">Earth contact</span><b id="hc">–</b><div class="t"><i id="hcb"></i></div></div>
@@ -557,7 +635,7 @@ textarea{
  </div>
 
  </section>
-<section id="s2"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Sky view and compare mode</h3>
+<section id="s2" class="reveal-on-scroll"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Sky view and compare mode</h3>
  <div class="pan" id="p3">
   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
   <div class="lab cy">Sky view & Ephemeris</div><h2 id="skyT">Sky view</h2>
@@ -590,28 +668,28 @@ textarea{
   <div class="ctl"><select id="ca"></select><select id="cad"></select><span class="lab">vs</span><select id="cb"></select><select id="cbd"></select></div>
   <div id="cmpT"></div><p id="cmpS"></p></div>
 </section>
-<section id="sd"><div class="lab cy">02 · Decision mode · MUST</div><h3 class="sh">Decision: set your priorities, get the top 3</h3>
+<section id="sd" class="reveal-on-scroll"><div class="lab cy">02 · Decision mode · Prioritization</div><h3 class="sh">Decision: set your priorities, get the top 3</h3>
  <div class="grid"><div class="pan"><h2>Priorities</h2><div id="wsl"></div><div id="sciNote" class="lab" style="letter-spacing:.06em;line-height:1.7">*Science score: not yet available (needs LRO shadow data). Excluded from decision score in Real Data mode.</div></div>
  <div class="pan"><h2>Top 3 site and date</h2><div id="dec"></div><p class="lab" style="letter-spacing:.06em">No single best answer: each option shows its strengths, weaknesses and how certain it is.</p></div></div></section>
-<section id="sc"><div class="lab cy">03 · Mission scenario simulator · SHOULD</div><h3 class="sh">Scenario: best site for a specific mission</h3>
+<section id="sc" class="reveal-on-scroll"><div class="lab cy">03 · Mission scenario simulator</div><h3 class="sh">Scenario: best site for a specific mission</h3>
  <div class="grid"><div class="pan"><h2>Mission profile</h2><select id="pf"></select>
   <div class="opt" style="margin-top:10px"><b id="a0v"></b>Battery drain per dark hour<input id="a0" type="range" min="0.5" max="4" step="0.1" value="1"></div>
   <div class="opt"><b id="a1v"></b>Charge per sunlit hour<input id="a1" type="range" min="1" max="6" step="0.5" value="3"></div>
   <label class="lab"><input type="checkbox" id="a2"> Earth contact needed every day</label>
   <p class="lab" style="letter-spacing:.06em;line-height:1.7">These battery numbers are our assumptions. Change them. Every site and date is simulated hour by hour.</p></div>
  <div class="pan"><h2>Best sites for this mission</h2><div id="scn"></div></div></div></section>
-<section id="sx"><div class="lab cy">04 · Explain · SHOULD</div><h3 class="sh">Explain: why it scored this way, and what would change it</h3>
+<section id="sx" class="reveal-on-scroll"><div class="lab cy">04 · Explainable AI & Geometry</div><h3 class="sh">Explain: why it scored this way, and what would change it</h3>
  <div class="pan"><div class="lab cy" id="xt"></div><p class="lab" style="letter-spacing:.06em">Click any Atlas square to explain it. No black-box AI: every number comes from Sun and Earth geometry.</p>
  <div class="g2"><div><h2>Why this score</h2><div id="xb"></div></div><div><h2>What if...</h2><div id="xw"></div><h2 style="margin-top:14px">Sensitivity</h2><div id="xs"></div></div></div></div></section>
-<section id="ss"><div class="lab cy">05 · Scientist tools · COULD</div><h3 class="sh">Scientists: check the numbers, export the data</h3>
+<section id="ss" class="reveal-on-scroll"><div class="lab cy">05 · Scientist tools</div><h3 class="sh">Scientists: check the numbers, export the data</h3>
  <div class="g2"><div class="pan"><h2>Uncertainty for the selected choice</h2><div id="un"></div><p class="lab" style="letter-spacing:.06em;line-height:1.7">A landing offset is modelled as a higher horizon (0.3° is about 400 m here, an assumption).</p>
   <h2>Science target</h2><p>Permanent-shadow areas near a site (possible ice) need LRO data. Planned.</p></div>
- <div class="pan"><h2>Data and export</h2><p id="exportSourceNote" class="lab" style="letter-spacing:.06em;line-height:1.7">Source: NASA/JPL Horizons API (Center: coord@301, geometric sphere). Local terrain mask: in progress.</p>
-  <textarea id="csv" readonly></textarea><div class="ctl"><button class="btn" id="cp">Copy CSV</button><span class="lab" id="cpm"></span></div></div></div>
- <div id="accuracyWarning" class="res"><b>NASA Ephemeris Active:</b> Sun and Earth positions are authentic NASA/JPL Horizons data. Terrain mask (LRO LOLA) in progress.</div></section>
-<section id="s3"><div class="lab cy">06 · Game · COULD</div><h3 class="sh">Polar Window: the playable form of the simulator</h3>
+ <div class="pan"><h2>Data and export</h2><p id="exportSourceNote" class="lab" style="letter-spacing:.06em;line-height:1.7">Source: NASA/JPL Horizons API (Center: coord@301) + LRO LOLA 80m DEM topographic mask.</p>
+  <textarea id="csv" readonly></textarea><div class="ctl"><button class="btn btn-primary" id="cp">Copy CSV</button><span class="lab" id="cpm"></span></div></div></div>
+ <div id="accuracyWarning" class="res"><b>NASA Data Active:</b> JPL Horizons ephemerides + LRO LOLA 80m topographic horizon mask applied.</div></section>
+<section id="s3" class="reveal-on-scroll"><div class="lab cy">06 · Flight Simulator Game</div><h3 class="sh">Polar Window: the playable form of the simulator</h3>
  <div class="pan"><div class="lab cy" id="lvl"></div><h2>You choose where and when</h2><p id="brief"></p>
-  <div class="ctl"><select id="gs"></select><select id="gd"></select><button class="btn" id="scout">Scout (3)</button><button class="btn" id="launch">Launch</button></div>
+  <div class="ctl"><select id="gs"></select><select id="gd"></select><button class="btn" id="scout">Scout (3)</button><button class="btn btn-primary" id="launch">Launch</button></div>
   <div class="lab" id="scoutOut" style="margin:8px 0"></div>
   <div class="lab">Battery over 10 days</div>
   <svg id="gsv" viewBox="0 0 240 70" preserveAspectRatio="none" style="width:100%;height:110px;background:#03050b;display:block"></svg>
@@ -620,7 +698,7 @@ textarea{
 </section>
 </main>
 
-<section id="data-method" class="wrap">
+<section id="data-method" class="wrap reveal-on-scroll">
  <div class="pan" style="padding:28px 24px">
   <div class="lab cy">NASA DATA & METHODOLOGY</div>
   <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
@@ -1216,4 +1294,37 @@ $('terrainToggle').onchange=()=>{
 pset();
 brief();
 initData();
+
+// --- SCROLL ANIMATIONS (SPACED PARALLAX & REVEALS) ---
+const moonEl = document.getElementById('heroMoon');
+const scrollBarEl = document.getElementById('scrollBar');
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+  if (moonEl) {
+    const rotateDeg = (scrolled * 0.08).toFixed(2);
+    const translateY = (scrolled * 0.32).toFixed(1);
+    const scale = Math.max(0.75, (1 - scrolled * 0.00035)).toFixed(3);
+    moonEl.style.transform = `translate3d(0, ${translateY}px, 0) rotate(${rotateDeg}deg) scale(${scale})`;
+    moonEl.style.opacity = Math.max(0.12, (1 - scrolled / 1100)).toFixed(2);
+  }
+  if (scrollBarEl) {
+    const winHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = winHeight > 0 ? (scrolled / winHeight) * 100 : 0;
+    scrollBarEl.style.width = scrollPercent + '%';
+  }
+}, { passive: true });
+
+if ('IntersectionObserver' in window) {
+  const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => scrollObserver.observe(el));
+} else {
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+}
 </script></body></html>

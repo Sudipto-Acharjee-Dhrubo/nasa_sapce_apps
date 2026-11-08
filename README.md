@@ -1,4 +1,4 @@
-# Horizon Atlas · CLPS Lunar Mission Browser
+# Horizon Atlas · Lunar Landing Site Navigator
 **NASA Space Apps Challenge 2026**
 
 Horizon Atlas is an interactive mission-planning and educational web tool designed to evaluate solar power availability (illumination percentage) and direct Earth communication line-of-sight for lunar south pole landing sites. It replaces simplified models with authentic NASA open data:

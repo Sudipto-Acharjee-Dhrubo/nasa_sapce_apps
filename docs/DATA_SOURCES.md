@@ -1,6 +1,6 @@
 # NASA Data Sources – Horizon Atlas
 
-This document registers every NASA open dataset utilized in **Horizon Atlas** (`CLPS Lunar Mission Browser`, NASA Space Apps Challenge 2026). In accordance with NASA Open Science guidelines and competition rules, all data sources, endpoints, parameters, and processing pipelines are explicitly documented.
+This document registers every NASA open dataset utilized in **Horizon Atlas** (`Lunar Landing Site Navigator`, NASA Space Apps Challenge 2026). In accordance with NASA Open Science guidelines and competition rules, all data sources, endpoints, parameters, and processing pipelines are explicitly documented.
 
 ---
 
