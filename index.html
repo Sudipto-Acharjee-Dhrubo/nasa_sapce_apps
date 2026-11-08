@@ -498,37 +498,7 @@ textarea{
   transition:width .1s linear;
 }
 
-/* --- Hero Parallax Moon (Spaced Style) --- */
-.the-moon-parallax{
-  position:absolute;
-  right:6vw;top:10%;
-  width:min(440px,45vw);
-  aspect-ratio:1;
-  pointer-events:none;
-  z-index:1;
-  border-radius:50%;
-  will-change:transform,opacity;
-  box-shadow:
-    0 0 60px rgba(232,75,240,0.3),
-    0 0 140px rgba(0,130,243,0.25);
-  transition:transform .12s cubic-bezier(0.2,0,0,1);
-}
-@media(max-width:820px){
-  .the-moon-parallax{
-    width:min(260px,55vw);
-    right:50%;
-    transform:translateX(50%)!important;
-    top:6%;
-    opacity:.35;
-  }
-}
-.hero-moon-img{
-  width:100%;height:100%;
-  object-fit:cover;border-radius:50%;
-  filter:brightness(1.06) contrast(1.15);
-  display:block;
-  animation:ambient-spin 180s linear infinite;
-}
+
 @keyframes ambient-spin{
   0%{transform:rotate(0deg)}
   100%{transform:rotate(360deg)}
@@ -563,9 +533,6 @@ textarea{
 
 <header class="hero">
   <div class="limb"></div>
-  <div class="the-moon-parallax" id="heroMoon">
-    <img src="assets/moon.jpg" alt="Lunar Surface" class="hero-moon-img">
-  </div>
   <div class="hc">
     <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(12,21,36,0.85);border:1px solid var(--line-blue);border-radius:20px;margin-bottom:16px">
       <span class="beacon-dot"></span>
@@ -1295,19 +1262,11 @@ pset();
 brief();
 initData();
 
-// --- SCROLL ANIMATIONS (SPACED PARALLAX & REVEALS) ---
-const moonEl = document.getElementById('heroMoon');
+// --- SCROLL ANIMATIONS (PROGRESS BAR & REVEALS) ---
 const scrollBarEl = document.getElementById('scrollBar');
 
 window.addEventListener('scroll', () => {
   const scrolled = window.pageYOffset || document.documentElement.scrollTop;
-  if (moonEl) {
-    const rotateDeg = (scrolled * 0.08).toFixed(2);
-    const translateY = (scrolled * 0.32).toFixed(1);
-    const scale = Math.max(0.75, (1 - scrolled * 0.00035)).toFixed(3);
-    moonEl.style.transform = `translate3d(0, ${translateY}px, 0) rotate(${rotateDeg}deg) scale(${scale})`;
-    moonEl.style.opacity = Math.max(0.12, (1 - scrolled / 1100)).toFixed(2);
-  }
   if (scrollBarEl) {
     const winHeight = document.documentElement.scrollHeight - window.innerHeight;
     const scrollPercent = winHeight > 0 ? (scrolled / winHeight) * 100 : 0;
