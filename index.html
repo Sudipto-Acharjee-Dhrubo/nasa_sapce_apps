@@ -780,7 +780,6 @@ textarea{
   display:flex;align-items:center;justify-content:center;
   position:relative;
   width:100%;
-  /* Extra vertical space so top/bottom of sphere never clip to container edge */
   padding:0;
   overflow:visible;
 }
@@ -801,6 +800,89 @@ textarea{
   border:none;outline:none;box-shadow:none;
 }
 #moonCanvas:active{cursor:grabbing}
+
+/* ---- Full-view expand button ---- */
+.moon-fullview-btn{
+  position:absolute;
+  top:14px;right:14px;
+  z-index:20;
+  background:rgba(4,7,16,0.72);
+  border:1px solid rgba(0,130,243,0.35);
+  color:rgba(255,255,255,0.85);
+  font-size:18px;
+  width:40px;height:40px;
+  border-radius:10px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+  transition:background .2s, border-color .2s, transform .15s;
+  line-height:1;
+}
+.moon-fullview-btn:hover{
+  background:rgba(0,130,243,0.25);
+  border-color:rgba(0,130,243,0.7);
+  transform:scale(1.08);
+}
+
+/* ---- Fullscreen overlay mode ---- */
+.moon-canvas-wrap.moon-fs{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  z-index:9000 !important;
+  background:#000 !important;
+  overflow:hidden !important;
+}
+/* Starfield shows behind transparent canvas in fullscreen via page #stars (z-index:0) */
+/* but we need an explicit black bg for the fullscreen wrap */
+.moon-canvas-wrap.moon-fs #moonCanvas{
+  width:100% !important;
+  height:100% !important;
+}
+/* Label bar shown in fullscreen */
+.moon-fs-bar{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:9001;
+  padding:14px 20px;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.moon-fs-bar.hidden{display:none!important}
+.moon-fs-title{
+  font:700 13px var(--font-cond,sans-serif);
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);
+}
+/* Star overlay for fullscreen mode (behind canvas) */
+.moon-fs-stars{
+  display:none;
+  position:fixed;inset:0;
+  z-index:8999;
+  background:#000
+    radial-gradient(1px 1px at 5% 8%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 12% 25%,rgba(0,130,243,0.9),transparent),
+    radial-gradient(1px 1px at 20% 60%,#fff,transparent),
+    radial-gradient(2px 2px at 28% 15%,rgba(255,255,255,0.95),transparent),
+    radial-gradient(1px 1px at 35% 72%,rgba(232,75,240,0.8),transparent),
+    radial-gradient(1px 1px at 42% 40%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 50% 88%,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 58% 20%,#fff,transparent),
+    radial-gradient(2px 2px at 65% 55%,rgba(0,130,243,0.75),transparent),
+    radial-gradient(1px 1px at 73% 10%,rgba(255,240,180,0.9),transparent),
+    radial-gradient(1px 1px at 80% 80%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 88% 35%,rgba(232,75,240,0.7),transparent),
+    radial-gradient(1px 1px at 93% 65%,rgba(255,255,255,0.85),transparent),
+    radial-gradient(2.5px 2.5px at 96% 18%,rgba(255,255,255,1),transparent),
+    radial-gradient(1px 1px at 15% 90%,rgba(0,130,243,0.6),transparent),
+    radial-gradient(1px 1px at 55% 5%,#fff,transparent),
+    radial-gradient(1px 1px at 70% 92%,rgba(255,255,255,0.65),transparent);
+  pointer-events:none;
+  animation:star-drift 60s linear infinite;
+}
+.moon-fs-stars.active{display:block}
 
 /* ---------- MISSION CARDS ---------- */
 .pn-card-stack{display:flex;flex-direction:column;gap:16px}
@@ -945,7 +1027,16 @@ textarea{
  <!-- 3D Moon Globe -->
  <div id="polarNav">
   <div class="moon-stage">
-    <div class="moon-canvas-wrap">
+    <!-- Fullscreen star background (shown only when moon-fs active) -->
+    <div class="moon-fs-stars" id="moonFsStars"></div>
+    <!-- Fullscreen top bar -->
+    <div class="moon-fs-bar hidden" id="moonFsBar">
+      <span class="moon-fs-title">🌕 Horizon Atlas · 3D Lunar South Pole</span>
+      <button class="moon-fullview-btn" id="moonFsClose" title="Exit Full View" style="position:static;width:auto;padding:0 14px;font-size:13px;letter-spacing:.1em;font-family:var(--font-cond,sans-serif)">✕ &nbsp;EXIT FULL VIEW</button>
+    </div>
+    <div class="moon-canvas-wrap" id="moonWrap">
+      <!-- Full View toggle button -->
+      <button class="moon-fullview-btn" id="moonFsBtn" title="Full View">⛶</button>
       <canvas id="moonCanvas"></canvas>
     </div>
     <svg id="polarMap" viewBox="-110 -110 220 220" style="display:none"><g id="pmPins"></g></svg>
@@ -2184,5 +2275,48 @@ populatePnDateSel();
   // --- Start ---
   animate();
   setTimeout(update3DPins, 600);
+})();
+</script>
+
+<script>
+// ===== FULL VIEW TOGGLE =====
+(function(){
+  const wrap    = document.getElementById('moonWrap');
+  const btn     = document.getElementById('moonFsBtn');
+  const bar     = document.getElementById('moonFsBar');
+  const closeBtn= document.getElementById('moonFsClose');
+  const stars   = document.getElementById('moonFsStars');
+  if(!wrap || !btn) return;
+
+  let isFs = false;
+
+  function enterFullView(){
+    isFs = true;
+    wrap.classList.add('moon-fs');
+    bar.classList.remove('hidden');
+    stars.classList.add('active');
+    btn.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+    // Trigger Three.js resize so canvas fills viewport
+    window.dispatchEvent(new Event('resize'));
+  }
+
+  function exitFullView(){
+    isFs = false;
+    wrap.classList.remove('moon-fs');
+    bar.classList.add('hidden');
+    stars.classList.remove('active');
+    btn.style.display = '';
+    document.body.style.overflow = '';
+    window.dispatchEvent(new Event('resize'));
+  }
+
+  btn.addEventListener('click', enterFullView);
+  closeBtn.addEventListener('click', exitFullView);
+
+  // ESC key to close
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && isFs) exitFullView();
+  });
 })();
 </script></body></html>
