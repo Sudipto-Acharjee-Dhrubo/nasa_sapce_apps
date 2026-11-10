@@ -705,26 +705,47 @@ textarea{
   position:relative;z-index:1;
   background:transparent;
   display:flex;flex-direction:column;align-items:center;
-  padding:20px 0 30px;
+  /* Break out of #app max-width constraint so moon can be truly full-width */
+  width:100vw;
+  margin-left:calc(-50vw + 50%);
+  padding:0 0 50px;
+  overflow:visible;
 }
-.pn-inner{
-  max-width:1200px;width:100%;margin:0 auto;position:relative;z-index:1;
+.pn-card-stack{
+  width:100%;max-width:720px;
+  display:flex;flex-direction:column;gap:16px;
+  padding:0 20px;
 }
-.pn-body{
-  display:flex;flex-direction:column;align-items:center;gap:28px;
+@media(max-width:640px){
+  .pn-card-stack .pn-card{padding:14px 16px}
+  .pn-card-stack div[style*="grid"]{grid-template-columns:1fr!important}
 }
-.pn-card-stack{width:100%;max-width:600px;display:flex;flex-direction:column;gap:16px}
-@media(max-width:640px){.pn-card-stack .pn-card{padding:14px 16px} .pn-card-stack div[style*="grid"]{grid-template-columns:1fr!important}}
 
-/* ---------- 3D MOON GLOBE ---------- */
+/* ---------- 3D MOON GLOBE — truly floating, no border ---------- */
 .moon-stage{
   display:flex;align-items:center;justify-content:center;
   position:relative;
+  width:100%;
+  /* Extra vertical space so top/bottom of sphere never clip to container edge */
+  padding:0;
+  overflow:visible;
 }
 .moon-canvas-wrap{
-  width:min(500px,70vw);height:min(500px,70vw);position:relative;
+  /* Wide canvas = lots of transparent breathing room around the sphere */
+  width:min(820px,98vw);
+  height:min(820px,98vw);
+  position:relative;
+  background:transparent !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  overflow:visible;
 }
-#moonCanvas{width:100%;height:100%;display:block;cursor:grab;background:transparent}
+#moonCanvas{
+  width:100%;height:100%;display:block;cursor:grab;
+  background:transparent !important;
+  border:none;outline:none;box-shadow:none;
+}
 #moonCanvas:active{cursor:grabbing}
 
 /* ---------- MISSION CARDS ---------- */
@@ -1837,16 +1858,17 @@ populatePnDateSel();
   if(typeof THREE === 'undefined'){ console.error('Moon: THREE not loaded'); wrap.innerHTML='<div style="color:#ea384c;padding:20px;text-align:center">3D requires internet for Three.js CDN</div>'; return; }
   if(typeof THREE.OrbitControls === 'undefined'){ console.error('Moon: OrbitControls not loaded'); }
 
-  const W = ()=> wrap.clientWidth || 380;
+  const W = ()=> wrap.clientWidth || 500;
   const H = ()=> wrap.clientHeight || W();
 
   // --- Scene ---
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, W()/H(), 0.1, 100);
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  scene.background = null; // CRITICAL: null = transparent, no background fill
+  const camera = new THREE.PerspectiveCamera(55, W()/H(), 0.1, 100);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, premultipliedAlpha:false });
   renderer.setSize(W(), H());
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(0x000000, 0); // alpha=0 = fully transparent clear
 
   // --- Moon ---
   const MR = 1; // moon radius
@@ -1870,17 +1892,17 @@ populatePnDateSel();
   atm.lookAt(camera.position);
   scene.add(atm);
 
-  // --- Lighting ---
-  const sun = new THREE.DirectionalLight(0xffeedd, 1.8);
+  // --- Lighting: strong ambient so dark side of moon isn't pitch black at canvas edge ---
+  const sun = new THREE.DirectionalLight(0xffeedd, 1.6);
   sun.position.set(4, 2, 5);
   scene.add(sun);
-  scene.add(new THREE.AmbientLight(0x223344, 0.4));
-  const rim = new THREE.DirectionalLight(0x3366aa, 0.4);
+  scene.add(new THREE.AmbientLight(0x334466, 0.7)); // brighter ambient = softer dark side
+  const rim = new THREE.DirectionalLight(0x5577bb, 0.5);
   rim.position.set(-3, -1, -3);
   scene.add(rim);
 
-  // --- Camera: looking at south pole ---
-  camera.position.set(0.4, -2.0, 1.0);
+  // --- Camera: looking at south pole, pulled back so sphere has breathing room ---
+  camera.position.set(0.4, -2.8, 1.4);
   camera.lookAt(0, -MR, 0);
 
   // --- Controls ---
@@ -1888,8 +1910,8 @@ populatePnDateSel();
   ctrl.target.set(0, -0.4, 0);
   ctrl.enableDamping = true;
   ctrl.dampingFactor = 0.06;
-  ctrl.minDistance = 1.3;
-  ctrl.maxDistance = 4.5;
+  ctrl.minDistance = 1.8;
+  ctrl.maxDistance = 6.0;
   ctrl.autoRotate = true;
   ctrl.autoRotateSpeed = 0.4;
   ctrl.enablePan = false;
