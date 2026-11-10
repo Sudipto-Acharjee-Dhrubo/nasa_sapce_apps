@@ -1955,41 +1955,39 @@ populatePnDateSel();
   rim.position.set(-3, -1, -3);
   scene.add(rim);
 
-  // --- 3D Sun sphere (placed in direction of the directional light, far away) ---
-  // Normalize light direction and place sun at distance 7
-  const SUN_DIR = new THREE.Vector3(4, 2, 5).normalize();
-  const SUN_DIST = 6.5;
-  const sunPos = SUN_DIR.clone().multiplyScalar(SUN_DIST);
+  // --- Sun: Canvas-texture sprite, placed via NDC so it's always visible in upper-right ---
+  // Build a glowing sun canvas texture
+  const sunCanvas = document.createElement('canvas');
+  sunCanvas.width = 256; sunCanvas.height = 256;
+  const sunCtx = sunCanvas.getContext('2d');
+  // Outer halo
+  let g = sunCtx.createRadialGradient(128,128,0, 128,128,128);
+  g.addColorStop(0,   'rgba(255,255,220,1)');
+  g.addColorStop(0.08,'rgba(255,240,160,1)');
+  g.addColorStop(0.18,'rgba(255,180,60,0.85)');
+  g.addColorStop(0.35,'rgba(255,120,20,0.45)');
+  g.addColorStop(0.55,'rgba(255,80,0,0.18)');
+  g.addColorStop(0.75,'rgba(255,60,0,0.07)');
+  g.addColorStop(1,   'rgba(0,0,0,0)');
+  sunCtx.fillStyle = g;
+  sunCtx.fillRect(0,0,256,256);
+  const sunTex = new THREE.CanvasTexture(sunCanvas);
 
-  // Core sun sphere — bright yellow-white
-  const sunCoreMat = new THREE.MeshBasicMaterial({ color: 0xfffde0 });
-  const sunCoreGeo = new THREE.SphereGeometry(0.11, 24, 24);
-  const sunMesh = new THREE.Mesh(sunCoreGeo, sunCoreMat);
-  sunMesh.position.copy(sunPos);
-  scene.add(sunMesh);
-
-  // Corona glow 1 — large soft orange halo
-  const corona1Geo = new THREE.SphereGeometry(0.22, 24, 24);
-  const corona1Mat = new THREE.MeshBasicMaterial({
-    color: 0xff9933, transparent: true, opacity: 0.18, side: THREE.BackSide
+  const spriteMat = new THREE.SpriteMaterial({
+    map: sunTex, transparent: true, opacity: 1, depthWrite: false, depthTest: false
   });
-  const corona1 = new THREE.Mesh(corona1Geo, corona1Mat);
-  corona1.position.copy(sunPos);
-  scene.add(corona1);
+  const sunSprite = new THREE.Sprite(spriteMat);
 
-  // Corona glow 2 — extra large very faint white
-  const corona2Geo = new THREE.SphereGeometry(0.42, 24, 24);
-  const corona2Mat = new THREE.MeshBasicMaterial({
-    color: 0xffeecc, transparent: true, opacity: 0.07, side: THREE.BackSide
-  });
-  const corona2 = new THREE.Mesh(corona2Geo, corona2Mat);
-  corona2.position.copy(sunPos);
-  scene.add(corona2);
-
-  // Point light AT sun position so it contributes local illumination
-  const sunPoint = new THREE.PointLight(0xfff5cc, 0.6, 20);
-  sunPoint.position.copy(sunPos);
-  scene.add(sunPoint);
+  // Position the sprite in VIEW space: upper-right corner
+  // We'll update its world position each frame from NDC (-0.55, 0.65) = upper-right
+  function placeSunInView(){
+    const ndc = new THREE.Vector3(0.58, 0.60, 0.5); // NDC: x=right, y=top
+    ndc.unproject(camera);
+    sunSprite.position.copy(ndc);
+    sunSprite.scale.set(0.55, 0.55, 1);
+  }
+  placeSunInView();
+  scene.add(sunSprite);
 
   // --- Camera: looking at south pole, pulled back so sphere has breathing room ---
   camera.position.set(0.4, -2.8, 1.4);
@@ -2163,12 +2161,12 @@ populatePnDateSel();
         ring.scale.setScalar(1 + Math.sin(t)*0.12);
       }
     });
-    // Pulse sun corona — slow breath effect
-    const st = Date.now()*0.0008;
-    corona1.material.opacity = 0.14 + Math.sin(st)*0.07;
-    corona1.scale.setScalar(1 + Math.sin(st)*0.06);
-    corona2.material.opacity = 0.05 + Math.sin(st*0.7)*0.03;
-    corona2.scale.setScalar(1 + Math.sin(st*0.7)*0.08);
+    // Keep sun sprite locked in upper-right of view & pulse its scale
+    placeSunInView();
+    const st = Date.now()*0.0007;
+    const pulse = 1 + Math.sin(st)*0.07;
+    sunSprite.scale.set(0.55*pulse, 0.55*pulse, 1);
+    spriteMat.opacity = 0.88 + Math.sin(st)*0.12;
     renderer.render(scene, camera);
   }
 
