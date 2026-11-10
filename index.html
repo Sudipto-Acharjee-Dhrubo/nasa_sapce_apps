@@ -749,9 +749,10 @@ textarea{
   letter-spacing:.08em;color:var(--mut);
 }
 .pn-body{
-  display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;
+  display:flex;flex-direction:column;align-items:center;gap:28px;
 }
-@media(max-width:900px){.pn-body{grid-template-columns:1fr;gap:24px}}
+.pn-card-stack{width:100%;max-width:600px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:640px){.pn-card-stack .pn-card{padding:14px 16px} .pn-card-stack div[style*="grid"]{grid-template-columns:1fr!important}}
 
 /* ---------- 3D MOON GLOBE ---------- */
 .moon-stage{
@@ -759,16 +760,10 @@ textarea{
   position:relative;
 }
 .moon-canvas-wrap{
-  width:min(420px,55vw);height:min(420px,55vw);position:relative;
+  width:min(500px,70vw);height:min(500px,70vw);position:relative;
 }
-#moonCanvas{width:100%;height:100%;display:block;cursor:grab}
+#moonCanvas{width:100%;height:100%;display:block;cursor:grab;background:transparent}
 #moonCanvas:active{cursor:grabbing}
-/* glow behind moon */
-.moon-canvas-wrap::before{
-  content:'';position:absolute;inset:-20px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,130,243,0.1) 40%,transparent 70%);
-  pointer-events:none;z-index:-1;
-}
 
 /* ---------- MISSION CARDS ---------- */
 .pn-card-stack{display:flex;flex-direction:column;gap:16px}
@@ -801,6 +796,7 @@ textarea{
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border:1px solid rgba(34,197,94,0.25);
   border-radius:14px;
+  width:100%;max-width:600px;
 }
 #pnPassCount{
   font:800 28px system-ui,sans-serif;letter-spacing:.02em;
@@ -868,6 +864,7 @@ textarea{
           <div class="pn-pass-sub">for current mission requirements</div>
         </div>
 
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="pn-card">
           <div class="pn-card-head">
             <div class="pn-card-icon">📅</div>
@@ -887,18 +884,16 @@ textarea{
           <div class="pn-opt">
             <div class="pn-opt-top"><span>Min sunlight</span><b id="pnVs">55%</b></div>
             <input type="range" id="pnRs" min="20" max="95" value="55">
-            <div class="pn-hint">↑ more solar power generation</div>
           </div>
           <div class="pn-opt">
             <div class="pn-opt-top"><span>Max darkness</span><b id="pnVd">90 h</b></div>
             <input type="range" id="pnRd" min="10" max="200" value="90">
-            <div class="pn-hint">↓ battery must survive longest night</div>
           </div>
           <div class="pn-opt">
             <div class="pn-opt-top"><span>Min Earth contact</span><b id="pnVc">70%</b></div>
             <input type="range" id="pnRc" min="10" max="100" value="70">
-            <div class="pn-hint">↑ direct comms link to DSN</div>
           </div>
+        </div>
         </div>
 
         <a href="#s1" class="btn btn-primary" style="text-align:center;text-decoration:none;border-radius:10px;padding:14px 0;display:block">Launch Mission Control →</a>
