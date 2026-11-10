@@ -702,51 +702,13 @@ textarea{
 
 /* ===== POLAR NAVIGATOR — 3D MOON MISSION DESIGNER ===== */
 #polarNav{
-  position:relative;z-index:2;
-  min-height:100vh;
-  background:radial-gradient(ellipse at 60% 40%,rgba(8,20,50,0.6) 0%,#000 70%);
-  display:flex;align-items:center;justify-content:center;
-  padding:40px 20px;
-  overflow:hidden;
-}
-/* subtle star particles behind */
-#polarNav::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(1px 1px at 15% 25%,rgba(255,255,255,0.6),transparent),
-    radial-gradient(1px 1px at 45% 12%,rgba(255,255,255,0.4),transparent),
-    radial-gradient(1.5px 1.5px at 72% 65%,rgba(0,130,243,0.5),transparent),
-    radial-gradient(1px 1px at 88% 30%,rgba(255,255,255,0.5),transparent),
-    radial-gradient(1px 1px at 30% 80%,rgba(232,75,240,0.4),transparent),
-    radial-gradient(1px 1px at 60% 90%,rgba(255,255,255,0.3),transparent);
-  pointer-events:none;z-index:0;
+  position:relative;z-index:1;
+  background:transparent;
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 0 30px;
 }
 .pn-inner{
   max-width:1200px;width:100%;margin:0 auto;position:relative;z-index:1;
-}
-.pn-top{
-  text-align:center;margin-bottom:32px;
-}
-.pn-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:6px 18px;background:rgba(4,7,16,0.8);
-  border:1px solid rgba(0,130,243,0.3);border-radius:24px;
-  margin-bottom:16px;
-}
-.pn-badge .beacon-dot{width:6px;height:6px}
-.pn-badge span{
-  font:600 10px system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);
-}
-.pn-h1{
-  font:900 clamp(36px,6vw,72px)/1 Impact,'Arial Black',sans-serif;
-  letter-spacing:.04em;text-transform:uppercase;color:#fff;
-  background:linear-gradient(180deg,#fff 40%,rgba(255,255,255,0.6) 70%,rgba(0,130,243,0.8));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:8px;
-}
-.pn-headline{
-  font:500 clamp(14px,2vw,20px) system-ui,sans-serif;
-  letter-spacing:.08em;color:var(--mut);
 }
 .pn-body{
   display:flex;flex-direction:column;align-items:center;gap:28px;
@@ -839,69 +801,6 @@ textarea{
 <div id="scrollBar"></div>
 <div id="stars"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#04060e" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
-<!-- ===== 3D MOON POLAR NAVIGATOR ===== -->
-<div id="polarNav">
-  <div class="pn-inner">
-    <div class="pn-top">
-      <div class="pn-badge"><span class="beacon-dot"></span><span>NASA Horizons API Active</span></div>
-      <div class="pn-h1">HORIZON ATLAS</div>
-      <div class="pn-headline">What does your lander need?</div>
-    </div>
-    <div class="pn-body">
-      <!-- LEFT: 3D Moon Globe (WebGL) -->
-      <div class="moon-stage">
-        <div class="moon-canvas-wrap">
-          <canvas id="moonCanvas"></canvas>
-        </div>
-        <!-- Hidden SVG for data compat with drawPolarMap -->
-        <svg id="polarMap" viewBox="-110 -110 220 220" style="display:none"><g id="pmPins"></g></svg>
-      </div>
-
-      <!-- RIGHT: Mission Cards -->
-      <div class="pn-card-stack">
-        <div class="pn-pass-banner">
-          <span id="pnPassCount" style="color:var(--ok)">– of – sites pass</span>
-          <div class="pn-pass-sub">for current mission requirements</div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="pn-card">
-          <div class="pn-card-head">
-            <div class="pn-card-icon">📅</div>
-            <div class="pn-card-title">Mission Window</div>
-          </div>
-          <div class="pn-date-row">
-            <label for="pnDateSel">Start date</label>
-            <select id="pnDateSel"><option>Loading…</option></select>
-          </div>
-        </div>
-
-        <div class="pn-card">
-          <div class="pn-card-head">
-            <div class="pn-card-icon">☀️</div>
-            <div class="pn-card-title">Mission Parameters</div>
-          </div>
-          <div class="pn-opt">
-            <div class="pn-opt-top"><span>Min sunlight</span><b id="pnVs">55%</b></div>
-            <input type="range" id="pnRs" min="20" max="95" value="55">
-          </div>
-          <div class="pn-opt">
-            <div class="pn-opt-top"><span>Max darkness</span><b id="pnVd">90 h</b></div>
-            <input type="range" id="pnRd" min="10" max="200" value="90">
-          </div>
-          <div class="pn-opt">
-            <div class="pn-opt-top"><span>Min Earth contact</span><b id="pnVc">70%</b></div>
-            <input type="range" id="pnRc" min="10" max="100" value="70">
-          </div>
-        </div>
-        </div>
-
-        <a href="#s1" class="btn btn-primary" style="text-align:center;text-decoration:none;border-radius:10px;padding:14px 0;display:block">Launch Mission Control →</a>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="pm-tooltip" id="pmTip"></div>
 
 <nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#data-method">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
 
@@ -967,6 +866,35 @@ textarea{
  </div>
 
  <section id="s1" class="reveal-on-scroll"><div class="lab cy">01 · Explore · Artemis III Landing Sites</div><h3 class="sh">Explore: what does your lander need?</h3>
+
+ <!-- 3D Moon Globe -->
+ <div id="polarNav">
+  <div class="moon-stage">
+    <div class="moon-canvas-wrap">
+      <canvas id="moonCanvas"></canvas>
+    </div>
+    <svg id="polarMap" viewBox="-110 -110 220 220" style="display:none"><g id="pmPins"></g></svg>
+  </div>
+  <div class="pn-card-stack">
+    <div class="pn-pass-banner">
+      <span id="pnPassCount" style="color:var(--ok)">– of – sites pass</span>
+      <div class="pn-pass-sub">for current mission requirements</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="pn-card">
+        <div class="pn-card-head"><div class="pn-card-icon">📅</div><div class="pn-card-title">Mission Window</div></div>
+        <div class="pn-date-row"><label for="pnDateSel">Start date</label><select id="pnDateSel"><option>Loading…</option></select></div>
+      </div>
+      <div class="pn-card">
+        <div class="pn-card-head"><div class="pn-card-icon">☀️</div><div class="pn-card-title">Mission Parameters</div></div>
+        <div class="pn-opt"><div class="pn-opt-top"><span>Min sunlight</span><b id="pnVs">55%</b></div><input type="range" id="pnRs" min="20" max="95" value="55"></div>
+        <div class="pn-opt"><div class="pn-opt-top"><span>Max darkness</span><b id="pnVd">90 h</b></div><input type="range" id="pnRd" min="10" max="200" value="90"></div>
+        <div class="pn-opt"><div class="pn-opt-top"><span>Min Earth contact</span><b id="pnVc">70%</b></div><input type="range" id="pnRc" min="10" max="100" value="70"></div>
+      </div>
+    </div>
+  </div>
+ </div>
+ <div class="pm-tooltip" id="pmTip"></div>
  <div class="hud">
   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
   <div class="brand">HORIZON <span>SITE NAVIGATOR</span></div>
