@@ -753,62 +753,23 @@ textarea{
 }
 @media(max-width:900px){.pn-body{grid-template-columns:1fr;gap:24px}}
 
-/* ---------- 3D MOON ---------- */
+/* ---------- 3D MOON GLOBE ---------- */
 .moon-stage{
   display:flex;align-items:center;justify-content:center;
-  perspective:1200px;
   position:relative;
 }
-.moon-3d-wrap{
-  position:relative;
-  width:min(380px,55vw);aspect-ratio:1;
-  animation:moon-float 8s ease-in-out infinite;
+.moon-canvas-wrap{
+  width:min(420px,55vw);aspect-ratio:1;position:relative;
 }
-@keyframes moon-float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-.moon-3d{
-  width:100%;height:100%;border-radius:50%;
-  background:url('assets/blue_moon.png') center/cover;
-  box-shadow:
-    inset -50px -35px 70px rgba(0,0,0,0.92),
-    inset 20px 10px 40px rgba(0,60,180,0.15),
-    0 0 50px rgba(0,130,243,0.25),
-    0 0 100px rgba(0,130,243,0.12),
-    0 0 200px rgba(0,60,180,0.06);
-  animation:moon-spin 80s linear infinite;
-  position:relative;overflow:hidden;
-}
-/* simulated rotation via bg-position shift */
-@keyframes moon-spin{
-  0%{background-position:0% center}
-  100%{background-position:200% center}
-}
-/* terminator overlay for 3D depth */
-.moon-3d::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  background:linear-gradient(105deg,transparent 35%,rgba(0,0,0,0.6) 55%,rgba(0,0,0,0.9) 75%);
-  pointer-events:none;
-}
-/* glow ring */
-.moon-3d-wrap::after{
-  content:'';position:absolute;inset:-8px;border-radius:50%;
-  border:1.5px solid rgba(0,130,243,0.2);
-  box-shadow:0 0 30px rgba(0,130,243,0.15);
-  pointer-events:none;
+#moonCanvas{width:100%;height:100%;display:block;cursor:grab;border-radius:4px}
+#moonCanvas:active{cursor:grabbing}
+/* glow behind moon */
+.moon-canvas-wrap::before{
+  content:'';position:absolute;inset:-20px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,130,243,0.1) 40%,transparent 70%);
+  pointer-events:none;z-index:-1;
   animation:glow-pulse 4s ease-in-out infinite alternate;
 }
-@keyframes glow-pulse{
-  0%{opacity:0.5;box-shadow:0 0 20px rgba(0,130,243,0.1)}
-  100%{opacity:1;box-shadow:0 0 40px rgba(0,130,243,0.25)}
-}
-/* polar map overlay on the moon */
-.moon-polar-overlay{
-  position:absolute;inset:15%;
-  pointer-events:auto;
-}
-#polarMap{width:100%;height:100%;overflow:visible;display:block}
 
 /* ---------- MISSION CARDS ---------- */
 .pn-card-stack{display:flex;flex-direction:column;gap:16px}
@@ -892,28 +853,13 @@ textarea{
       <div class="pn-headline">What does your lander need?</div>
     </div>
     <div class="pn-body">
-      <!-- LEFT: 3D Moon with polar map overlay -->
+      <!-- LEFT: 3D Moon Globe (WebGL) -->
       <div class="moon-stage">
-        <div class="moon-3d-wrap">
-          <div class="moon-3d"></div>
-          <div class="moon-polar-overlay">
-            <svg id="polarMap" viewBox="-110 -110 220 220" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="0" cy="0" r="20"  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.5" stroke-dasharray="2,2"/>
-              <circle cx="0" cy="0" r="40"  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.5" stroke-dasharray="2,2"/>
-              <circle cx="0" cy="0" r="60"  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.5" stroke-dasharray="2,2"/>
-              <circle cx="0" cy="0" r="80"  fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.5" stroke-dasharray="2,2"/>
-              <text x="2" y="-19"  fill="rgba(255,255,255,0.35)" font-size="5" font-family="system-ui">89°S</text>
-              <text x="2" y="-39"  fill="rgba(255,255,255,0.35)" font-size="5" font-family="system-ui">88°S</text>
-              <text x="2" y="-59"  fill="rgba(255,255,255,0.35)" font-size="5" font-family="system-ui">87°S</text>
-              <text x="2" y="-79"  fill="rgba(255,255,255,0.35)" font-size="5" font-family="system-ui">86°S</text>
-              <line x1="-100" x2="100" y1="0" y2="0" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
-              <line x1="0" x2="0" y1="-100" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
-              <circle cx="0" cy="0" r="2.5" fill="rgba(232,75,240,0.8)"/>
-              <text x="5" y="-3" fill="rgba(232,75,240,0.9)" font-size="4.5" font-family="system-ui" font-weight="700">POLE</text>
-              <g id="pmPins"></g>
-            </svg>
-          </div>
+        <div class="moon-canvas-wrap">
+          <canvas id="moonCanvas"></canvas>
         </div>
+        <!-- Hidden SVG for data compat with drawPolarMap -->
+        <svg id="polarMap" viewBox="-110 -110 220 220" style="display:none"><g id="pmPins"></g></svg>
       </div>
 
       <!-- RIGHT: Mission Cards -->
@@ -1956,4 +1902,247 @@ setDatasetMode = function(useReal) {
 // Initial draw (uses demo data until real data loads)
 populatePnDateSel();
 
+</script>
+<!-- Three.js for 3D Moon Globe -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ===== 3D MOON GLOBE =====
+(function(){
+  const wrap = document.querySelector('.moon-canvas-wrap');
+  const canvas = document.getElementById('moonCanvas');
+  if(!wrap || !canvas || typeof THREE === 'undefined') return;
+
+  const W = ()=> wrap.clientWidth || 380;
+  const H = ()=> wrap.clientHeight || W();
+
+  // --- Scene ---
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, W()/H(), 0.1, 100);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setSize(W(), H());
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  // --- Moon ---
+  const MR = 1; // moon radius
+  const geo = new THREE.SphereGeometry(MR, 64, 64);
+  const loader = new THREE.TextureLoader();
+  const tex = loader.load('assets/lroc_color_2k.jpg');
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  const mat = new THREE.MeshPhongMaterial({
+    map: tex, shininess: 5,
+    bumpScale: 0.02
+  });
+  const moon = new THREE.Mesh(geo, mat);
+  scene.add(moon);
+
+  // --- Atmosphere ring ---
+  const atmGeo = new THREE.RingGeometry(MR*1.01, MR*1.06, 64);
+  const atmMat = new THREE.MeshBasicMaterial({
+    color:0x4488ff, transparent:true, opacity:0.08, side:THREE.DoubleSide
+  });
+  const atm = new THREE.Mesh(atmGeo, atmMat);
+  atm.lookAt(camera.position);
+  scene.add(atm);
+
+  // --- Lighting ---
+  const sun = new THREE.DirectionalLight(0xffeedd, 1.8);
+  sun.position.set(4, 2, 5);
+  scene.add(sun);
+  scene.add(new THREE.AmbientLight(0x223344, 0.4));
+  const rim = new THREE.DirectionalLight(0x3366aa, 0.4);
+  rim.position.set(-3, -1, -3);
+  scene.add(rim);
+
+  // --- Camera: looking at south pole ---
+  camera.position.set(0.4, -2.0, 1.0);
+  camera.lookAt(0, -MR, 0);
+
+  // --- Controls ---
+  const ctrl = new THREE.OrbitControls(camera, canvas);
+  ctrl.target.set(0, -0.4, 0);
+  ctrl.enableDamping = true;
+  ctrl.dampingFactor = 0.06;
+  ctrl.minDistance = 1.3;
+  ctrl.maxDistance = 4.5;
+  ctrl.autoRotate = true;
+  ctrl.autoRotateSpeed = 0.4;
+  ctrl.enablePan = false;
+
+  // --- lat/lon → 3D ---
+  function ll3(lat, lon, r){
+    const phi = (90 - lat) * Math.PI/180;
+    const th  = (lon + 180) * Math.PI/180;
+    return new THREE.Vector3(
+      -r * Math.sin(phi) * Math.cos(th),
+       r * Math.cos(phi),
+       r * Math.sin(phi) * Math.sin(th)
+    );
+  }
+
+  // --- Site coords ---
+  const COORDS = [
+    {lat:-89.46, lon:222.51},
+    {lat:-88.81, lon:123.69},
+    {lat:-85.99, lon:357.07},
+    {lat:-87.45, lon:354.83}
+  ];
+
+  // --- Pin meshes ---
+  const pinGroup = new THREE.Group();
+  scene.add(pinGroup);
+  const pinGeo  = new THREE.SphereGeometry(0.022, 16, 16);
+  const stickGeo = new THREE.CylinderGeometry(0.004, 0.004, 0.1, 8);
+  const ringGeo  = new THREE.RingGeometry(0.028, 0.045, 32);
+  let pins3d = [];
+
+  function update3DPins(){
+    while(pinGroup.children.length) pinGroup.remove(pinGroup.children[0]);
+    pins3d = [];
+
+    const di = +document.getElementById('pnDateSel').value || 0;
+    const r = {s:+document.getElementById('pnRs').value, d:+document.getElementById('pnRd').value, c:+document.getElementById('pnRc').value};
+    const sites = typeof SITES!=='undefined' ? SITES : [];
+    const metrics = typeof M!=='undefined' ? M : [];
+
+    sites.forEach((s, i)=>{
+      const c = COORDS[i] || COORDS[0];
+      const m = metrics[i] && metrics[i][di] ? metrics[i][di] : null;
+      const pass = m ? score(m, r) >= 1 : false;
+      const col = pass ? 0x22c55e : 0xea384c;
+
+      // Surface position
+      const pos = ll3(c.lat, c.lon, MR + 0.005);
+      const outer = ll3(c.lat, c.lon, MR + 0.08);
+
+      // Pin head (glowing sphere)
+      const headMat = new THREE.MeshStandardMaterial({
+        color:col, emissive:col, emissiveIntensity:0.9, roughness:0.3
+      });
+      const head = new THREE.Mesh(pinGeo, headMat);
+      head.position.copy(outer);
+
+      // Stick from surface to head
+      const stickMat = new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:0.7});
+      const stick = new THREE.Mesh(stickGeo, stickMat);
+      const mid = pos.clone().add(outer).multiplyScalar(0.5);
+      stick.position.copy(mid);
+      stick.lookAt(0,0,0);
+      stick.rotateX(Math.PI/2);
+
+      // Pulse ring at base
+      const rMat = new THREE.MeshBasicMaterial({
+        color:col, transparent:true, opacity:0.35, side:THREE.DoubleSide
+      });
+      const ring = new THREE.Mesh(ringGeo, rMat);
+      ring.position.copy(ll3(c.lat, c.lon, MR + 0.008));
+      ring.lookAt(0,0,0);
+
+      const g = new THREE.Group();
+      g.add(head); g.add(stick); g.add(ring);
+      g.userData = {index:i, name:s.n, passes:pass};
+      pinGroup.add(g);
+      pins3d.push(g);
+    });
+  }
+
+  // --- Latitude ring lines on the globe (south pole region) ---
+  [86,87,88,89].forEach(lat=>{
+    const pts=[];
+    for(let lon=0;lon<=360;lon+=3) pts.push(ll3(-lat, lon, MR+0.003));
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+    const lineMat = new THREE.LineBasicMaterial({color:0x4488ff, transparent:true, opacity:0.15});
+    scene.add(new THREE.Line(lineGeo, lineMat));
+  });
+
+  // Pole marker
+  const polePos = ll3(-90, 0, MR+0.01);
+  const poleDotGeo = new THREE.SphereGeometry(0.012, 12, 12);
+  const poleDotMat = new THREE.MeshBasicMaterial({color:0xe84bf0});
+  const poleDot = new THREE.Mesh(poleDotGeo, poleDotMat);
+  poleDot.position.copy(polePos);
+  scene.add(poleDot);
+
+  // --- Raycaster for interaction ---
+  const ray = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  const tipEl = document.getElementById('pmTip');
+
+  canvas.addEventListener('click', e=>{
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX-rect.left)/rect.width)*2-1;
+    mouse.y = -((e.clientY-rect.top)/rect.height)*2+1;
+    ray.setFromCamera(mouse, camera);
+    const hits = ray.intersectObjects(pinGroup.children, true);
+    if(hits.length){
+      let o = hits[0].object;
+      while(o.parent && !o.userData.name) o = o.parent;
+      if(o.userData.index !== undefined){
+        sel = [o.userData.index, +document.getElementById('pnDateSel').value||0];
+        atlas();
+        drawPolarMap();
+      }
+    }
+  });
+
+  canvas.addEventListener('mousemove', e=>{
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((e.clientX-rect.left)/rect.width)*2-1;
+    mouse.y = -((e.clientY-rect.top)/rect.height)*2+1;
+    ray.setFromCamera(mouse, camera);
+    const hits = ray.intersectObjects(pinGroup.children, true);
+    if(hits.length){
+      let o = hits[0].object;
+      while(o.parent && !o.userData.name) o = o.parent;
+      if(o.userData.name){
+        const i = o.userData.index;
+        const di = +document.getElementById('pnDateSel').value||0;
+        const m = M[i]&&M[i][di]?M[i][di]:null;
+        const st = o.userData.passes;
+        tipEl.innerHTML = `<b>${o.userData.name}</b><br>Sun ${m?m.sun.toFixed(0)+'%':'–'} · Dark ${m?m.dark+' h':'–'} · Contact ${m?m.cd+'%':'–'}<br><b style="color:${st?'var(--ok)':'var(--bad)'}">${st?'PASS ✓':'FAIL ✗'}</b>`;
+        tipEl.style.display='block';
+        tipEl.style.left=(e.clientX+14)+'px';
+        tipEl.style.top=(e.clientY-10)+'px';
+        canvas.style.cursor='pointer';
+      }
+    } else {
+      tipEl.style.display='none';
+      canvas.style.cursor='grab';
+    }
+  });
+  canvas.addEventListener('mouseleave', ()=>{ tipEl.style.display='none'; });
+
+  // --- Animation loop ---
+  function animate(){
+    requestAnimationFrame(animate);
+    ctrl.update();
+    atm.lookAt(camera.position);
+    // Pulse pin rings
+    const t = Date.now()*0.003;
+    pins3d.forEach(p=>{
+      const ring = p.children[2];
+      if(ring){
+        ring.material.opacity = 0.2 + Math.sin(t)*0.18;
+        ring.scale.setScalar(1 + Math.sin(t)*0.12);
+      }
+    });
+    renderer.render(scene, camera);
+  }
+
+  // --- Resize ---
+  window.addEventListener('resize', ()=>{
+    camera.aspect = W()/H();
+    camera.updateProjectionMatrix();
+    renderer.setSize(W(), H());
+  });
+
+  // --- Hook into drawPolarMap for live updates ---
+  const _origDPM = drawPolarMap;
+  drawPolarMap = function(){ _origDPM(); update3DPins(); };
+
+  // --- Start ---
+  animate();
+  setTimeout(update3DPins, 600);
+})();
 </script></body></html>
