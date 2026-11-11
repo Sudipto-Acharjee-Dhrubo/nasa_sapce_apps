@@ -1249,7 +1249,7 @@ textarea{
   <label class="lab"><input type="checkbox" id="a2"> Earth contact needed every day</label>
   <p class="lab" style="letter-spacing:.06em;line-height:1.7">These battery numbers are our assumptions. Change them. Every site and date is simulated hour by hour.</p></div>
  <div class="pan"><h2>Best sites for this mission</h2><div id="scn"></div></div></div></section>
-<section id="sx" class="reveal-on-scroll"><div class="lab cy">04 · Explainable AI & Geometry</div><h3 class="sh">Explain: why it scored this way, and what would change it</h3>
+<section id="sx" class="reveal-on-scroll"><div class="lab cy">04 · Explainable decisions & geometry</div><h3 class="sh">Explain: why it scored this way, and what would change it</h3>
  <div class="pan"><div class="lab cy" id="xt"></div><p class="lab" style="letter-spacing:.06em">Click any Atlas square to explain it. No black-box AI: every number comes from Sun and Earth geometry.</p>
  <div class="g2"><div><h2>Why this score</h2><div id="xb"></div></div><div><h2>What if...</h2><div id="xw"></div><h2 style="margin-top:14px">Sensitivity</h2><div id="xs"></div></div></div></div></section>
 <section id="ss" class="reveal-on-scroll"><div class="lab cy">05 · Scientist tools</div><h3 class="sh">Scientists: check the numbers, export the data</h3>
@@ -1693,11 +1693,18 @@ const tot=(i,m,w)=>{
 
 const alt=(i,j,dh,dd=0)=>{
   if(!isRealData){
-    DH=dh;const m=demo_sim(i,j+dd/15.2);DH=0;return m;
+    const targetJ=j+dd/15.2;
+    if(targetJ<0)return{oob:true,msg:`no data before ${DATES[0]}`};
+    if(targetJ>=ND)return{oob:true,msg:`no data after ${DATES[ND-1]}`};
+    DH=dh;const m=demo_sim(i,targetJ);DH=0;return m;
   }
   const s=SITES[i];
   const startIdx=REAL_INDICES[j];
-  const shiftedIdx=Math.max(0,Math.min(s.times.length-H,startIdx+Math.round(dd*24)));
+  const shiftedIdx=startIdx+Math.round(dd*24);
+  const firstDate=DATES[0]||(s.times?s.times[0].split(' ')[0]:'2026-12-01');
+  const lastDate=DATES[DATES.length-1]||(s.times?s.times[s.times.length-H].split(' ')[0]:'2027-09-21');
+  if(shiftedIdx<0)return{oob:true,msg:`no data before ${firstDate}`};
+  if(shiftedIdx>s.times.length-H)return{oob:true,msg:`no data after ${lastDate}`};
   const sun_slice=s.sun_el.slice(shiftedIdx,shiftedIdx+H);
   const sun_az_slice=s.sun_az.slice(shiftedIdx,shiftedIdx+H);
   const earth_slice=s.earth_el.slice(shiftedIdx,shiftedIdx+H);
@@ -1778,10 +1785,30 @@ function xai(){
   }).join('')+'<p class="lab" style="letter-spacing:.06em;line-height:1.7">Starts at 50. Each bar shows how far a factor pushed the score up or down, using your Decision priorities.</p>';
   
   const pf=x=>score(x,r)>=1?'<b style="color:var(--ok)">PASS</b>':'<b style="color:var(--bad)">FAIL</b>',row=(a,b)=>`<div class="xr" style="grid-template-columns:1fr auto"><span>${a}</span><span>${b}</span></div>`;
-  $('xw').innerHTML=[-6,-3,3,6].map(dd=>[`Start ${dd>0?'+':''}${dd} days`,alt(i,j,0,dd)]).concat([['Horizon 0.3° higher (landing error)',alt(i,j,.3)]]).map(([l,x])=>row('If: '+l,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark ${pf(x)}`)).join('');
+  $('xw').innerHTML=[-6,-3,3,6].map(dd=>[`Start ${dd>0?'+':''}${dd} days`,alt(i,j,0,dd)]).concat([['Horizon 0.3° higher (landing error)',alt(i,j,.3)]]).map(([l,x])=>{
+    if(!x||x.oob)return row('If: '+l,`<span style="color:var(--mut);font-style:italic">${x&&x.msg?x.msg:'outside data range'}</span>`);
+    return row('If: '+l,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark ${pf(x)}`);
+  }).join('');
   
-  const ms=[['Sunlight need',(m.sun-r.s)/r.s,`can rise to ${m.sun.toFixed(0)}% (now ${r.s}%)`],['Dark limit',(r.d-m.dark)/r.d,`can fall to ${m.dark} h (now ${r.d} h)`],['Contact need',(m.cd-r.c)/r.c,`can rise to ${m.cd}% (now ${r.c}%)`]].sort((a,b)=>a[1]-b[1]);
-  $('xs').innerHTML=ms.map(x=>row(x[0],x[1]<0?'<b style="color:var(--bad)">already failing</b>':x[2])).join('')+`<p class="lab" style="letter-spacing:.06em;line-height:1.7">Most sensitive: ${ms[0][0]}. A small change there flips the verdict first.</p>`;
+  const reqs=[
+    {name:'Sunlight need',pass:m.sun>=r.s,margin:(m.sun-r.s)/r.s,val:`${m.sun.toFixed(0)}%`,limit:`${r.s}%`,gap:`${(r.s-m.sun).toFixed(0)} pts`,passText:`can rise to ${m.sun.toFixed(0)}% (now ${r.s}%)`},
+    {name:'Dark limit',pass:m.dark<=r.d,margin:(r.d-m.dark)/r.d,val:`${m.dark} h`,limit:`${r.d} h`,gap:`${m.dark-r.d} h`,passText:`can fall to ${m.dark} h (now ${r.d} h)`},
+    {name:'Contact need',pass:m.cd>=r.c,margin:(m.cd-r.c)/r.c,val:`${m.cd}%`,limit:`${r.c}%`,gap:`${r.c-m.cd}%`,passText:`can rise to ${m.cd}% (now ${r.c}%)`}
+  ];
+  const failing=reqs.filter(x=>!x.pass);
+  let note='';
+  if(failing.length===reqs.length){
+    const closest=[...reqs].sort((a,b)=>b.margin-a.margin)[0];
+    note=`Fails all ${reqs.length} requirements. Closest to passing: ${closest.name} (${closest.val} vs limit ${closest.limit}, ${closest.gap} away).`;
+  }else if(failing.length>0){
+    const details=failing.map(f=>`${f.name} (${f.val} vs limit ${f.limit}, ${f.gap} away)`).join(', ');
+    note=`Fails ${failing.length} of ${reqs.length} requirements: ${details}.`;
+  }else{
+    const mostSens=[...reqs].sort((a,b)=>a.margin-b.margin)[0];
+    note=`Most sensitive: ${mostSens.name}. A small change there flips the verdict first.`;
+  }
+  const ms=[...reqs].sort((a,b)=>a.margin-b.margin);
+  $('xs').innerHTML=ms.map(x=>row(x.name,x.pass?x.passText:'<b style="color:var(--bad)">already failing</b>')).join('')+`<p class="lab" style="letter-spacing:.06em;line-height:1.7">${note}</p>`;
   
   const us=[0,.15,.3,.5].map(o=>[o,alt(i,j,o)]),sn=us.map(x=>x[1].sun);
   $('un').innerHTML=us.map(([o,x])=>row(`Horizon +${o}° (~${Math.round(o/.3*400)} m shift)`,`${x.sun.toFixed(0)}% sun · ${x.dark} h dark`)).join('')+`<p>Sunlight ranges from ${Math.min(...sn).toFixed(0)}% to ${Math.max(...sn).toFixed(0)}% across these shifts.</p>`;
