@@ -2138,15 +2138,7 @@ populatePnDateSel();
     );
   }
 
-  // --- Site coords ---
-  const COORDS = [
-    {lat:-89.46, lon:222.51},
-    {lat:-88.81, lon:123.69},
-    {lat:-85.99, lon:357.07},
-    {lat:-87.45, lon:354.83}
-  ];
-
-  // --- Pin meshes ---
+  // --- Pin meshes (coordinates read dynamically from REAL_SITES) ---
   const pinGroup = new THREE.Group();
   scene.add(pinGroup);
   const pinGeo  = new THREE.SphereGeometry(0.022, 16, 16);
@@ -2160,18 +2152,20 @@ populatePnDateSel();
 
     const di = +document.getElementById('pnDateSel').value || 0;
     const r = {s:+document.getElementById('pnRs').value, d:+document.getElementById('pnRd').value, c:+document.getElementById('pnRc').value};
-    const sites = typeof SITES!=='undefined' ? SITES : [];
+    const sites = (typeof REAL_SITES !== 'undefined' && REAL_SITES.length) ? REAL_SITES : (typeof SITES !== 'undefined' ? SITES : []);
     const metrics = typeof M!=='undefined' ? M : [];
 
     sites.forEach((s, i)=>{
-      const c = COORDS[i] || COORDS[0];
+      const lat = (s && typeof s.lat === 'number') ? s.lat : (typeof REAL_SITES !== 'undefined' && REAL_SITES[i] ? REAL_SITES[i].lat : null);
+      const lon = (s && typeof s.lon === 'number') ? s.lon : (typeof REAL_SITES !== 'undefined' && REAL_SITES[i] ? REAL_SITES[i].lon : null);
+      if(lat === null || lon === null) return;
       const m = metrics[i] && metrics[i][di] ? metrics[i][di] : null;
       const pass = m ? score(m, r) >= 1 : false;
       const col = pass ? 0x22c55e : 0xea384c;
 
       // Surface position
-      const pos = ll3(c.lat, c.lon, MR + 0.005);
-      const outer = ll3(c.lat, c.lon, MR + 0.08);
+      const pos = ll3(lat, lon, MR + 0.005);
+      const outer = ll3(lat, lon, MR + 0.08);
 
       // Pin head (glowing sphere)
       const headMat = new THREE.MeshPhongMaterial({
@@ -2193,7 +2187,7 @@ populatePnDateSel();
         color:col, transparent:true, opacity:0.35, side:THREE.DoubleSide
       });
       const ring = new THREE.Mesh(ringGeo, rMat);
-      ring.position.copy(ll3(c.lat, c.lon, MR + 0.008));
+      ring.position.copy(ll3(lat, lon, MR + 0.008));
       ring.lookAt(0,0,0);
 
       const g = new THREE.Group();
