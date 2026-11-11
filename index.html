@@ -1022,7 +1022,7 @@ textarea{
 <div id="stars"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#04060e" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
 
-<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#val">Validation</a><a href="method.html">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
+<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="method.html">Validation & Method</a><a href="#contact">Contact</a></nav>
 
 <header class="hero">
   <div class="limb"></div>
@@ -1269,78 +1269,19 @@ textarea{
 </section>
 </main>
 
-<section id="val" class="wrap reveal-on-scroll">
- <div class="pan" style="padding:28px 24px">
-  <div class="lab cy">07 · NASA BENCHMARK & MODEL VALIDATION</div>
-  <h2 class="big" style="margin-top:6px">Validation: Sunlight Comparison & Sanity Checks</h2>
-  <p class="s2" style="margin-bottom:20px">Independent validation comparing Horizon Atlas computed polar illumination against published NASA/LOLA benchmarks, accompanied by automated data integrity checks.</p>
-
-  <div class="g2" style="margin-bottom:24px;gap:20px">
-   <!-- Benchmark Comparison Panel -->
-   <div style="background:rgba(8,16,32,0.6);border:1px solid var(--line-blue);border-radius:10px;padding:18px 20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-     <h4 style="margin:0;color:var(--cy)">Sunlight Illumination Benchmark</h4>
-     <span id="valSiteBadge" class="chip ok">Site: Malapert Massif</span>
-    </div>
-    <div id="valTableWrap" class="sc">
-     <div style="color:var(--mut);font-size:12px;padding:10px">Loading benchmark evaluation...</div>
-    </div>
-   </div>
-
-   <!-- Scientific Caveats Panel -->
-   <div style="background:rgba(8,16,32,0.6);border:1px solid var(--line-blue);border-radius:10px;padding:18px 20px">
-    <h4 style="margin:0 0 10px;color:var(--am)">Scientific Caveats & Differences</h4>
-    <ul class="ck" style="font-size:12px;line-height:1.7;color:#a794b8;margin:0;padding-left:18px">
-     <li><b>Averaging Duration:</b> Published illumination maps (e.g. Gläser et al. 2014) are averaged over an 18.6-year lunar precession cycle (~163,000 hours), whereas Horizon Atlas models our 13-month operational mission window (9,481 hours).</li>
-     <li><b>Observer Height:</b> Published models evaluate an elevated mast height (e.g. 2 m above surface). Horizon Atlas models a ground-level observer (0 m) where local boulders and micro-relief cast longer shadows.</li>
-     <li><b>DEM & Solar Disk:</b> Published maps use a 20 m/pixel LOLA DEM; Horizon Atlas uses the official 80 m LOLA polar DEM (<code>LDEM_80S_80MPP_ADJ</code>), evaluating Sun center disk elevation relative to the 360° ray-marched horizon.</li>
-     <li><b>Transparency:</b> Differences between ground-level mission windows and multi-year orbital averages are scientifically expected and openly documented.</li>
-    </ul>
-   </div>
-  </div>
-
-  <!-- Automated Browser Sanity Checks -->
-  <h4 style="margin:16px 0 10px;color:var(--electric-blue)">Automated Browser Sanity Checks</h4>
-  <div id="valSanityWrap" style="display:flex;flex-direction:column;gap:10px">
-   <div style="color:var(--mut);font-size:12px;padding:10px">Evaluating sanity checks...</div>
-  </div>
- </div>
-</section>
-
-<section id="data-method" class="wrap reveal-on-scroll">
+<section id="val-method" class="wrap reveal-on-scroll">
  <div class="pan cen" style="padding:32px 24px;text-align:center">
-  <div class="lab cy">NASA DATA & METHODOLOGY</div>
-  <h2 class="big" style="margin-top:6px;margin-bottom:10px">Data Sources & Method</h2>
-  <p class="s2" style="margin-bottom:20px;max-width:620px;margin-left:auto;margin-right:auto">Sources, method, assumptions, limitations and image credits are on a separate page.</p>
+  <div class="lab cy">VALIDATION, DATA & METHOD</div>
+  <h2 class="big" style="margin-top:6px;margin-bottom:10px">Validation, Data & Method</h2>
+  <p class="s2" style="margin-bottom:20px;max-width:620px;margin-left:auto;margin-right:auto">How we checked our numbers, where the data comes from, our method and limits, and image credits.</p>
   <a href="method.html" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:10px 24px">
-    Open Data, Method & Credits →
+    Open Validation, Data & Method →
   </a>
  </div>
 </section>
-
-<section id="str" class="wrap about r reveal-on-scroll">
-  <div>
-    <h2 class="big">Our Strengths</h2>
-    <p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
-    <ul class="ck">
-      <li>Starts from your lander's needs, not from one site.</li>
-      <li>Searches every site and date at once.</li>
-      <li>Explains why a choice wins or fails, and by how much.</li>
-      <li>Plans to test against real past CLPS landings.</li>
-      <li>Clear limits: demo model now, NASA SPICE and LRO data next.</li>
-    </ul>
-  </div>
-  <div class="disc">
-    <img src="assets/blue_moon.png" alt="Lunar Blue Moon Telemetry" class="str-moon-img">
-  </div>
-</section>
-<section id="who" class="wrap cen"><h2 class="big">Who It Helps</h2><p class="s">One tool, three kinds of users.</p><div class="wg">
-<div class="wc"><div class="av">🛰</div><h4>Mission planners</h4><div class="am">Compare many options fast</div><p class="s2">Get a ranked shortlist with strengths, risks and certainty.</p></div>
-<div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
-<div class="wc"><div class="av">🔬</div><h4>Lunar scientists</h4><div class="am">Check the numbers</div><p class="s2">Uncertainty ranges, data export and clear sources. Accuracy needs SPICE and LRO.</p></div></div></section>
 <footer id="contact" class="wrap"><div class="cs"><div><div class="ic">★</div><div><b>NASA Space Apps Challenge</b><br><span class="s2">Bangladesh 2026</span></div></div><div><div class="ic">◎</div><div><b>Challenge</b><br><span class="s2">Lunar Landing Site Navigator</span></div></div><div><div class="ic" style="overflow:hidden;padding:2px"><img src="assets/team_logo.png" alt="Team VOIDBRONE" style="width:100%;height:100%;object-fit:contain"></div><div><b>Team</b><br><span class="s2" style="color:#fff;font-weight:700">Team VOIDBRONE</span></div></div></div>
 <div class="fc"><div><img src="assets/team_logo.png" alt="Team VOIDBRONE" style="width:68px;height:68px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))"><br><b>HORIZON ATLAS</b><p id="footerModelDesc">A planning and learning tool, not software for real missions. Powered by NASA/JPL Horizons ephemerides.</p></div>
-<div><h5>Quick Links</h5><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><a href="#who">Who it helps</a></div>
+<div><h5>Quick Links</h5><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><a href="method.html#who">Who it helps</a></div>
 <div><h5>Tools</h5><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a></div>
 <div><h5>Data</h5><span>NASA SPICE (planned)</span><br><span>NASA LRO (planned)</span><br><span>NASA CLPS records</span></div></div>
 <p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · Team VOIDBRONE · NASA Space Apps Challenge Bangladesh 2026</p></footer>
@@ -1496,190 +1437,12 @@ function setDatasetMode(useReal){
   brief();
   dec();
   scn();
-  runValidationAndSanityChecks();
 }
 
 function updateSelectOptions(){
   const siteNames=SITES.map(s=>s.n);
   ['ca','cb','gs'].forEach(id=>fill(id,siteNames));
   ['cad','cbd','gd'].forEach(id=>fill(id,DATES));
-}
-
-// ===== STEP B: VALIDATION CONFIGURATION & SANITY CHECKS =====
-const VALIDATION = {
-  site_id: 'malapert_massif',
-  published_pct: null, // Starts as null; when given a number, diff is calculated and shown
-  published_source_text: 'NASA PGDA Product 69 (Gläser et al. 2014)',
-  published_source_url: 'https://pgda.gsfc.nasa.gov/products/69',
-  published_notes: 'LOLA polar illumination study (18.6-year precession cycle, 20m/px DEM, 2m mast height). Approximate benchmark comparison for candidate region.'
-};
-
-function runValidationAndSanityChecks(){
-  const tblWrap = document.getElementById('valTableWrap');
-  const sanityWrap = document.getElementById('valSanityWrap');
-  const siteBadge = document.getElementById('valSiteBadge');
-  if(!tblWrap || !sanityWrap) return;
-
-  const sites = (typeof REAL_SITES !== 'undefined' && REAL_SITES.length) ? REAL_SITES : [];
-  if(!sites.length){
-    tblWrap.innerHTML = '<div style="color:var(--mut);font-size:12px;padding:8px">Real NASA data not loaded yet (switch to Real Data mode).</div>';
-    sanityWrap.innerHTML = '<div style="color:var(--mut);font-size:12px;padding:8px">Waiting for NASA ephemerides to load...</div>';
-    return;
-  }
-
-  // Find site matching VALIDATION.site_id
-  let s = sites.find(item => item.id === VALIDATION.site_id);
-  let isApprox = false;
-  if(!s){
-    s = sites[0];
-    isApprox = true;
-  }
-  if(siteBadge) siteBadge.textContent = `Target: ${s.n || s.id}` + (isApprox ? ' (approx match)' : '');
-
-  // Calculate 13-month illumination stats for this site
-  const N = s.sun_el.length;
-  let unmaskCount = 0, maskCount = 0;
-  for(let t = 0; t < N; t++){
-    if(s.sun_el[t] > 0) unmaskCount++;
-    const hElev = getHorizonElev(s, s.sun_az[t]);
-    if(s.sun_el[t] > hElev) maskCount++;
-  }
-  const pctUnmasked = (unmaskCount / N) * 100;
-  const pctMasked = (maskCount / N) * 100;
-
-  // Selected 10-day window stats
-  const dateIdx = (typeof sel !== 'undefined' && sel && sel[1] !== undefined) ? sel[1] : (+document.getElementById('pnDateSel').value || 0);
-  const startIdx = (typeof REAL_INDICES !== 'undefined' && REAL_INDICES[dateIdx] !== undefined) ? REAL_INDICES[dateIdx] : 0;
-  let winUnmask = 0, winMask = 0;
-  const winLen = Math.min(240, N - startIdx);
-  for(let t = 0; t < winLen; t++){
-    const idx = startIdx + t;
-    if(s.sun_el[idx] > 0) winUnmask++;
-    const hElev = getHorizonElev(s, s.sun_az[idx]);
-    if(s.sun_el[idx] > hElev) winMask++;
-  }
-  const winPctUnmasked = (winUnmask / winLen) * 100;
-  const winPctMasked = (winMask / winLen) * 100;
-
-  // Build Table
-  const hasPub = typeof VALIDATION.published_pct === 'number' && !isNaN(VALIDATION.published_pct);
-  const diffVal = hasPub ? (pctMasked - VALIDATION.published_pct).toFixed(1) : null;
-  const diffSign = hasPub && (pctMasked - VALIDATION.published_pct) > 0 ? '+' : '';
-
-  let html = `<table class="ct" style="width:100%;font-size:12px">
-    <thead>
-      <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
-        <td style="padding:6px 10px"><b>Condition / Window</b></td>
-        <td style="padding:6px 10px"><b>Horizon Atlas (Our Value)</b></td>
-        <td style="padding:6px 10px"><b>Published NASA Reference</b></td>
-        ${hasPub ? '<td style="padding:6px 10px"><b>Difference</b></td>' : ''}
-        <td style="padding:6px 10px"><b>Source & Link</b></td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="padding:6px 10px"><b>Whole 13-Month Window (Mask ON)</b></td>
-        <td style="padding:6px 10px;color:var(--ok);font-weight:700">${pctMasked.toFixed(1)}%</td>
-        <td style="padding:6px 10px">${hasPub ? VALIDATION.published_pct.toFixed(1) + '%' : '<span class="chip" style="background:#131c2e;color:var(--mut);border:1px solid var(--line-blue);font-size:11px">Published reference value not entered yet</span>'}</td>
-        ${hasPub ? `<td style="padding:6px 10px;font-weight:700;color:${Math.abs(diffVal) < 10 ? 'var(--ok)' : 'var(--am)'}">${diffSign}${diffVal} pts</td>` : ''}
-        <td style="padding:6px 10px"><a href="${VALIDATION.published_source_url}" target="_blank" style="color:var(--electric-blue)">${VALIDATION.published_source_text}</a></td>
-      </tr>
-      <tr>
-        <td style="padding:6px 10px">Whole 13-Month Window (Mask OFF, 0° horizon)</td>
-        <td style="padding:6px 10px;color:var(--mut)">${pctUnmasked.toFixed(1)}%</td>
-        <td style="padding:6px 10px;color:var(--mut)">—</td>
-        ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
-        <td style="padding:6px 10px;color:var(--mut);font-size:11px">NASA/JPL Horizons geometric horizon</td>
-      </tr>
-      <tr>
-        <td style="padding:6px 10px">Selected 10-Day Window (Mask ON)</td>
-        <td style="padding:6px 10px;color:var(--cy);font-weight:700">${winPctMasked.toFixed(1)}%</td>
-        <td style="padding:6px 10px;color:var(--mut)">—</td>
-        ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
-        <td style="padding:6px 10px;color:var(--mut);font-size:11px">Window start: ${s.times ? s.times[startIdx].slice(0, 11) : 'Date ' + (dateIdx+1)}</td>
-      </tr>
-      <tr>
-        <td style="padding:6px 10px">Selected 10-Day Window (Mask OFF)</td>
-        <td style="padding:6px 10px;color:var(--mut)">${winPctUnmasked.toFixed(1)}%</td>
-        <td style="padding:6px 10px;color:var(--mut)">—</td>
-        ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
-        <td style="padding:6px 10px;color:var(--mut);font-size:11px">Window start: ${s.times ? s.times[startIdx].slice(0, 11) : 'Date ' + (dateIdx+1)}</td>
-      </tr>
-    </tbody>
-  </table>
-  <div style="margin-top:10px;font-size:11px;color:var(--mut);line-height:1.5">
-    <b>Notes:</b> ${VALIDATION.published_notes}
-  </div>`;
-  tblWrap.innerHTML = html;
-
-  // Run Sanity Checks across all sites
-  // 1. Value ranges and equal lengths
-  let sc1Pass = true;
-  const expectedLen = sites[0].sun_el.length;
-  sites.forEach(st => {
-    if(st.sun_el.length !== expectedLen || st.earth_el.length !== expectedLen) sc1Pass = false;
-    for(let i=0; i<expectedLen; i++){
-      if(st.sun_el[i] < -90 || st.sun_el[i] > 90 || st.earth_el[i] < -90 || st.earth_el[i] > 90){
-        sc1Pass = false; break;
-      }
-    }
-  });
-
-  // 2. Monotonicity: Mask ON never gives more sunlight than Mask OFF
-  let sc2Pass = true;
-  sites.forEach(st => {
-    const arrLen = st.sun_el.length;
-    for(let start = 0; start < arrLen - 240; start += 395){
-      let unmaskCount = 0, maskCount = 0;
-      for(let k = 0; k < 240; k++){
-        const idx = start + k;
-        if(st.sun_el[idx] > 0) unmaskCount++;
-        const hElev = getHorizonElev(st, st.sun_az[idx]);
-        if(st.sun_el[idx] > hElev) maskCount++;
-      }
-      if(maskCount > unmaskCount) { sc2Pass = false; break; }
-    }
-  });
-
-  // 3. Horizon plausibility & per-site min/max reporting
-  let sc3Pass = true;
-  const horizonRanges = [];
-  sites.forEach(st => {
-    if(st.horizon && st.horizon.horizon_elevations_deg){
-      const arr = st.horizon.horizon_elevations_deg;
-      const mn = Math.min(...arr);
-      const mx = Math.max(...arr);
-      if(mn < 0 || mx > 45) sc3Pass = false;
-      horizonRanges.push(`<b>${st.n || st.id}:</b> ${mn.toFixed(2)}°–${mx.toFixed(2)}°`);
-    }
-  });
-
-  let sanityHtml = `
-    <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <b style="color:#fff">1. Coordinate Limits & Time-Series Integrity:</b>
-        <div style="color:var(--mut);font-size:11px">All Sun and Earth elevations lie in [-90°, +90°]; all arrays equal in length (${expectedLen.toLocaleString()} hourly steps per site).</div>
-      </div>
-      <span class="chip ${sc1Pass ? 'ok' : 'bad'}">${sc1Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
-    </div>
-
-    <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>
-        <b style="color:#fff">2. Topographic Mask Monotonicity:</b>
-        <div style="color:var(--mut);font-size:11px">Terrain mask ON never yields more sunlight than mask OFF across all mission windows and sites.</div>
-      </div>
-      <span class="chip ${sc2Pass ? 'ok' : 'bad'}">${sc2Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
-    </div>
-
-    <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div style="flex:1">
-        <b style="color:#fff">3. Local Horizon Relief Plausibility:</b>
-        <div style="color:var(--mut);font-size:11px;margin-top:2px">Reported terrain mask elevation ranges: ${horizonRanges.join(' · ')}</div>
-      </div>
-      <span class="chip ${sc3Pass ? 'ok' : 'bad'}">${sc3Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
-    </div>
-  `;
-  sanityWrap.innerHTML = sanityHtml;
 }
 
 // --- 3. ASYNC INITIALIZATION WITH ERROR HANDLING ---
@@ -2703,7 +2466,6 @@ populatePnDateSel();
     _origDPM();
     update3DPins();
     update3DSunlight(currentHour);
-    if(typeof runValidationAndSanityChecks === 'function') runValidationAndSanityChecks();
   };
 
   const _origAtlas = atlas;
@@ -2711,7 +2473,6 @@ populatePnDateSel();
     _origAtlas();
     update3DPins();
     update3DSunlight(currentHour);
-    if(typeof runValidationAndSanityChecks === 'function') runValidationAndSanityChecks();
   };
 
   // --- Start ---

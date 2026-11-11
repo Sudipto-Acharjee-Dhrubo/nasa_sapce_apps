@@ -1022,14 +1022,52 @@ textarea{
 <div id="stars"></div>
 <nav class="nav" style="position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--line-blue);background:rgba(4,7,16,0.92);backdrop-filter:blur(12px);z-index:1000">
   <div style="font:700 15px var(--font-cond);letter-spacing:.15em;text-transform:uppercase;color:#fff">
-    HORIZON ATLAS <span style="color:var(--electric-blue);font-weight:400">· DATA, METHOD & CREDITS</span>
+    HORIZON ATLAS <span style="color:var(--electric-blue);font-weight:400">· VALIDATION, DATA, METHOD & CREDITS</span>
   </div>
   <a href="index.html" class="btn" style="text-decoration:none;padding:7px 18px;margin:0;font-size:12px;display:inline-flex;align-items:center;gap:6px">
     ← Back to Horizon Atlas
   </a>
 </nav>
 <main style="position:relative;z-index:1;padding-top:20px">
-<section id="data-method" class="wrap">
+<section id="val" class="wrap">
+ <div class="pan" style="padding:28px 24px">
+  <div class="lab cy">07 · NASA BENCHMARK & MODEL VALIDATION</div>
+  <h2 class="big" style="margin-top:6px">Validation: Sunlight Comparison & Sanity Checks</h2>
+  <p class="s2" style="margin-bottom:20px">Independent validation comparing Horizon Atlas computed polar illumination against published NASA/LOLA benchmarks, accompanied by automated data integrity checks.</p>
+
+  <div class="g2" style="margin-bottom:24px;gap:20px">
+   <!-- Benchmark Comparison Panel -->
+   <div style="background:rgba(8,16,32,0.6);border:1px solid var(--line-blue);border-radius:10px;padding:18px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+     <h4 style="margin:0;color:var(--cy)">Sunlight Illumination Benchmark</h4>
+     <span id="valSiteBadge" class="chip ok">Site: Malapert Massif</span>
+    </div>
+    <div id="valTableWrap" class="sc">
+     <div style="color:var(--mut);font-size:12px;padding:10px">Loading benchmark evaluation...</div>
+    </div>
+   </div>
+
+   <!-- Scientific Caveats Panel -->
+   <div style="background:rgba(8,16,32,0.6);border:1px solid var(--line-blue);border-radius:10px;padding:18px 20px">
+    <h4 style="margin:0 0 10px;color:var(--am)">Scientific Caveats & Differences</h4>
+    <ul class="ck" style="font-size:12px;line-height:1.7;color:#a794b8;margin:0;padding-left:18px">
+     <li><b>Averaging Duration:</b> Published illumination maps (e.g. Gläser et al. 2014) are averaged over an 18.6-year lunar precession cycle (~163,000 hours), whereas Horizon Atlas models our 13-month operational mission window (9,481 hours).</li>
+     <li><b>Observer Height:</b> Published models evaluate an elevated mast height (e.g. 2 m above surface). Horizon Atlas models a ground-level observer (0 m) where local boulders and micro-relief cast longer shadows.</li>
+     <li><b>DEM & Solar Disk:</b> Published maps use a 20 m/pixel LOLA DEM; Horizon Atlas uses the official 80 m LOLA polar DEM (<code>LDEM_80S_80MPP_ADJ</code>), evaluating Sun center disk elevation relative to the 360° ray-marched horizon.</li>
+     <li><b>Transparency:</b> Differences between ground-level mission windows and multi-year orbital averages are scientifically expected and openly documented.</li>
+    </ul>
+   </div>
+  </div>
+
+  <!-- Automated Browser Sanity Checks -->
+  <h4 style="margin:16px 0 10px;color:var(--electric-blue)">Automated Browser Sanity Checks</h4>
+  <div id="valSanityWrap" style="display:flex;flex-direction:column;gap:10px">
+   <div style="color:var(--mut);font-size:12px;padding:10px">Evaluating sanity checks...</div>
+  </div>
+ </div>
+</section>
+
+<section id="data-method" class="wrap" style="margin-top:24px">
  <div class="pan" style="padding:28px 24px">
   <div class="lab cy">NASA DATA & METHODOLOGY</div>
   <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
@@ -1161,9 +1199,250 @@ textarea{
  </div>
 </section>
 
+<section id="str" class="wrap about r" style="margin-top:24px">
+  <div>
+    <h2 class="big">Our Strengths</h2>
+    <p>Horizon Atlas is a planning and learning tool that is honest about what it knows.</p>
+    <ul class="ck">
+      <li>Starts from your lander's needs, not from one site.</li>
+      <li>Searches every site and date at once.</li>
+      <li>Explains why a choice wins or fails, and by how much.</li>
+      <li>Plans to test against real past CLPS landings.</li>
+      <li>Clear limits: demo model now, NASA SPICE and LRO data next.</li>
+    </ul>
+  </div>
+  <div class="disc">
+    <img src="assets/blue_moon.png" alt="Lunar Blue Moon Telemetry" class="str-moon-img">
+  </div>
+</section>
+
+<section id="who" class="wrap cen" style="margin-top:24px">
+  <h2 class="big">Who It Helps</h2>
+  <p class="s">One tool, three kinds of users.</p>
+  <div class="wg">
+    <div class="wc"><div class="av">🛰</div><h4>Mission planners</h4><div class="am">Compare many options fast</div><p class="s2">Get a ranked shortlist with strengths, risks and certainty.</p></div>
+    <div class="wc"><div class="av">🎓</div><h4>Teachers and students</h4><div class="am">Learn why the pole is hard</div><p class="s2">Pictures, simple words and a game that teaches timing and place.</p></div>
+    <div class="wc"><div class="av">🔬</div><h4>Lunar scientists</h4><div class="am">Check the numbers</div><p class="s2">Uncertainty ranges, data export and clear sources. Accuracy needs SPICE and LRO.</p></div>
+  </div>
+</section>
+
 </main>
 <footer class="wrap" style="text-align:center;padding:40px 20px 60px;color:var(--mut);font-size:12px;border-top:1px solid var(--line-blue);margin-top:40px;position:relative;z-index:1">
   <p style="margin:0 0 6px;color:#fff;font-weight:600">Team VOIDBRONE · NASA Space Apps Challenge 2026 · Lunar Landing Site Navigator.</p>
   <p style="margin:0">Planning and learning tool, not software for real missions.</p>
 </footer>
+
+<script>
+// Dynamic Starfield
+let sh='';for(let i=0;i<240;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
+const starsEl = document.getElementById('stars');
+if(starsEl) starsEl.style.boxShadow=sh.slice(0,-1);
+
+// Standalone loader and validation logic for method.html (avoids coupling to index.html simulator state)
+const VALIDATION = {
+  site_id: 'malapert_massif',
+  published_pct: null, // Starts as null; when given a number, diff is calculated and shown
+  published_source_text: 'NASA PGDA Product 69 (Gläser et al. 2014)',
+  published_source_url: 'https://pgda.gsfc.nasa.gov/products/69',
+  published_notes: 'LOLA polar illumination study (18.6-year precession cycle, 20m/px DEM, 2m mast height). Approximate benchmark comparison for candidate region.'
+};
+
+function getHorizonElev(s, az){
+  if(!s.horizon || !s.horizon.horizon_elevations_deg) return 0.0;
+  const azNorm = ((az % 360) + 360) % 360;
+  const i0 = Math.floor(azNorm);
+  const i1 = (i0 + 1) % 360;
+  const f = azNorm - i0;
+  const arr = s.horizon.horizon_elevations_deg;
+  return arr[i0] * (1 - f) + arr[i1] * f;
+}
+
+async function loadAndRunValidation(){
+  const tblWrap = document.getElementById('valTableWrap');
+  const sanityWrap = document.getElementById('valSanityWrap');
+  const siteBadge = document.getElementById('valSiteBadge');
+  if(!tblWrap || !sanityWrap) return;
+
+  try {
+    const res = await fetch('data/index.json');
+    if(!res.ok) throw new Error(`HTTP ${res.status} fetching data/index.json`);
+    const idxData = await res.json();
+    
+    const sites = [];
+    for(const s of idxData.sites){
+      const sRes = await fetch(`data/${s.file}`);
+      if(!sRes.ok) throw new Error(`HTTP ${sRes.status} fetching data/${s.file}`);
+      const sJson = await sRes.json();
+      sJson.id = s.id;
+      sJson.n = s.name;
+      try {
+        const hRes = await fetch(`data/horizon_${s.id}.json`);
+        if(hRes.ok) sJson.horizon = await hRes.json();
+      } catch(e){}
+      sites.push(sJson);
+    }
+
+    if(!sites.length) throw new Error('No site ephemeris records found');
+
+    // Find site matching VALIDATION.site_id
+    let s = sites.find(item => item.id === VALIDATION.site_id);
+    let isApprox = false;
+    if(!s){
+      s = sites[0];
+      isApprox = true;
+    }
+    if(siteBadge) siteBadge.textContent = `Target: ${s.n || s.id}` + (isApprox ? ' (approx match)' : '');
+
+    // Calculate 13-month illumination stats for this site
+    const N = s.sun_el.length;
+    let unmaskCount = 0, maskCount = 0;
+    for(let t = 0; t < N; t++){
+      if(s.sun_el[t] > 0) unmaskCount++;
+      const hElev = getHorizonElev(s, s.sun_az[t]);
+      if(s.sun_el[t] > hElev) maskCount++;
+    }
+    const pctUnmasked = (unmaskCount / N) * 100;
+    const pctMasked = (maskCount / N) * 100;
+
+    // Selected 10-day window stats (window 0: 2026-Dec-01)
+    const startIdx = 0;
+    let winUnmask = 0, winMask = 0;
+    const winLen = Math.min(240, N - startIdx);
+    for(let t = 0; t < winLen; t++){
+      const idx = startIdx + t;
+      if(s.sun_el[idx] > 0) winUnmask++;
+      const hElev = getHorizonElev(s, s.sun_az[idx]);
+      if(s.sun_el[idx] > hElev) winMask++;
+    }
+    const winPctUnmasked = (winUnmask / winLen) * 100;
+    const winPctMasked = (winMask / winLen) * 100;
+
+    // Build Table
+    const hasPub = typeof VALIDATION.published_pct === 'number' && !isNaN(VALIDATION.published_pct);
+    const diffVal = hasPub ? (pctMasked - VALIDATION.published_pct).toFixed(1) : null;
+    const diffSign = hasPub && (pctMasked - VALIDATION.published_pct) > 0 ? '+' : '';
+
+    let html = `<table class="ct" style="width:100%;font-size:12px">
+      <thead>
+        <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
+          <td style="padding:6px 10px"><b>Condition / Window</b></td>
+          <td style="padding:6px 10px"><b>Horizon Atlas (Our Value)</b></td>
+          <td style="padding:6px 10px"><b>Published NASA Reference</b></td>
+          ${hasPub ? '<td style="padding:6px 10px"><b>Difference</b></td>' : ''}
+          <td style="padding:6px 10px"><b>Source & Link</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px 10px"><b>Whole 13-Month Window (Mask ON)</b></td>
+          <td style="padding:6px 10px;color:var(--ok);font-weight:700">${pctMasked.toFixed(1)}%</td>
+          <td style="padding:6px 10px">${hasPub ? VALIDATION.published_pct.toFixed(1) + '%' : '<span class="chip" style="background:#131c2e;color:var(--mut);border:1px solid var(--line-blue);font-size:11px">Published reference value not entered yet</span>'}</td>
+          ${hasPub ? `<td style="padding:6px 10px;font-weight:700;color:${Math.abs(diffVal) < 10 ? 'var(--ok)' : 'var(--am)'}">${diffSign}${diffVal} pts</td>` : ''}
+          <td style="padding:6px 10px"><a href="${VALIDATION.published_source_url}" target="_blank" style="color:var(--electric-blue)">${VALIDATION.published_source_text}</a></td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px">Whole 13-Month Window (Mask OFF, 0° horizon)</td>
+          <td style="padding:6px 10px;color:var(--mut)">${pctUnmasked.toFixed(1)}%</td>
+          <td style="padding:6px 10px;color:var(--mut)">—</td>
+          ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
+          <td style="padding:6px 10px;color:var(--mut);font-size:11px">NASA/JPL Horizons geometric horizon</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px">Selected 10-Day Window (Mask ON)</td>
+          <td style="padding:6px 10px;color:var(--cy);font-weight:700">${winPctMasked.toFixed(1)}%</td>
+          <td style="padding:6px 10px;color:var(--mut)">—</td>
+          ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
+          <td style="padding:6px 10px;color:var(--mut);font-size:11px">Window start: ${s.times ? s.times[startIdx].slice(0, 11) : 'Date 1'}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 10px">Selected 10-Day Window (Mask OFF)</td>
+          <td style="padding:6px 10px;color:var(--mut)">${winPctUnmasked.toFixed(1)}%</td>
+          <td style="padding:6px 10px;color:var(--mut)">—</td>
+          ${hasPub ? '<td style="padding:6px 10px;color:var(--mut)">—</td>' : ''}
+          <td style="padding:6px 10px;color:var(--mut);font-size:11px">Window start: ${s.times ? s.times[startIdx].slice(0, 11) : 'Date 1'}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:11px;color:var(--mut);line-height:1.5">
+      <b>Notes:</b> ${VALIDATION.published_notes}
+    </div>`;
+    tblWrap.innerHTML = html;
+
+    // Run Sanity Checks across all sites
+    // 1. Value ranges and equal lengths
+    let sc1Pass = true;
+    const expectedLen = sites[0].sun_el.length;
+    sites.forEach(st => {
+      if(st.sun_el.length !== expectedLen || st.earth_el.length !== expectedLen) sc1Pass = false;
+      for(let i=0; i<expectedLen; i++){
+        if(st.sun_el[i] < -90 || st.sun_el[i] > 90 || st.earth_el[i] < -90 || st.earth_el[i] > 90){
+          sc1Pass = false; break;
+        }
+      }
+    });
+
+    // 2. Monotonicity: Mask ON never gives more sunlight than Mask OFF
+    let sc2Pass = true;
+    sites.forEach(st => {
+      const arrLen = st.sun_el.length;
+      for(let start = 0; start < arrLen - 240; start += 395){
+        let unmaskCount = 0, maskCount = 0;
+        for(let k = 0; k < 240; k++){
+          const idx = start + k;
+          if(st.sun_el[idx] > 0) unmaskCount++;
+          const hElev = getHorizonElev(st, st.sun_az[idx]);
+          if(st.sun_el[idx] > hElev) maskCount++;
+        }
+        if(maskCount > unmaskCount) { sc2Pass = false; break; }
+      }
+    });
+
+    // 3. Horizon plausibility & per-site min/max reporting
+    let sc3Pass = true;
+    const horizonRanges = [];
+    sites.forEach(st => {
+      if(st.horizon && st.horizon.horizon_elevations_deg){
+        const arr = st.horizon.horizon_elevations_deg;
+        const mn = Math.min(...arr);
+        const mx = Math.max(...arr);
+        if(mn < 0 || mx > 45) sc3Pass = false;
+        horizonRanges.push(`<b>${st.n || st.id}:</b> ${mn.toFixed(2)}°–${mx.toFixed(2)}°`);
+      }
+    });
+
+    let sanityHtml = `
+      <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <b style="color:#fff">1. Coordinate Limits & Time-Series Integrity:</b>
+          <div style="color:var(--mut);font-size:11px">All Sun and Earth elevations lie in [-90°, +90°]; all arrays equal in length (${expectedLen.toLocaleString()} hourly steps per site).</div>
+        </div>
+        <span class="chip ${sc1Pass ? 'ok' : 'bad'}">${sc1Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
+      </div>
+
+      <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <b style="color:#fff">2. Topographic Mask Monotonicity:</b>
+          <div style="color:var(--mut);font-size:11px">Terrain mask ON never yields more sunlight than mask OFF across all mission windows and sites.</div>
+        </div>
+        <span class="chip ${sc2Pass ? 'ok' : 'bad'}">${sc2Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
+      </div>
+
+      <div style="background:rgba(4,7,16,0.7);border:1px solid rgba(0,130,243,0.18);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="flex:1">
+          <b style="color:#fff">3. Local Horizon Relief Plausibility:</b>
+          <div style="color:var(--mut);font-size:11px;margin-top:2px">Reported terrain mask elevation ranges: ${horizonRanges.join(' · ')}</div>
+        </div>
+        <span class="chip ${sc3Pass ? 'ok' : 'bad'}">${sc3Pass ? 'PASS ✓' : 'FAIL ✗'}</span>
+      </div>
+    `;
+    sanityWrap.innerHTML = sanityHtml;
+  } catch(err) {
+    console.error('Validation data load error:', err);
+    tblWrap.innerHTML = `<div style="color:var(--bad);font-size:12px;padding:12px"><b>Failed to load real NASA data:</b> ${err.message}. Please ensure files are served via HTTP (e.g. <code>python -m http.server 8000</code>).</div>`;
+    sanityWrap.innerHTML = `<div style="color:var(--bad);font-size:12px;padding:12px">Sanity checks could not execute: real NASA ephemeris failed to load.</div>`;
+  }
+}
+
+loadAndRunValidation();
+</script>
 </body></html>

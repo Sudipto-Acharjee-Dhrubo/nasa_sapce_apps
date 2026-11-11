@@ -21,7 +21,7 @@ Horizon Atlas is an interactive mission-planning and educational web tool design
 | **Malapert Massif** | -85.99°S | 357.07°E | +4,843.3 m | NASA Artemis III Candidate Regions / USGS LGRS |
 | **Haworth** | -87.45°S | 354.83°E | -3,312.3 m | NASA Artemis III Candidate Regions / IAU Gazetteer |
 
-Data sources, method and credits: method.html
+Validation, data sources, method, credits, strengths and users: method.html
 
 ---
 
