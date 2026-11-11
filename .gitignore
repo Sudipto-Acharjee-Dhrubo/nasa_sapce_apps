@@ -21,3 +21,7 @@ Thumbs.db
 Untitled*.png
 *.bak
 
+# Personal reports (kept locally, not published to remote)
+PROJECT_REPORT.md
+SIMPLE_PROJECT_EXPLANATION.md
+
