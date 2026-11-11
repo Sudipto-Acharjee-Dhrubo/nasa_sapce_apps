@@ -1992,15 +1992,15 @@ populatePnDateSel();
 
 </script>
 <!-- Three.js for 3D Moon Globe -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/OrbitControls.js"></script>
 <script>
 // ===== 3D MOON GLOBE =====
 (function(){
   const wrap = document.querySelector('.moon-canvas-wrap');
   const canvas = document.getElementById('moonCanvas');
   if(!wrap || !canvas){ console.error('Moon: no canvas/wrap'); return; }
-  if(typeof THREE === 'undefined'){ console.error('Moon: THREE not loaded'); wrap.innerHTML='<div style="color:#ea384c;padding:20px;text-align:center">3D requires internet for Three.js CDN</div>'; return; }
+  if(typeof THREE === 'undefined'){ console.error('Moon: THREE not loaded'); wrap.innerHTML='<div style="color:#ea384c;padding:20px;text-align:center">3D requires vendor/three.min.js</div>'; return; }
   if(typeof THREE.OrbitControls === 'undefined'){ console.error('Moon: OrbitControls not loaded'); }
 
   const W = ()=> wrap.clientWidth || 500;
