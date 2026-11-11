@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Horizon Atlas – Lunar Landing Site Navigator</title>
+<!-- Google Fonts: Anton (Display Headline), Roboto Condensed (Technical Subheads & UI), JetBrains Mono (Telemetry) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+  --bg:#000000;                     /* Deep dark black space void */
+  --pan:#040711;                    /* Activity card dark slate */
+  --pan-glass:rgba(4,7,16,0.88);    /* Deep dark space glassmorphism */
+  --line-blue:#142236;              /* HUD border blue */
+  --line-light:#3e577a;             /* Technical corner / accent blue */
+  --main-purple:#e84bf0;            /* Cyber neon purple */
+  --electric-blue:#0082f3;          /* Spaced celestial Earth link blue */
+  --ink:#f3f3f3;                    /* High-contrast crisp text */
+  --mut:#7d8ea6;                    /* Technical subtitle text */
+  --line:#142236;                   /* Standard panel border */
+  --cy:#e84bf0;                     /* Cyber neon purple primary accent */
+  --am:#e8a24a;                     /* Solar gold secondary accent */
+  --ok:#22c55e;                     /* Mission GO green */
+  --bad:#ea384c;                    /* Mission NO-GO red */
+  --font-anton:'Anton',Impact,sans-serif;
+  --font-cond:'Roboto Condensed',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+html{scroll-padding-top:70px;scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#000000;
+  background-image:
+    radial-gradient(circle at 50% 0%,rgba(0,130,243,0.08) 0%,rgba(232,75,240,0.03) 25%,transparent 55%),
+    linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:100% 100%, 54px 54px, 54px 54px;
+  color:var(--ink);
+  font:14px/1.6 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::selection{background:var(--main-purple);color:#fff}
+
+/* Dynamic Starfield Animation — 3 layered tilesets for depth */
+#stars{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+  opacity:1;
+}
+/* Layer 1 — small distant stars, fast tile repeat */
+#stars::before{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(1px 1px at 12px 18px,#fff,transparent),
+    radial-gradient(1px 1px at 55px 92px,rgba(255,255,255,0.8),transparent),
+    radial-gradient(1px 1px at 93px 34px,rgba(255,255,255,0.6),transparent),
+    radial-gradient(1px 1px at 141px 77px,#fff,transparent),
+    radial-gradient(1px 1px at 178px 148px,rgba(255,255,255,0.75),transparent),
+    radial-gradient(1px 1px at 220px 23px,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 263px 108px,rgba(255,255,255,0.9),transparent),
+    radial-gradient(1px 1px at 302px 55px,rgba(255,255,255,0.65),transparent),
+    radial-gradient(1px 1px at 348px 180px,#fff,transparent),
+    radial-gradient(1px 1px at 390px 70px,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 428px 130px,rgba(255,255,255,0.55),transparent),
+    radial-gradient(1px 1px at 471px 15px,#fff,transparent),
+    radial-gradient(1px 1px at 510px 165px,rgba(255,255,255,0.8),transparent),
+    radial-gradient(1px 1px at 553px 88px,rgba(255,255,255,0.6),transparent),
+    radial-gradient(1px 1px at 592px 42px,#fff,transparent),
+    radial-gradient(1px 1px at 38px 190px,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 115px 210px,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 240px 230px,rgba(255,255,255,0.65),transparent),
+    radial-gradient(1px 1px at 445px 240px,rgba(255,255,255,0.8),transparent),
+    radial-gradient(1px 1px at 575px 200px,rgba(255,255,255,0.55),transparent);
+  background-size:600px 260px;
+  animation:star-drift 180s linear infinite;
+  opacity:0.65;
+}
+/* Layer 2 — medium stars with colour tints, slower */
+#stars::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    radial-gradient(1.5px 1.5px at 42px 68px,rgba(0,130,243,0.9),transparent),
+    radial-gradient(2px 2px at 130px 25px,rgba(255,255,255,0.95),transparent),
+    radial-gradient(1.5px 1.5px at 195px 155px,rgba(232,75,240,0.85),transparent),
+    radial-gradient(2px 2px at 275px 90px,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 355px 40px,rgba(0,130,243,0.75),transparent),
+    radial-gradient(1px 1px at 415px 175px,rgba(255,220,180,0.9),transparent),
+    radial-gradient(2px 2px at 490px 110px,rgba(255,255,255,0.85),transparent),
+    radial-gradient(1.5px 1.5px at 548px 55px,rgba(232,75,240,0.7),transparent),
+    radial-gradient(1px 1px at 70px 220px,rgba(255,255,255,0.8),transparent),
+    radial-gradient(2px 2px at 310px 240px,rgba(0,130,243,0.6),transparent),
+    radial-gradient(1.5px 1.5px at 580px 230px,rgba(255,255,255,0.75),transparent),
+    /* extra bright hero stars */
+    radial-gradient(2.5px 2.5px at 160px 120px,rgba(255,255,255,1),transparent),
+    radial-gradient(2px 2px at 450px 80px,rgba(255,240,200,0.95),transparent),
+    radial-gradient(2.5px 2.5px at 520px 190px,rgba(180,210,255,0.9),transparent);
+  background-size:620px 270px;
+  animation:star-drift 240s linear infinite reverse;
+  opacity:0.9;
+}
+/* Page body background star tile (layer 3 — largest, slowest) */
+#stars{
+  background:
+    radial-gradient(1px 1px at 80px 60px,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 200px 150px,rgba(255,255,255,0.3),transparent),
+    radial-gradient(2px 2px at 350px 100px,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 500px 200px,rgba(255,255,255,0.35),transparent),
+    radial-gradient(1px 1px at 650px 50px,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 750px 170px,rgba(255,255,255,0.3),transparent),
+    radial-gradient(2px 2px at 900px 90px,rgba(255,255,255,0.45),transparent),
+    radial-gradient(1px 1px at 1050px 140px,rgba(255,255,255,0.35),transparent),
+    radial-gradient(1px 1px at 1150px 60px,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 1250px 200px,rgba(255,255,255,0.3),transparent);
+  background-size:1300px 280px;
+  animation:star-drift 300s linear infinite;
+}
+@keyframes star-drift{
+  0%{background-position:0 0}
+  100%{background-position:1300px 1300px}
+}
+
+/* Pulsing Status Beacon */
+.beacon-dot{
+  display:inline-block;
+  width:7px;height:7px;
+  border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 0 0 rgba(34,197,94,0.7);
+  animation:beacon-pulse 2s infinite;
+  margin-right:6px;
+  vertical-align:middle;
+}
+@keyframes beacon-pulse{
+  0%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,197,94,0.7)}
+  70%{transform:scale(1);box-shadow:0 0 0 7px rgba(34,197,94,0)}
+  100%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,197,94,0)}
+}
+
+/* Typography Classes */
+.lab{
+  font:600 11px var(--font-cond);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--mut);
+}
+.cy{color:var(--cy)}
+.am{color:var(--am)}
+h1, h2, h3, h4, h5{
+  font-family:var(--font-anton);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  font-weight:400;
+  margin:4px 0 10px;
+}
+.sh{
+  font-family:var(--font-anton);
+  font-size:clamp(24px,3.5vw,36px);
+  letter-spacing:.05em;
+  color:#fff;
+  margin:6px 0 16px;
+}
+
+/* Navigation - Spaced style */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;justify-content:center;gap:24px;align-items:center;flex-wrap:wrap;
+  padding:14px 4vw;
+  background:rgba(0,0,0,0.92);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line-blue);
+  font:600 12px var(--font-cond);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.nav a{color:var(--mut);text-decoration:none;transition:color .2s,text-shadow .2s}
+.nav a:hover{color:#fff;text-shadow:0 0 12px rgba(0,130,243,0.6)}
+.nav a.active{color:var(--electric-blue)}
+.dd{position:relative}
+.dd>div{
+  display:none;position:absolute;top:100%;left:-14px;min-width:180px;
+  background:#0c1524;border:1px solid var(--line-blue);
+  box-shadow:0 12px 30px rgba(0,0,0,0.8);
+  padding:8px 0;border-radius:2px;
+}
+.dd:hover>div,.dd:focus-within>div{display:block}
+.dd>div a{display:block;padding:8px 18px;color:var(--mut)}
+.dd>div a:hover{color:#fff;background:rgba(0,130,243,0.15)}
+
+/* Hero Header - Spaced "To Space & Back" Design */
+.hero{
+  position:relative;z-index:1;
+  min-height:min(90vh,780px);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  padding:30px 20px 60px;
+}
+.hero-grid{
+  position:relative;z-index:2;
+  width:100%;max-width:1220px;margin:0 auto;
+  display:grid;grid-template-columns:1.15fr 0.85fr;
+  align-items:center;gap:40px;
+}
+.hero h1{
+  font-family:var(--font-anton);
+  font-size:clamp(46px,7vw,90px);
+  letter-spacing:.04em;
+  line-height:.95;
+  margin:10px 0 0;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,#ffffff 45%,rgba(255,255,255,0.7) 75%,var(--main-purple) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 35px rgba(232,75,240,0.3));
+}
+.hero .hs{
+  font-family:var(--font-cond);
+  font-size:clamp(16px,2.4vw,24px);
+  letter-spacing:.25em;
+  font-weight:700;
+  color:var(--electric-blue);
+  text-transform:uppercase;
+  margin-top:10px;
+}
+.hero .tag{
+  font:600 12px var(--mono);
+  letter-spacing:.25em;
+  color:var(--mut);
+  margin:8px 0 28px;
+  text-transform:uppercase;
+}
+.limb{
+  position:absolute;left:50%;top:64%;width:180%;aspect-ratio:1;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,130,243,0.22) 0%,rgba(232,75,240,0.1) 22%,#000000 65%);
+  box-shadow:
+    0 -2px 10px 1px rgba(255,255,255,0.85),
+    0 -6px 35px 2px rgba(0,130,243,0.4),
+    0 -20px 90px 20px rgba(232,75,240,0.25);
+  pointer-events:none;
+}
+.hc{position:relative;z-index:2;max-width:680px;text-align:left}
+.lg{width:76px;height:76px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(0,130,243,0.5))}
+.team-hero-logo{
+  width:96px;height:96px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 20px rgba(0,130,243,0.6)) drop-shadow(0 0 35px rgba(232,75,240,0.4));
+  margin-bottom:8px;
+  transition:transform .3s ease;
+  display:inline-block;
+}
+.team-hero-logo:hover{
+  transform:scale(1.08) rotate(2deg);
+}
+
+/* Spacecraft Lander Animated Presentation */
+.hero-craft-container{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  perspective:1000px;
+  transition:transform .3s ease-out;
+  will-change:transform;
+}
+.craft-hud-badge{
+  position:relative;
+  padding:7px 16px;
+  background:rgba(4,7,16,0.85);
+  border:1px solid var(--line-blue);
+  backdrop-filter:blur(10px);
+  border-radius:2px;
+  margin-bottom:14px;
+  text-align:left;
+  box-shadow:0 0 20px rgba(0,0,0,0.8);
+}
+.craft-hud-top{display:flex;align-items:center;gap:6px}
+.craft-hud-label{font:700 11px var(--mono);letter-spacing:.18em;color:var(--electric-blue);text-transform:uppercase}
+.craft-hud-telemetry{font:500 10px var(--mono);letter-spacing:.12em;color:var(--mut);margin-top:2px}
+.craft-float-wrap{
+  position:relative;
+  width:100%;max-width:440px;
+  animation:space-hover 7.5s ease-in-out infinite;
+  transform-origin:center center;
+  filter:drop-shadow(0 25px 45px rgba(0,0,0,0.95)) drop-shadow(0 0 30px rgba(0,130,243,0.25));
+}
+@keyframes space-hover{
+  0%{transform:translate3d(0,0px,0) rotate(0deg)}
+  25%{transform:translate3d(-5px,-14px,0) rotate(1.4deg)}
+  50%{transform:translate3d(4px,-5px,0) rotate(-0.6deg)}
+  75%{transform:translate3d(-3px,-20px,0) rotate(-1.5deg)}
+  100%{transform:translate3d(0,0px,0) rotate(0deg)}
+}
+.hero-spacecraft-img{
+  width:100%;height:auto;display:block;
+  filter:brightness(1.08) contrast(1.12);
+  user-select:none;pointer-events:none;
+}
+.thruster-glow{
+  position:absolute;bottom:8%;left:50%;
+  transform:translateX(-50%);
+  width:70px;height:90px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,130,243,0.95) 0%,rgba(232,75,240,0.55) 45%,rgba(232,162,74,0.3) 70%,transparent 85%);
+  filter:blur(6px);
+  pointer-events:none;
+  animation:thruster-burn 1.8s ease-in-out infinite alternate;
+}
+@keyframes thruster-burn{
+  0%{opacity:0.55;transform:translateX(-50%) scale(0.85,0.8)}
+  50%{opacity:1;transform:translateX(-50%) scale(1.15,1.3);filter:blur(5px) drop-shadow(0 0 18px rgba(0,130,243,0.85))}
+  100%{opacity:0.75;transform:translateX(-50%) scale(0.95,1.05)}
+}
+@media(max-width:960px){
+  .hero{min-height:auto;padding:30px 16px 40px}
+  .hero-grid{grid-template-columns:1fr;text-align:center;gap:24px}
+  .hc{text-align:center;max-width:100%}
+  .hero-craft-container{max-width:300px;margin:0 auto;order:0}
+}
+
+/* Buttons - Spaced Capsule Buttons */
+.btn{
+  background:linear-gradient(135deg,#fff 0%,#e2e8f0 100%);
+  color:#04080e;
+  border:0;
+  padding:14px 40px;
+  font:700 12px var(--font-cond);
+  letter-spacing:.25em;
+  cursor:pointer;
+  text-transform:uppercase;
+  border-radius:4px;
+  transition:all .25s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 4px 18px rgba(0,0,0,0.5);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn:hover{
+  background:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(255,255,255,0.25),0 0 15px rgba(0,130,243,0.4);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--main-purple) 0%,#7a1fa0 100%);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:linear-gradient(135deg,#ff3dff 0%,var(--main-purple) 100%);
+  box-shadow:0 8px 25px rgba(232,75,240,0.45);
+}
+
+/* Containers & HUD Cards */
+#app{
+  display:block;position:relative;z-index:1;
+  max-width:1200px;margin:auto;padding:20px;
+}
+.hud{
+  display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;
+  gap:20px;align-items:center;
+  border:1px solid var(--line-blue);
+  background:var(--pan-glass);
+  backdrop-filter:blur(14px);
+  padding:14px 20px;
+  position:relative;
+  border-radius:4px;
+}
+@media(max-width:760px){.hud{grid-template-columns:1fr 1fr}.hud .brand{grid-column:1/-1}}
+.brand{font:700 16px var(--font-cond);letter-spacing:.15em;text-transform:uppercase}
+.brand span{color:var(--electric-blue);font-weight:400}
+.m b{display:block;font:700 18px var(--mono);margin-top:2px;color:#fff}
+.m .t{height:4px;background:#132035;margin-top:4px;border-radius:2px;overflow:hidden}
+.m .t i{display:block;height:100%;background:linear-gradient(90deg,var(--electric-blue),var(--main-purple));width:0;transition:width .25s}
+
+/* Chips & Badges */
+.chip{
+  font:600 11px var(--mono);
+  letter-spacing:.15em;
+  padding:6px 14px;
+  border:1px solid var(--line-blue);
+  background:rgba(12,21,36,0.85);
+  border-radius:3px;
+  text-transform:uppercase;
+}
+.chip.ok{color:var(--ok);border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08)}
+.chip.no{color:var(--bad);border-color:rgba(234,56,76,0.4);background:rgba(234,56,76,0.08)}
+
+/* Spaced Panels */
+.pan{
+  border:1px solid var(--line-blue);
+  background:var(--pan-glass);
+  backdrop-filter:blur(12px);
+  padding:20px;
+  margin-bottom:16px;
+  position:relative;
+  border-radius:4px;
+  transition:border-color .25s,box-shadow .25s;
+}
+.pan:hover{
+  border-color:rgba(232,75,240,0.45);
+  box-shadow:0 0 25px rgba(232,75,240,0.15);
+}
+.pan:before{
+  content:"";position:absolute;top:-1px;left:0;width:70px;height:2px;
+  background:linear-gradient(90deg,var(--main-purple),var(--electric-blue));
+}
+.pan h2{margin:4px 0 12px;font-size:24px;color:#fff}
+
+/* Spaced Corner Brackets for HUD feel */
+.corner-tl{position:absolute;top:0;left:0;width:9px;height:9px;border-top:2px solid var(--main-purple);border-left:2px solid var(--main-purple);pointer-events:none}
+.corner-tr{position:absolute;top:0;right:0;width:9px;height:9px;border-top:2px solid var(--electric-blue);border-right:2px solid var(--electric-blue);pointer-events:none}
+.corner-bl{position:absolute;bottom:0;left:0;width:9px;height:9px;border-bottom:2px solid var(--line-light);border-left:2px solid var(--line-light);pointer-events:none}
+.corner-br{position:absolute;bottom:0;right:0;width:9px;height:9px;border-bottom:2px solid var(--line-light);border-right:2px solid var(--line-light);pointer-events:none}
+
+.grid{display:grid;grid-template-columns:310px 1fr;gap:16px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+/* Sliders & Inputs */
+.opt{
+  border:1px solid var(--line-blue);
+  background:rgba(8,16,28,0.7);
+  padding:12px;margin-bottom:10px;
+  border-radius:3px;
+}
+.opt b{float:right;font:700 14px var(--mono);color:var(--cy)}
+.opt .up{color:var(--ok);font-size:12px;font-family:var(--font-cond);font-weight:600}
+.opt .dn{color:var(--bad);font-size:12px;font-family:var(--font-cond);font-weight:600}
+
+input[type=range]{
+  width:100%;
+  accent-color:var(--main-purple);
+  background:#132035;
+  height:6px;
+  border-radius:3px;
+  outline:none;
+}
+select{
+  background:#08101c;
+  color:#fff;
+  border:1px solid var(--line-blue);
+  padding:9px 12px;
+  font:600 12px var(--mono);
+  max-width:100%;
+  border-radius:3px;
+}
+
+/* Atlas Heatmap Table */
+.sc{overflow-x:auto}
+table{border-collapse:separate;border-spacing:3px;font-size:11px}
+th{font:600 11px var(--font-cond);letter-spacing:.08em;color:var(--mut);text-align:right;padding-right:8px;white-space:nowrap;font-weight:600}
+.dates th{text-align:center;padding:0;font-size:9px;font-family:var(--mono)}
+td{width:22px;height:22px;cursor:pointer;padding:0;border-radius:2px;transition:transform .15s,filter .15s}
+td:hover{transform:scale(1.25);z-index:2;filter:brightness(1.3)}
+td.pass{outline:2px solid #fff;outline-offset:-2px}
+td.sel{box-shadow:0 0 0 3px var(--main-purple);transform:scale(1.15)}
+
+/* Telemetry Bars & Footers */
+.res{
+  margin-top:12px;padding:12px 16px;
+  border:1px solid var(--ok);
+  background:rgba(34,197,94,0.08);
+  border-radius:3px;
+}
+.res.no{border-color:var(--bad);background:rgba(234,56,76,0.08)}
+.res ul{margin:8px 0 0;padding-left:18px}
+.leg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+
+svg.sky{
+  width:100%;display:block;
+  background:#02050c;
+  border:1px solid var(--line-blue);
+  border-radius:3px;
+}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.bar{height:8px;background:#132035;margin-top:6px;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;transition:width .2s}
+
+/* --- Celestial Bodies Animations (Sun & Earth) --- */
+.anim-sun-spin{
+  width:52px;height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  animation:sun-rotate 35s linear infinite;
+  filter:drop-shadow(0 0 16px rgba(255,140,0,0.85)) drop-shadow(0 0 30px rgba(232,75,240,0.4)) brightness(1.1);
+  will-change:transform;
+}
+@keyframes sun-rotate{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.05)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+
+.anim-earth-spin{
+  width:48px;height:48px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  animation:earth-rotate 45s linear infinite;
+  filter:drop-shadow(0 0 14px rgba(0,130,243,0.85)) drop-shadow(0 0 25px rgba(0,210,255,0.4));
+  box-shadow:inset -10px -8px 16px rgba(0,0,0,0.7);
+  will-change:transform;
+}
+@keyframes earth-rotate{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+/* Sky canvas SVG Sun & Earth */
+.sky-celestial-sun{
+  filter:drop-shadow(0 0 10px rgba(255,160,0,0.95)) drop-shadow(0 0 18px rgba(255,80,0,0.6));
+  animation:sky-sun-flare 2.5s ease-in-out infinite alternate;
+}
+@keyframes sky-sun-flare{
+  0%{opacity:0.9;filter:drop-shadow(0 0 8px rgba(255,160,0,0.9)) brightness(1)}
+  100%{opacity:1;filter:drop-shadow(0 0 16px rgba(255,200,40,1)) brightness(1.2)}
+}
+
+.sky-celestial-earth{
+  filter:drop-shadow(0 0 8px rgba(0,130,243,0.9)) drop-shadow(0 0 14px rgba(0,210,255,0.5));
+  animation:sky-earth-glow 3s ease-in-out infinite alternate;
+}
+@keyframes sky-earth-glow{
+  0%{opacity:0.9;filter:drop-shadow(0 0 6px rgba(0,130,243,0.85)) brightness(1)}
+  100%{opacity:1;filter:drop-shadow(0 0 12px rgba(90,190,255,1)) brightness(1.15)}
+}
+
+/* Celestial Strip & Cards */
+.celestial-strip{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  margin:12px 0 16px;
+}
+@media(max-width:768px){.celestial-strip{grid-template-columns:1fr}}
+.celestial-card{
+  display:flex;align-items:center;gap:14px;padding:12px 16px;
+  background:rgba(4,7,16,0.85);border:1px solid var(--line-blue);
+  border-radius:4px;position:relative;overflow:hidden;
+  transition:border-color .25s,box-shadow .25s;
+}
+.celestial-card:hover{
+  border-color:rgba(0,130,243,0.5);
+  box-shadow:0 0 20px rgba(0,130,243,0.15);
+}
+.celestial-card.sun-panel:hover{
+  border-color:rgba(232,162,74,0.6);
+  box-shadow:0 0 20px rgba(232,162,74,0.2);
+}
+.celestial-thumb-wrap{
+  flex-shrink:0;width:54px;height:54px;
+  display:grid;place-items:center;
+}
+.celestial-details{flex-grow:1;min-width:0}
+.celestial-type{font:700 10px var(--mono);letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+.celestial-title{display:flex;align-items:center;gap:8px;font:700 13px var(--mono);color:#fff;margin:3px 0 2px;flex-wrap:wrap}
+.celestial-meta{font:500 11px var(--font-cond);letter-spacing:.08em;color:var(--mut)}
+.celestial-pill{
+  font:700 10px var(--mono);letter-spacing:.12em;padding:2px 8px;border-radius:2px;text-transform:uppercase;
+}
+.celestial-pill.lit{background:rgba(232,162,74,0.15);color:var(--am);border:1px solid rgba(232,162,74,0.4)}
+.celestial-pill.dark{background:rgba(234,56,76,0.12);color:var(--bad);border:1px solid rgba(234,56,76,0.35)}
+.celestial-pill.contact{background:rgba(0,130,243,0.15);color:var(--electric-blue);border:1px solid rgba(0,130,243,0.4)}
+.celestial-pill.nocontact{background:rgba(234,56,76,0.12);color:var(--bad);border:1px solid rgba(234,56,76,0.35)}
+.foot{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line-blue);
+  background:rgba(8,16,28,0.7);
+  margin-top:14px;border-radius:3px;
+}
+@media(max-width:640px){.foot{grid-template-columns:1fr 1fr}}
+.foot div{padding:12px;border-right:1px solid var(--line-blue)}
+.foot div:last-child{border-right:none}
+.foot b{display:block;font:700 22px var(--mono);color:#fff;margin-top:2px}
+
+.ctl{display:flex;gap:12px;align-items:center;margin-top:10px}
+.ctl .btn{padding:10px 24px;margin:0}
+
+/* General Layout & Sections */
+section{scroll-margin-top:80px}
+#app section{margin-bottom:48px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:820px){.g2{grid-template-columns:1fr}}
+.xr{display:grid;grid-template-columns:110px 1fr 45px;align-items:center;gap:10px;margin:8px 0;font:12px var(--mono)}
+.xr i{display:block;height:8px;border-radius:2px}
+textarea{
+  width:100%;height:150px;
+  background:#050a14;color:#fff;
+  border:1px solid var(--line-blue);
+  font:11px var(--mono);padding:10px;border-radius:3px;
+}
+
+/* Feature Cards & How it Works (Spaced Styling) */
+.wrap{position:relative;z-index:1;max-width:1150px;margin:auto;padding:70px 20px}
+.big{font-family:var(--font-anton);font-size:clamp(32px,5vw,52px);letter-spacing:.04em;margin:0 0 10px;color:#fff}
+.cen{text-align:center}
+.s{color:var(--mut);max-width:600px;margin:0 auto 36px;font-size:15px}
+.s2{color:var(--mut);font-size:13px}
+.about{display:grid;grid-template-columns:340px 1fr;gap:50px;align-items:center}
+.about.r{grid-template-columns:1fr 340px}
+@media(max-width:820px){.about,.about.r{grid-template-columns:1fr;justify-items:center}}
+
+.disc{
+  width:min(300px,80vw);aspect-ratio:1;border-radius:50%;padding:8px;
+  background:linear-gradient(135deg,var(--main-purple),var(--electric-blue));
+  box-shadow:0 0 50px rgba(232,75,240,0.3);
+  animation:float-disc 6s ease-in-out infinite;
+}
+@keyframes float-disc{
+  0%,100%{transform:translateY(0px)}
+  50%{transform:translateY(-8px)}
+}
+.disc i{
+  display:block;height:100%;border-radius:50%;
+  background:radial-gradient(circle at 60% 38%,rgba(50,50,50,.6) 0 13%,transparent 14%),
+             radial-gradient(circle at 70% 58%,rgba(60,60,60,.55) 0 9%,transparent 10%),
+             radial-gradient(circle at 32% 30%,#d8d8d8,#8f8f8f 55%,#111 100%);
+  box-shadow:inset -30px -20px 50px rgba(0,0,0,.85);
+}
+
+.arc{position:relative}
+.fg{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;position:relative}
+.fg>div{
+  background:var(--pan-glass);
+  border:1px solid var(--line-blue);
+  padding:20px 14px;
+  border-radius:4px;
+  font-size:13px;color:var(--mut);
+  text-align:center;
+  transition:all .3s cubic-bezier(0.16,1,0.3,1);
+  position:relative;
+}
+.fg>div:hover{
+  transform:translateY(-6px);
+  border-color:var(--electric-blue);
+  box-shadow:0 10px 30px rgba(0,130,243,0.2);
+}
+.fg>div h4{color:#fff;font-size:16px;margin:10px 0 6px}
+.ic{
+  width:58px;height:58px;border-radius:50%;
+  border:1px solid var(--electric-blue);
+  display:grid;place-items:center;margin:auto;
+  color:var(--electric-blue);font-size:22px;
+  background:#08101c;
+  box-shadow:0 0 20px rgba(0,130,243,0.25);
+}
+.rm{
+  display:inline-block;
+  border:1px solid var(--line-light);
+  padding:4px 14px;font:700 11px var(--font-cond);letter-spacing:.12em;
+  color:#fff;text-decoration:none;margin-top:12px;border-radius:2px;
+  transition:all .2s;
+}
+.rm:hover{background:var(--electric-blue);border-color:var(--electric-blue)}
+.cb{display:block;margin:30px auto 0;width:min(260px,60vw);height:min(260px,60vw)}
+@media(max-width:900px){.fg{grid-template-columns:1fr 1fr}}
+
+/* Timeline */
+.tl{display:grid;grid-template-columns:repeat(5,1fr);align-items:start;gap:6px}
+.tl .ti{
+  padding:16px 14px;font-size:13px;color:var(--mut);
+  background:var(--pan-glass);border:1px solid var(--line-blue);border-radius:3px;
+}
+.tl .n{
+  grid-row:2;
+  background:linear-gradient(90deg,var(--main-purple),var(--electric-blue));
+  font:700 18px var(--font-anton);color:#fff;
+  padding:8px 0;text-align:center;border-radius:2px;margin:6px 0;
+}
+.tl .a{grid-row:1;align-self:end}
+.tl .b{grid-row:3}
+@media(max-width:820px){.tl{grid-template-columns:1fr}.tl>*{grid-column:1!important;grid-row:auto!important}}
+
+.ck{list-style:none;padding:0}
+.ck li{margin:14px 0;padding-left:34px;position:relative}
+.ck li:before{
+  content:"✓";position:absolute;left:0;top:2px;
+  width:20px;height:20px;border:1px solid var(--electric-blue);
+  color:var(--electric-blue);font-weight:700;font-size:11px;
+  display:grid;place-items:center;border-radius:2px;
+}
+.wg{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:820px){.wg{grid-template-columns:1fr}}
+.wc{
+  border:1px solid var(--line-blue);
+  padding:26px 20px;
+  background:var(--pan-glass);
+  border-radius:4px;
+  position:relative;
+}
+.av{
+  width:84px;height:84px;border-radius:50%;margin:auto;
+  display:grid;place-items:center;font-size:38px;
+  background:radial-gradient(circle at 35% 30%,#1c2e46,#0c1524);
+  border:2px solid var(--electric-blue);
+  box-shadow:0 0 20px rgba(0,130,243,0.3);
+}
+.cs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:10px 0 40px}
+.cs>div{display:flex;gap:14px;align-items:center}
+.fc{
+  display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:24px;
+  font-size:13px;color:var(--mut);border-top:1px solid var(--line-blue);padding-top:30px;
+}
+.fc h5{color:#fff;font-size:16px;margin:0 0 10px}
+.fc a{display:block;color:var(--mut);text-decoration:none;margin:6px 0;transition:color .2s}
+.fc a:hover{color:#fff}
+@media(max-width:820px){.cs,.fc{grid-template-columns:1fr}}
+
+/* --- Scroll Progress Bar --- */
+#scrollBar{
+  position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--cy),var(--electric-blue));
+  z-index:999;width:0%;
+  box-shadow:0 0 10px rgba(232,75,240,0.7);
+  transition:width .1s linear;
+}
+
+
+@keyframes ambient-spin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+/* --- About Section Moon Image --- */
+.about-moon-img{
+  width:100%;height:100%;
+  border-radius:50%;object-fit:cover;
+  display:block;
+  filter:brightness(1.08) contrast(1.15);
+  box-shadow:inset -25px -15px 50px rgba(0,0,0,.9);
+  animation:ambient-spin 120s linear infinite;
+}
+
+/* --- Strengths Section Blue Moon Image --- */
+.str-moon-img{
+  width:100%;height:100%;
+  border-radius:50%;object-fit:cover;
+  display:block;
+  filter:brightness(1.08) contrast(1.15) drop-shadow(0 0 20px rgba(0,130,243,0.35));
+  box-shadow:inset -25px -15px 50px rgba(0,10,30,.85);
+  animation:ambient-spin 140s linear infinite reverse;
+}
+
+/* --- Scroll-Triggered Reveal Animations --- */
+.reveal-on-scroll{
+  opacity:0;
+  transform:translateY(35px);
+  transition:opacity .7s cubic-bezier(0.16,1,0.3,1),transform .7s cubic-bezier(0.16,1,0.3,1);
+  will-change:opacity,transform;
+}
+.reveal-on-scroll.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ===== POLAR NAVIGATOR — 3D MOON MISSION DESIGNER ===== */
+#polarNav{
+  position:relative;z-index:1;
+  background:transparent;
+  display:flex;flex-direction:column;align-items:center;
+  /* Break out of #app max-width constraint so moon can be truly full-width */
+  width:100vw;
+  margin-left:calc(-50vw + 50%);
+  padding:0 0 50px;
+  overflow:visible;
+}
+.pn-card-stack{
+  width:100%;max-width:720px;
+  display:flex;flex-direction:column;gap:16px;
+  padding:0 20px;
+}
+@media(max-width:640px){
+  .pn-card-stack .pn-card{padding:14px 16px}
+  .pn-card-stack div[style*="grid"]{grid-template-columns:1fr!important}
+}
+
+/* ---------- 3D MOON GLOBE — truly floating, no border ---------- */
+.moon-stage{
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  width:100%;
+  padding:0;
+  overflow:visible;
+}
+.moon-canvas-wrap{
+  /* Wide canvas = lots of transparent breathing room around the sphere */
+  width:min(820px,98vw);
+  height:min(820px,98vw);
+  position:relative;
+  background:transparent !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  overflow:visible;
+}
+#moonCanvas{
+  width:100%;height:100%;display:block;cursor:grab;
+  background:transparent !important;
+  border:none;outline:none;box-shadow:none;
+}
+#moonCanvas:active{cursor:grabbing}
+
+/* ---- Full-view expand button ---- */
+.moon-fullview-btn{
+  position:absolute;
+  top:14px;right:14px;
+  z-index:20;
+  background:rgba(4,7,16,0.72);
+  border:1px solid rgba(0,130,243,0.35);
+  color:rgba(255,255,255,0.85);
+  font-size:18px;
+  width:40px;height:40px;
+  border-radius:10px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+  transition:background .2s, border-color .2s, transform .15s;
+  line-height:1;
+}
+.moon-fullview-btn:hover{
+  background:rgba(0,130,243,0.25);
+  border-color:rgba(0,130,243,0.7);
+  transform:scale(1.08);
+}
+
+/* ---- 3D Celestial Edge Badges (when Sun/Earth off-screen) ---- */
+.moon-edge-badge{
+  position:absolute;z-index:25;
+  background:rgba(4,7,16,0.88);
+  border:1px solid rgba(0,130,243,0.45);
+  color:#fff;
+  font:600 11px var(--font-cond,sans-serif);
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:14px;
+  pointer-events:none;transform:translate(-50%, -50%);
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 0 12px rgba(0,130,243,0.3);
+  backdrop-filter:blur(6px);
+  white-space:nowrap;
+}
+
+/* ---- 3D Timeline & Lighting Controls Panel ---- */
+.moon-controls-panel{
+  position:absolute;
+  bottom:14px;left:14px;right:14px;
+  z-index:20;
+  background:rgba(4,7,16,0.88);
+  border:1px solid rgba(0,130,243,0.28);
+  border-radius:12px;
+  padding:10px 16px;
+  backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.55);
+}
+@media(max-width:640px){
+  .moon-controls-panel{padding:8px 10px;bottom:8px;left:8px;right:8px;gap:4px}
+  .moon-readout{font-size:11px}
+  .moon-caption-text{font-size:10px}
+}
+.moon-readout{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;font-size:12px;
+}
+.moon-readout-time{
+  display:inline-flex;align-items:center;gap:6px;
+  font:600 12px var(--mono,monospace);color:#fff;
+}
+.moon-readout-telemetry{
+  display:inline-flex;align-items:center;gap:12px;
+  font:500 12px var(--mono,monospace);
+}
+.moon-slider-row{
+  display:flex;align-items:center;gap:10px;width:100%;
+}
+.moon-play-btn{
+  background:var(--main-purple);color:#fff;border:none;
+  padding:5px 12px;border-radius:6px;font:700 11px var(--font-cond,sans-serif);
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  transition:background .2s, transform .1s;
+}
+.moon-play-btn:hover{filter:brightness(1.15)}
+.moon-caption-text{
+  font:400 11px var(--font-cond,sans-serif);
+  letter-spacing:.04em;color:var(--mut);
+  text-align:center;margin-top:2px;
+}
+
+/* ---- Fullscreen overlay mode ---- */
+.moon-canvas-wrap.moon-fs{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  z-index:9000 !important;
+  background:#000 !important;
+  overflow:hidden !important;
+}
+/* Starfield shows behind transparent canvas in fullscreen via page #stars (z-index:0) */
+/* but we need an explicit black bg for the fullscreen wrap */
+.moon-canvas-wrap.moon-fs #moonCanvas{
+  width:100% !important;
+  height:100% !important;
+}
+/* Label bar shown in fullscreen */
+.moon-fs-bar{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:9001;
+  padding:14px 20px;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.moon-fs-bar.hidden{display:none!important}
+.moon-fs-title{
+  font:700 13px var(--font-cond,sans-serif);
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);
+}
+/* Star overlay for fullscreen mode (behind canvas) */
+.moon-fs-stars{
+  display:none;
+  position:fixed;inset:0;
+  z-index:8999;
+  background:#000
+    radial-gradient(1px 1px at 5% 8%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 12% 25%,rgba(0,130,243,0.9),transparent),
+    radial-gradient(1px 1px at 20% 60%,#fff,transparent),
+    radial-gradient(2px 2px at 28% 15%,rgba(255,255,255,0.95),transparent),
+    radial-gradient(1px 1px at 35% 72%,rgba(232,75,240,0.8),transparent),
+    radial-gradient(1px 1px at 42% 40%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 50% 88%,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 58% 20%,#fff,transparent),
+    radial-gradient(2px 2px at 65% 55%,rgba(0,130,243,0.75),transparent),
+    radial-gradient(1px 1px at 73% 10%,rgba(255,240,180,0.9),transparent),
+    radial-gradient(1px 1px at 80% 80%,#fff,transparent),
+    radial-gradient(1.5px 1.5px at 88% 35%,rgba(232,75,240,0.7),transparent),
+    radial-gradient(1px 1px at 93% 65%,rgba(255,255,255,0.85),transparent),
+    radial-gradient(2.5px 2.5px at 96% 18%,rgba(255,255,255,1),transparent),
+    radial-gradient(1px 1px at 15% 90%,rgba(0,130,243,0.6),transparent),
+    radial-gradient(1px 1px at 55% 5%,#fff,transparent),
+    radial-gradient(1px 1px at 70% 92%,rgba(255,255,255,0.65),transparent);
+  pointer-events:none;
+  animation:star-drift 60s linear infinite;
+}
+.moon-fs-stars.active{display:block}
+
+/* ---------- MISSION CARDS ---------- */
+.pn-card-stack{display:flex;flex-direction:column;gap:16px}
+.pn-card{
+  background:rgba(8,16,32,0.65);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(0,130,243,0.18);
+  border-radius:14px;padding:20px 22px;
+  transition:border-color .25s,box-shadow .25s;
+}
+.pn-card:hover{
+  border-color:rgba(0,130,243,0.4);
+  box-shadow:0 4px 30px rgba(0,130,243,0.1);
+}
+.pn-card-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.pn-card-icon{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,130,243,0.15);border:1px solid rgba(0,130,243,0.3);
+  display:grid;place-items:center;font-size:14px;flex-shrink:0;
+}
+.pn-card-title{
+  font:700 14px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;
+}
+.pn-pass-banner{
+  text-align:center;
+  padding:14px 20px;
+  background:rgba(8,16,32,0.65);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(34,197,94,0.25);
+  border-radius:14px;
+  width:100%;max-width:600px;
+}
+#pnPassCount{
+  font:800 28px system-ui,sans-serif;letter-spacing:.02em;
+  display:block;margin-bottom:2px;
+}
+.pn-pass-sub{
+  font:500 11px system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);
+}
+/* slider options inside cards */
+.pn-opt{margin-bottom:10px}
+.pn-opt:last-child{margin-bottom:0}
+.pn-opt-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.pn-opt-top span{
+  font:500 12px system-ui,sans-serif;color:rgba(255,255,255,0.7);
+}
+.pn-opt-top b{font:700 14px system-ui,monospace;color:var(--electric-blue)}
+.pn-hint{font:11px system-ui,sans-serif;color:var(--mut);margin-top:3px}
+/* date row */
+.pn-date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pn-date-row label{
+  font:600 12px system-ui,sans-serif;letter-spacing:.08em;color:rgba(255,255,255,0.6);
+  text-transform:uppercase;white-space:nowrap;
+}
+#pnDateSel{
+  flex:1;min-width:140px;background:rgba(8,16,32,0.8);color:#fff;
+  border:1px solid rgba(0,130,243,0.25);padding:10px 12px;
+  font:600 12px system-ui,monospace;border-radius:8px;
+}
+#pnDateSel:focus{outline:none;border-color:var(--electric-blue)}
+/* tooltip */
+.pm-tooltip{
+  position:fixed;pointer-events:none;z-index:999;
+  background:rgba(4,7,16,0.96);border:1px solid rgba(0,130,243,0.3);
+  padding:10px 14px;border-radius:10px;font:12px system-ui,sans-serif;
+  color:#fff;display:none;min-width:190px;line-height:1.7;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);
+}
+</style></head>
+<body>
+<div id="stars"></div>
+<nav class="nav" style="position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--line-blue);background:rgba(4,7,16,0.92);backdrop-filter:blur(12px);z-index:1000">
+  <div style="font:700 15px var(--font-cond);letter-spacing:.15em;text-transform:uppercase;color:#fff">
+    HORIZON ATLAS <span style="color:var(--electric-blue);font-weight:400">· DATA, METHOD & CREDITS</span>
+  </div>
+  <a href="index.html" class="btn" style="text-decoration:none;padding:7px 18px;margin:0;font-size:12px;display:inline-flex;align-items:center;gap:6px">
+    ← Back to Horizon Atlas
+  </a>
+</nav>
+<main style="position:relative;z-index:1;padding-top:20px">
+<section id="data-method" class="wrap">
+ <div class="pan" style="padding:28px 24px">
+  <div class="lab cy">NASA DATA & METHODOLOGY</div>
+  <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
+  <p class="s2" style="margin-bottom:20px">In accordance with NASA Open Science principles, Horizon Atlas uses the NASA/JPL Horizons API and discloses all calculation parameters and limitations.</p>
+  
+  <div class="g2" style="margin-bottom:20px">
+   <div>
+    <h4 style="color:var(--cy)">1. Ephemerides: NASA / JPL Horizons</h4>
+    <p class="s2">Apparent hourly azimuth and elevation for the Sun (Body 10) and Earth (Body 399) are fetched via the official <a href="https://ssd.jpl.nasa.gov/api/horizons.api" target="_blank" style="color:#fff">JPL Horizons API</a> using lunar surface geodetic coordinates (<code>CENTER='coord@301'</code>). Window: <b>2026-12-01 to 2027-12-31</b> (9,481 hourly ephemeris steps per site).</p>
+   </div>
+   <div>
+    <h4 style="color:var(--cy)">2. Topography & Terrain: NASA LRO LOLA (80 m/px)</h4>
+    <p class="s2">Lunar topography is computed directly from the Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Model <b><code>LDEM_80S_80MPP_ADJ.TIF</code></b> (80 m/pixel resolution, South Polar Stereographic projection, NASA PGDA / GSFC). Local 360° horizon elevation profiles are ray-marched outward to 30 km.</p>
+   </div>
+  </div>
+
+  <h4 style="margin:16px 0 8px">Evaluated Artemis III Candidate Regions (Official NASA Coordinates)</h4>
+  <div class="sc">
+   <table class="ct" style="width:100%;font-size:12px">
+    <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
+     <td style="padding:8px 12px"><b>Region Name</b></td>
+     <td style="padding:8px 12px"><b>Latitude</b></td>
+     <td style="padding:8px 12px"><b>Longitude (East)</b></td>
+     <td style="padding:8px 12px"><b>Primary NASA Reference</b></td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Connecting Ridge (Site 01)</b></td>
+     <td style="padding:8px 12px">-89.46°</td>
+     <td style="padding:8px 12px">222.51° (137.49°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 01 LDEM</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Peak Near Shackleton (Site 07)</b></td>
+     <td style="padding:8px 12px">-88.81°</td>
+     <td style="padding:8px 12px">123.69°</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 07 LDEM</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Malapert Massif</b></td>
+     <td style="padding:8px 12px">-85.99°</td>
+     <td style="padding:8px 12px">357.07° (2.93°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / USGS LGRS</td>
+    </tr>
+    <tr>
+     <td style="padding:8px 12px"><b>Haworth Crater Region</b></td>
+     <td style="padding:8px 12px">-87.45°</td>
+     <td style="padding:8px 12px">354.83° (5.17°W)</td>
+     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / IAU Gazetteer (USGS)</td>
+    </tr>
+   </table>
+  </div>
+
+  <h4 style="margin:20px 0 8px">Model Assumptions & Limitations</h4>
+  <ul class="ck" style="font-size:13px;color:#a794b8">
+   <li><b>Topographic Horizon Mask:</b> Computed from LRO LOLA 80 m DEM (<code>LDEM_80S_80MPP_ADJ.TIF</code>). For each azimuth (0°–359° in 1° steps), rays are marched outward to a maximum distance of 30 km to determine the maximum terrain elevation angle.</li>
+   <li><b>Lunar Curvature:</b> Evaluated rigorously accounting for lunar sphericity drop: \(\Delta z_{\text{drop}} = d^2 / (2R)\), where \(R = 1737.4\text{ km}\) is the reference lunar radius.</li>
+   <li><b>Resolution Limits:</b> At 80 m/pixel resolution, sub-pixel rocks, boulders, and micro-crater topography are smoothed. Observer height is modeled at ground level (0 m).</li>
+   <li><b>Solar & Earth Apparent Disks:</b> Measured from apparent disk centers. Solar semi-diameter is ~0.26°; Earth semi-diameter is ~0.95°. The Sun or Earth is considered unblocked when its disk center exceeds the horizon elevation mask.</li>
+   <li><b>Mission Windows:</b> Evaluated across 24 start dates spanning the full 13-month operational ephemeris window, simulating 240 continuous hours (10 Earth days) per mission.</li>
+   <li><b>Science Score:</b> Explicitly marked as a placeholder until permanently shadowed region (PSR) volatile distribution data is incorporated.</li>
+  </ul>
+
+  <div id="credits" style="margin-top:24px;border-top:1px solid var(--line);padding-top:16px">
+   <h4 style="margin:0 0 10px;color:var(--cy)">Credits: Assets & Licences</h4>
+   <p class="s2" style="font-size:12px;margin-bottom:12px">Inventory of visual media assets in <code>assets/</code>:</p>
+   <div class="sc">
+    <table class="ct" style="width:100%;font-size:12px">
+     <thead>
+      <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
+       <td style="padding:6px 10px"><b>File</b></td>
+       <td style="padding:6px 10px"><b>Description</b></td>
+       <td style="padding:6px 10px"><b>Source</b></td>
+       <td style="padding:6px 10px"><b>Licence</b></td>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td style="padding:6px 10px"><code>lroc_color_2k.jpg</code></td>
+       <td style="padding:6px 10px">LRO LROC 2K Global Color/Morphology Moon Texture</td>
+       <td style="padding:6px 10px"><a href="https://svs.gsfc.nasa.gov/4720" target="_blank" style="color:var(--electric-blue)">NASA SVS CGI Moon Kit</a></td>
+       <td style="padding:6px 10px">NASA Open Data / Public Domain</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>team_logo.png</code></td>
+       <td style="padding:6px 10px">Team VOIDBRONE Project Emblem</td>
+       <td style="padding:6px 10px">Team VOIDBRONE</td>
+       <td style="padding:6px 10px">Team VOIDBRONE (Project Use)</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>spacecraft.png</code></td>
+       <td style="padding:6px 10px">Hero Apollo Lunar Module Illustration</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>moon.jpg</code></td>
+       <td style="padding:6px 10px">About Section Moon Image</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>blue_moon.jpg</code></td>
+       <td style="padding:6px 10px">Lunar Surface Graphic (Blue tone)</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>blue_moon.png</code></td>
+       <td style="padding:6px 10px">Strengths Section Moon Graphic (Alpha masked)</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>earth.png</code></td>
+       <td style="padding:6px 10px">Earth Disc Illustration (Alpha masked)</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+      <tr>
+       <td style="padding:6px 10px"><code>sun.png</code></td>
+       <td style="padding:6px 10px">Sun Disc with Corona Illustration</td>
+       <td style="padding:6px 10px">TODO: source</td>
+       <td style="padding:6px 10px">TODO: source</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+  </div>
+ </div>
+</section>
+
+</main>
+<footer class="wrap" style="text-align:center;padding:40px 20px 60px;color:var(--mut);font-size:12px;border-top:1px solid var(--line-blue);margin-top:40px;position:relative;z-index:1">
+  <p style="margin:0 0 6px;color:#fff;font-weight:600">Team VOIDBRONE · NASA Space Apps Challenge 2026 · Lunar Landing Site Navigator.</p>
+  <p style="margin:0">Planning and learning tool, not software for real missions.</p>
+</footer>
+</body></html>

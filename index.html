@@ -1022,7 +1022,7 @@ textarea{
 <div id="stars"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3dff"/><stop offset="1" stop-color="#7a1fa0"/></linearGradient><symbol id="lg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="url(#mg)" stroke-width="12"/><path d="M12 64 Q50 38 88 64" fill="none" stroke="#04060e" stroke-width="8"/><circle cx="68" cy="33" r="7" fill="url(#mg)"/></symbol></defs></svg>
 
-<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#val">Validation</a><a href="#data-method">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
+<nav class="nav"><a href="#about">About</a><a href="#feat">Features</a><a href="#how">How it works</a><span class="dd"><a href="#s1" tabindex="0">Tools ▾</a><div><a href="#s1">Explore</a><a href="#sd">Decision</a><a href="#sc">Scenario</a><a href="#sx">Explain</a><a href="#ss">Scientist</a><a href="#s3">Game</a></div></span><a href="#val">Validation</a><a href="method.html">Data & Method</a><a href="#str">Strengths</a><a href="#who">Who it helps</a><a href="#contact">Contact</a></nav>
 
 <header class="hero">
   <div class="limb"></div>
@@ -1047,7 +1047,7 @@ textarea{
         <div class="corner-bl"></div><div class="corner-br"></div>
         <div class="craft-hud-top">
           <span class="beacon-dot"></span>
-          <span class="craft-hud-label">Illustration: Apollo Lunar Module (<a href="#credits" style="color:inherit;text-decoration:underline">see Credits</a>)</span>
+          <span class="craft-hud-label">Illustration: Apollo Lunar Module (<a href="method.html#credits" style="color:inherit;text-decoration:underline">see Credits</a>)</span>
         </div>
       </div>
       <div class="craft-float-wrap">
@@ -1308,134 +1308,13 @@ textarea{
 </section>
 
 <section id="data-method" class="wrap reveal-on-scroll">
- <div class="pan" style="padding:28px 24px">
+ <div class="pan cen" style="padding:32px 24px;text-align:center">
   <div class="lab cy">NASA DATA & METHODOLOGY</div>
-  <h2 class="big" style="margin-top:6px">Data Sources & Method</h2>
-  <p class="s2" style="margin-bottom:20px">In accordance with NASA Open Science principles, Horizon Atlas uses the NASA/JPL Horizons API and discloses all calculation parameters and limitations.</p>
-  
-  <div class="g2" style="margin-bottom:20px">
-   <div>
-    <h4 style="color:var(--cy)">1. Ephemerides: NASA / JPL Horizons</h4>
-    <p class="s2">Apparent hourly azimuth and elevation for the Sun (Body 10) and Earth (Body 399) are fetched via the official <a href="https://ssd.jpl.nasa.gov/api/horizons.api" target="_blank" style="color:#fff">JPL Horizons API</a> using lunar surface geodetic coordinates (<code>CENTER='coord@301'</code>). Window: <b>2026-12-01 to 2027-12-31</b> (9,481 hourly ephemeris steps per site).</p>
-   </div>
-   <div>
-    <h4 style="color:var(--cy)">2. Topography & Terrain: NASA LRO LOLA (80 m/px)</h4>
-    <p class="s2">Lunar topography is computed directly from the Lunar Reconnaissance Orbiter (LRO) Lunar Orbiter Laser Altimeter (LOLA) Digital Elevation Model <b><code>LDEM_80S_80MPP_ADJ.TIF</code></b> (80 m/pixel resolution, South Polar Stereographic projection, NASA PGDA / GSFC). Local 360° horizon elevation profiles are ray-marched outward to 30 km.</p>
-   </div>
-  </div>
-
-  <h4 style="margin:16px 0 8px">Evaluated Artemis III Candidate Regions (Official NASA Coordinates)</h4>
-  <div class="sc">
-   <table class="ct" style="width:100%;font-size:12px">
-    <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
-     <td style="padding:8px 12px"><b>Region Name</b></td>
-     <td style="padding:8px 12px"><b>Latitude</b></td>
-     <td style="padding:8px 12px"><b>Longitude (East)</b></td>
-     <td style="padding:8px 12px"><b>Primary NASA Reference</b></td>
-    </tr>
-    <tr>
-     <td style="padding:8px 12px"><b>Connecting Ridge (Site 01)</b></td>
-     <td style="padding:8px 12px">-89.46°</td>
-     <td style="padding:8px 12px">222.51° (137.49°W)</td>
-     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 01 LDEM</td>
-    </tr>
-    <tr>
-     <td style="padding:8px 12px"><b>Peak Near Shackleton (Site 07)</b></td>
-     <td style="padding:8px 12px">-88.81°</td>
-     <td style="padding:8px 12px">123.69°</td>
-     <td style="padding:8px 12px;color:var(--mut)">NASA PGDA Product 78 / Barker et al. (2021) Site 07 LDEM</td>
-    </tr>
-    <tr>
-     <td style="padding:8px 12px"><b>Malapert Massif</b></td>
-     <td style="padding:8px 12px">-85.99°</td>
-     <td style="padding:8px 12px">357.07° (2.93°W)</td>
-     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / USGS LGRS</td>
-    </tr>
-    <tr>
-     <td style="padding:8px 12px"><b>Haworth Crater Region</b></td>
-     <td style="padding:8px 12px">-87.45°</td>
-     <td style="padding:8px 12px">354.83° (5.17°W)</td>
-     <td style="padding:8px 12px;color:var(--mut)">NASA Artemis III Candidate Regions / IAU Gazetteer (USGS)</td>
-    </tr>
-   </table>
-  </div>
-
-  <h4 style="margin:20px 0 8px">Model Assumptions & Limitations</h4>
-  <ul class="ck" style="font-size:13px;color:#a794b8">
-   <li><b>Topographic Horizon Mask:</b> Computed from LRO LOLA 80 m DEM (<code>LDEM_80S_80MPP_ADJ.TIF</code>). For each azimuth (0°–359° in 1° steps), rays are marched outward to a maximum distance of 30 km to determine the maximum terrain elevation angle.</li>
-   <li><b>Lunar Curvature:</b> Evaluated rigorously accounting for lunar sphericity drop: \(\Delta z_{\text{drop}} = d^2 / (2R)\), where \(R = 1737.4\text{ km}\) is the reference lunar radius.</li>
-   <li><b>Resolution Limits:</b> At 80 m/pixel resolution, sub-pixel rocks, boulders, and micro-crater topography are smoothed. Observer height is modeled at ground level (0 m).</li>
-   <li><b>Solar & Earth Apparent Disks:</b> Measured from apparent disk centers. Solar semi-diameter is ~0.26°; Earth semi-diameter is ~0.95°. The Sun or Earth is considered unblocked when its disk center exceeds the horizon elevation mask.</li>
-   <li><b>Mission Windows:</b> Evaluated across 24 start dates spanning the full 13-month operational ephemeris window, simulating 240 continuous hours (10 Earth days) per mission.</li>
-   <li><b>Science Score:</b> Explicitly marked as a placeholder until permanently shadowed region (PSR) volatile distribution data is incorporated.</li>
-  </ul>
-
-  <div id="credits" style="margin-top:24px;border-top:1px solid var(--line);padding-top:16px">
-   <h4 style="margin:0 0 10px;color:var(--cy)">Credits: Assets & Licences</h4>
-   <p class="s2" style="font-size:12px;margin-bottom:12px">Inventory of visual media assets in <code>assets/</code>:</p>
-   <div class="sc">
-    <table class="ct" style="width:100%;font-size:12px">
-     <thead>
-      <tr style="border-bottom:1px solid var(--line);color:var(--mut)">
-       <td style="padding:6px 10px"><b>File</b></td>
-       <td style="padding:6px 10px"><b>Description</b></td>
-       <td style="padding:6px 10px"><b>Source</b></td>
-       <td style="padding:6px 10px"><b>Licence</b></td>
-      </tr>
-     </thead>
-     <tbody>
-      <tr>
-       <td style="padding:6px 10px"><code>lroc_color_2k.jpg</code></td>
-       <td style="padding:6px 10px">LRO LROC 2K Global Color/Morphology Moon Texture</td>
-       <td style="padding:6px 10px"><a href="https://svs.gsfc.nasa.gov/4720" target="_blank" style="color:var(--electric-blue)">NASA SVS CGI Moon Kit</a></td>
-       <td style="padding:6px 10px">NASA Open Data / Public Domain</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>team_logo.png</code></td>
-       <td style="padding:6px 10px">Team VOIDBRONE Project Emblem</td>
-       <td style="padding:6px 10px">Team VOIDBRONE</td>
-       <td style="padding:6px 10px">Team VOIDBRONE (Project Use)</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>spacecraft.png</code></td>
-       <td style="padding:6px 10px">Hero Apollo Lunar Module Illustration</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>moon.jpg</code></td>
-       <td style="padding:6px 10px">About Section Moon Image</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>blue_moon.jpg</code></td>
-       <td style="padding:6px 10px">Lunar Surface Graphic (Blue tone)</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>blue_moon.png</code></td>
-       <td style="padding:6px 10px">Strengths Section Moon Graphic (Alpha masked)</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>earth.png</code></td>
-       <td style="padding:6px 10px">Earth Disc Illustration (Alpha masked)</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-      <tr>
-       <td style="padding:6px 10px"><code>sun.png</code></td>
-       <td style="padding:6px 10px">Sun Disc with Corona Illustration</td>
-       <td style="padding:6px 10px">TODO: source</td>
-       <td style="padding:6px 10px">TODO: source</td>
-      </tr>
-     </tbody>
-    </table>
-   </div>
-  </div>
+  <h2 class="big" style="margin-top:6px;margin-bottom:10px">Data Sources & Method</h2>
+  <p class="s2" style="margin-bottom:20px;max-width:620px;margin-left:auto;margin-right:auto">Sources, method, assumptions, limitations and image credits are on a separate page.</p>
+  <a href="method.html" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;padding:10px 24px">
+    Open Data, Method & Credits →
+  </a>
  </div>
 </section>
 
