@@ -127,7 +127,16 @@ body{
   100%{background-position:1300px 1300px}
 }
 @media (max-width: 768px){
-  #stars, #stars::before, #stars::after{ animation: none !important; }
+  #stars { display: none !important; }
+  .pan, .hud, .nav, .about-moon-container, .hero-craft-container, .moon-controls-panel, .pm-tooltip {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(4, 7, 16, 0.95) !important;
+    box-shadow: none !important;
+  }
+  .anim-ambient-spin-1, .anim-ambient-spin-2, .anim-sun-spin, .anim-earth-spin, .about-moon-ambient {
+    animation: none !important;
+  }
 }
 
 /* Pulsing Status Beacon */
@@ -2111,9 +2120,41 @@ populatePnDateSel();
   ctrl.dampingFactor = 0.06;
   ctrl.minDistance = 1.8;
   ctrl.maxDistance = 6.0;
-  ctrl.autoRotate = true;
+  ctrl.autoRotate = !isMobile;
   ctrl.autoRotateSpeed = 0.4;
   ctrl.enablePan = false;
+  if(isMobile) {
+    ctrl.enableZoom = false; // Prevent pinch conflicts with page on mobile
+    let startX = 0, startY = 0, touchDecided = false;
+    canvas.addEventListener('touchstart', (e) => {
+      if (wrap.classList.contains('moon-fs')) return;
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        touchDecided = false;
+        ctrl.enabled = false;
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (wrap.classList.contains('moon-fs')) return;
+      if (touchDecided || e.touches.length !== 1) return;
+      const dx = Math.abs(e.touches[0].clientX - startX);
+      const dy = Math.abs(e.touches[0].clientY - startY);
+      if (dx > 10 && dx > dy) {
+        touchDecided = true;
+        ctrl.enabled = true;
+      } else if (dy > 10) {
+        touchDecided = true;
+        ctrl.enabled = false;
+      }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => {
+      ctrl.enabled = true;
+      touchDecided = false;
+    }, { passive: true });
+  }
 
   // --- lat/lon → 3D ---
   function ll3(lat, lon, r){
@@ -2225,7 +2266,11 @@ populatePnDateSel();
     el.style.left = `${leftPct.toFixed(1)}%`;
     el.style.top = `${topPct.toFixed(1)}%`;
     const angleDeg = Math.round(Math.atan2(-clampY, clampX) * 180 / Math.PI);
-    el.innerHTML = `${label} <span style="font-size:9px;opacity:0.7">(${sub})</span> <span style="display:inline-block;transform:rotate(${angleDeg}deg)">➜</span>`;
+    if (!el._init || el._lastAngle !== angleDeg) {
+      el._lastAngle = angleDeg;
+      el._init = true;
+      el.innerHTML = `${label} <span style="font-size:9px;opacity:0.7">(${sub})</span> <span style="display:inline-block;transform:rotate(${angleDeg}deg)">➜</span>`;
+    }
   }
 
   function updateEdgeIndicators(){
@@ -2441,7 +2486,7 @@ populatePnDateSel();
       if (playTimer) clearInterval(playTimer);
       playTimer = setInterval(()=>{
         const nextH = (currentHour + 1) % 240;
-        update3DSunlight(nextH);
+        update3DSunlight(nextH); requestRender();
       }, 60);
     } else {
       if (playIcon) playIcon.textContent = '▶';
@@ -2457,7 +2502,7 @@ populatePnDateSel();
   if (hourSlider) {
     hourSlider.addEventListener('input', (e) => {
       setPlaying(false);
-      update3DSunlight(+e.target.value);
+      update3DSunlight(+e.target.value); requestRender();
     });
   }
 
@@ -2470,24 +2515,36 @@ populatePnDateSel();
     globeObs.observe(wrap);
   }
 
+  // --- Render on demand (saves 100% of mobile CPU/GPU when idle) ---
+  let needsRender = true;
+  function requestRender(){ needsRender = true; }
+  ctrl.addEventListener('change', requestRender);
+
   // --- Animation loop ---
   function animate(){
     requestAnimationFrame(animate);
-    if (!isGlobeVisible && !document.fullscreenElement) return; // Save mobile CPU/GPU when off-screen
+    if (!isGlobeVisible && !document.fullscreenElement) return;
+
+    const shouldRender = isPlaying || ctrl.autoRotate || needsRender;
+    if (!shouldRender) return;
+    needsRender = false;
+
     ctrl.update();
     atm.lookAt(camera.position);
     sunLabel.lookAt(camera.position);
     earthLabel.lookAt(camera.position);
 
-    // Pulse pin rings
-    const t = Date.now()*0.003;
-    pins3d.forEach(p=>{
-      const ring = p.children[2];
-      if(ring){
-        ring.material.opacity = 0.2 + Math.sin(t)*0.18;
-        ring.scale.setScalar(1 + Math.sin(t)*0.12);
-      }
-    });
+    // Pulse pin rings when animating
+    if (isPlaying || ctrl.autoRotate) {
+      const t = Date.now()*0.003;
+      pins3d.forEach(p=>{
+        const ring = p.children[2];
+        if(ring){
+          ring.material.opacity = 0.2 + Math.sin(t)*0.18;
+          ring.scale.setScalar(1 + Math.sin(t)*0.12);
+        }
+      });
+    }
 
     // Update edge markers if Sun or Earth is off-screen
     updateEdgeIndicators();
@@ -2507,21 +2564,21 @@ populatePnDateSel();
   const _origDPM = drawPolarMap;
   drawPolarMap = function(){
     _origDPM();
-    update3DPins();
+    update3DPins(); requestRender();
     update3DSunlight(currentHour);
   };
 
   const _origAtlas = atlas;
   atlas = function(){
     _origAtlas();
-    update3DPins();
+    update3DPins(); requestRender();
     update3DSunlight(currentHour);
   };
 
   // --- Start ---
   animate();
   setTimeout(()=>{
-    update3DPins();
+    update3DPins(); requestRender();
     update3DSunlight(0);
   }, 600);
 })();
