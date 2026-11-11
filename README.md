@@ -77,8 +77,9 @@ Output: `data/horizon_<site_id>.json` containing 360-degree horizon elevation ma
 | :--- | :--- | :--- |
 | **Sudipto Acharjee Dhrubo** | Team Lead | [@Sudipto-Acharjee-Dhrubo](https://github.com/Sudipto-Acharjee-Dhrubo) |
 | **Rafia Haque Arpita** | Team Member | [@rafia-haque-arpita](https://github.com/rafia-haque-arpita) |
-| **Asiful** | Team Member | [@Asiful030](https://github.com/Asiful030) |
+| **Md Asiful Islam** | Team Member | [@Asiful030](https://github.com/Asiful030) |
 | **Md Sabik Anjum** | Team Member | [@Shudddhoo](https://github.com/Shudddhoo) |
+| **Navid Rehman** | Team Member | — |
 
 ---
 
