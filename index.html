@@ -126,6 +126,9 @@ body{
   0%{background-position:0 0}
   100%{background-position:1300px 1300px}
 }
+@media (max-width: 768px){
+  #stars, #stars::before, #stars::after{ animation: none !important; }
+}
 
 /* Pulsing Status Beacon */
 .beacon-dot{
@@ -1287,7 +1290,8 @@ textarea{
 <p class="s2" style="text-align:center;margin-top:30px">Horizon Atlas · Team VOIDBRONE · NASA Space Apps Challenge Bangladesh 2026</p></footer>
 
 <script>
-let sh='';for(let i=0;i<240;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
+const starCount = window.innerWidth < 768 ? 40 : 200;
+let sh='';for(let i=0;i<starCount;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
 document.getElementById('stars').style.boxShadow=sh.slice(0,-1);
 
 const ND=24,H=240,R=Math.PI/180,$=id=>document.getElementById(id);
@@ -2057,7 +2061,8 @@ populatePnDateSel();
   const camera = new THREE.PerspectiveCamera(55, W()/H(), 0.1, 100);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, premultipliedAlpha:false });
   renderer.setSize(W(), H());
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const isMobile = window.innerWidth < 768;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 2));
   renderer.setClearColor(0x000000, 0); // alpha=0 = fully transparent clear
 
   // --- Moon ---
@@ -2456,9 +2461,19 @@ populatePnDateSel();
     });
   }
 
+  // --- Performance optimization: pause 3D loop when off-screen ---
+  let isGlobeVisible = true;
+  if ('IntersectionObserver' in window) {
+    const globeObs = new IntersectionObserver((entries) => {
+      isGlobeVisible = entries[0].isIntersecting;
+    }, { threshold: 0.05 });
+    globeObs.observe(wrap);
+  }
+
   // --- Animation loop ---
   function animate(){
     requestAnimationFrame(animate);
+    if (!isGlobeVisible && !document.fullscreenElement) return; // Save mobile CPU/GPU when off-screen
     ctrl.update();
     atm.lookAt(camera.position);
     sunLabel.lookAt(camera.position);
@@ -2482,6 +2497,7 @@ populatePnDateSel();
 
   // --- Resize ---
   window.addEventListener('resize', ()=>{
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1.25 : 2));
     camera.aspect = W()/H();
     camera.updateProjectionMatrix();
     renderer.setSize(W(), H());

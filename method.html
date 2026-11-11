@@ -126,6 +126,9 @@ body{
   0%{background-position:0 0}
   100%{background-position:1300px 1300px}
 }
+@media (max-width: 768px){
+  #stars, #stars::before, #stars::after{ animation: none !important; }
+}
 
 /* Pulsing Status Beacon */
 .beacon-dot{
@@ -1234,7 +1237,8 @@ textarea{
 
 <script>
 // Dynamic Starfield
-let sh='';for(let i=0;i<240;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
+const starCount = window.innerWidth < 768 ? 40 : 200;
+let sh='';for(let i=0;i<starCount;i++)sh+=`${Math.random()*100}vw ${Math.random()*100}vh 0 ${Math.random()<.22?1.5:0.5}px rgba(${Math.random()<.15?'160,210,255':'255,255,255'},${.35+Math.random()*.65}),`;
 const starsEl = document.getElementById('stars');
 if(starsEl) starsEl.style.boxShadow=sh.slice(0,-1);
 
