@@ -62,6 +62,22 @@ In compliance with NASA Space Apps Challenge regulations, this document records 
   - Updated `index.html` with linear azimuth interpolation (`getHorizonElev`), real-time terrain mask toggle (ON by default), sensitivity analysis integration, and dynamic SVG horizon silhouette.
   - Updated `docs/DATA_SOURCES.md`, `README.md`, and `AI_USAGE.md`.
 
+---
+
+### Step 5: Visual Redesign & 3D Interactive Lunar South Pole Globe
+- **Date**: 2026-11-11
+- **Tool**: Antigravity ([MODEL_NAME_TODO: user to specify])
+- **Prompt Summary**: Redesign UI with dark space aesthetic and open layout. Add an interactive 3D Moon globe using Three.js with NASA LROC texture (`lroc_color_2k.jpg`), rendering Artemis III candidate landing site pins dynamically mapped to lunar surface coordinates, synced with mission parameter sliders and date selectors. Add fullscreen view, remove invented telemetry, add asset credits, and switch to local vendor scripts.
+- **Output / Deliverables**:
+  - Integrated Three.js 3D Moon sphere with NASA LROC 2K equirectangular texture (`lroc_color_2k.jpg`) and dynamic landing site pins.
+  - Linked 3D site coordinates directly to official `REAL_SITES` lat/lon from NASA Horizons ephemerides.
+  - Synced 3D pin pass/fail colors (green/red) and interactive raycaster inspection to mission requirements and selected dates.
+  - Added seamless space background blending and full-view overlay with starfield.
+  - Replaced hero badge telemetry with honest attribution linking to credits.
+  - Added comprehensive Credits & Licences inventory table for all visual assets in `data-method`.
+  - Configured local vendor paths (`vendor/three.min.js`, `vendor/OrbitControls.js`).
+  - Added `*.bak` to `.gitignore`.
+
 
 
 
