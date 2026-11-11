@@ -762,11 +762,11 @@ textarea{
   position:relative;z-index:1;
   background:transparent;
   display:flex;flex-direction:column;align-items:center;
-  /* Break out of #app max-width constraint so moon can be truly full-width */
-  width:100vw;
-  margin-left:calc(-50vw + 50%);
-  padding:0 0 50px;
-  overflow:visible;
+  width:100%;
+  max-width:100%;
+  margin:0 auto;
+  padding:0 0 40px;
+  overflow:hidden;
 }
 .pn-card-stack{
   width:100%;max-width:720px;
