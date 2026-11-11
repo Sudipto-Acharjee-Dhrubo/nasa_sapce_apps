@@ -824,6 +824,69 @@ textarea{
   transform:scale(1.08);
 }
 
+/* ---- 3D Celestial Edge Badges (when Sun/Earth off-screen) ---- */
+.moon-edge-badge{
+  position:absolute;z-index:25;
+  background:rgba(4,7,16,0.88);
+  border:1px solid rgba(0,130,243,0.45);
+  color:#fff;
+  font:600 11px var(--font-cond,sans-serif);
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:14px;
+  pointer-events:none;transform:translate(-50%, -50%);
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 0 12px rgba(0,130,243,0.3);
+  backdrop-filter:blur(6px);
+  white-space:nowrap;
+}
+
+/* ---- 3D Timeline & Lighting Controls Panel ---- */
+.moon-controls-panel{
+  position:absolute;
+  bottom:14px;left:14px;right:14px;
+  z-index:20;
+  background:rgba(4,7,16,0.88);
+  border:1px solid rgba(0,130,243,0.28);
+  border-radius:12px;
+  padding:10px 16px;
+  backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.55);
+}
+@media(max-width:640px){
+  .moon-controls-panel{padding:8px 10px;bottom:8px;left:8px;right:8px;gap:4px}
+  .moon-readout{font-size:11px}
+  .moon-caption-text{font-size:10px}
+}
+.moon-readout{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;font-size:12px;
+}
+.moon-readout-time{
+  display:inline-flex;align-items:center;gap:6px;
+  font:600 12px var(--mono,monospace);color:#fff;
+}
+.moon-readout-telemetry{
+  display:inline-flex;align-items:center;gap:12px;
+  font:500 12px var(--mono,monospace);
+}
+.moon-slider-row{
+  display:flex;align-items:center;gap:10px;width:100%;
+}
+.moon-play-btn{
+  background:var(--main-purple);color:#fff;border:none;
+  padding:5px 12px;border-radius:6px;font:700 11px var(--font-cond,sans-serif);
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  transition:background .2s, transform .1s;
+}
+.moon-play-btn:hover{filter:brightness(1.15)}
+.moon-caption-text{
+  font:400 11px var(--font-cond,sans-serif);
+  letter-spacing:.04em;color:var(--mut);
+  text-align:center;margin-top:2px;
+}
+
 /* ---- Fullscreen overlay mode ---- */
 .moon-canvas-wrap.moon-fs{
   position:fixed !important;
@@ -1036,7 +1099,37 @@ textarea{
     <div class="moon-canvas-wrap" id="moonWrap">
       <!-- Full View toggle button -->
       <button class="moon-fullview-btn" id="moonFsBtn" title="Full View">⛶</button>
+      
+      <!-- Offscreen Edge Badges for Sun & Earth -->
+      <div class="moon-edge-badge" id="moonSunEdge" style="display:none"></div>
+      <div class="moon-edge-badge" id="moonEarthEdge" style="display:none"></div>
+
       <canvas id="moonCanvas"></canvas>
+
+      <!-- 3D Globe Timeline & Real Horizons Lighting Controls -->
+      <div class="moon-controls-panel">
+        <div class="moon-readout">
+          <div class="moon-readout-time"><span class="beacon-dot"></span><b id="mrTime">2026-Dec-01 00:00</b> <span id="mrRel" style="color:var(--mut)">(T+0h)</span></div>
+          <div class="moon-readout-telemetry">
+            <span>☀️ Sun: <b id="mrSunEl">–</b> <span id="mrSunBadge" class="chip ok">LIT</span></span>
+            <span>🌍 Earth: <b id="mrEarthEl">–</b> <span id="mrEarthBadge" class="chip ok">LINK</span></span>
+          </div>
+        </div>
+        <div class="moon-slider-row">
+          <button id="moonPlayBtn" class="moon-play-btn" type="button" title="Play / Pause 10-day timeline">
+            <span id="moonPlayIcon">▶</span> <span id="moonPlayText">Play</span>
+          </button>
+          <div style="flex:1;display:flex;align-items:center;gap:8px">
+            <span style="font:600 10px var(--mono);color:var(--mut)">0h</span>
+            <input type="range" id="moonHourSlider" min="0" max="239" value="0" aria-label="Timeline hour slider" style="flex:1;accent-color:var(--main-purple);cursor:pointer">
+            <span style="font:600 10px var(--mono);color:var(--mut)">240h</span>
+          </div>
+          <span id="mrHourNum" style="font:700 12px var(--mono);min-width:44px;text-align:right;color:var(--electric-blue)">+0 h</span>
+        </div>
+        <div class="moon-caption-text">
+          Site positions and Sun/Earth directions: <b>NASA/JPL Horizons</b>. Surface texture: <b>NASA LROC</b> (illustrative relief).
+        </div>
+      </div>
     </div>
     <svg id="polarMap" viewBox="-110 -110 220 220" style="display:none"><g id="pmPins"></g></svg>
   </div>
@@ -2103,14 +2196,18 @@ populatePnDateSel();
   atm.lookAt(camera.position);
   scene.add(atm);
 
-  // --- Lighting: strong ambient so dark side of moon isn't pitch black at canvas edge ---
-  const sun = new THREE.DirectionalLight(0xffeedd, 1.6);
-  sun.position.set(4, 2, 5);
-  scene.add(sun);
-  scene.add(new THREE.AmbientLight(0x334466, 0.7)); // brighter ambient = softer dark side
-  const rim = new THREE.DirectionalLight(0x5577bb, 0.5);
-  rim.position.set(-3, -1, -3);
-  scene.add(rim);
+  // --- Lighting: Directional sunlight driven by NASA Horizons ephemerides ---
+  const sunLight = new THREE.DirectionalLight(0xfffaed, 2.0);
+  sunLight.position.set(5, 5, 5);
+  scene.add(sunLight);
+
+  // Lower ambient light (0.25) so terminator and shadows are visible
+  const ambientLight = new THREE.AmbientLight(0x223344, 0.25);
+  scene.add(ambientLight);
+
+  const rimLight = new THREE.DirectionalLight(0x335577, 0.15);
+  rimLight.position.set(-3, -1, -3);
+  scene.add(rimLight);
 
   // --- Camera: looking at south pole, pulled back so sphere has breathing room ---
   camera.position.set(0.4, -2.8, 1.4);
@@ -2136,6 +2233,113 @@ populatePnDateSel();
        r * Math.cos(phi),
        r * Math.sin(phi) * Math.sin(th)
     );
+  }
+
+  // Verification assert: cross(E, N) must equal U
+  (function checkBasis(){
+    const testLat = -89.46, testLon = 222.51;
+    const phi = testLat * Math.PI / 180, lam = testLon * Math.PI / 180;
+    const U = ll3(testLat, testLon, 1).normalize();
+    const E = new THREE.Vector3(-Math.sin(lam), 0, -Math.cos(lam));
+    const N = new THREE.Vector3(-Math.sin(phi)*Math.cos(lam), Math.cos(phi), Math.sin(phi)*Math.sin(lam));
+    const cross = new THREE.Vector3().crossVectors(E, N);
+    console.assert(cross.distanceTo(U) < 1e-4, 'Verification check: cross(E, N) must equal U');
+  })();
+
+  function azElToMoonFixed(lat, lon, azDeg, elDeg) {
+    const phi = lat * Math.PI / 180;
+    const lam = lon * Math.PI / 180;
+    const az = azDeg * Math.PI / 180;
+    const el = elDeg * Math.PI / 180;
+    const U = ll3(lat, lon, 1).normalize();
+    const E = new THREE.Vector3(-Math.sin(lam), 0, -Math.cos(lam));
+    const N = new THREE.Vector3(-Math.sin(phi)*Math.cos(lam), Math.cos(phi), Math.sin(phi)*Math.sin(lam));
+    return new THREE.Vector3()
+      .addScaledVector(E, Math.cos(el) * Math.sin(az))
+      .addScaledVector(N, Math.cos(el) * Math.cos(az))
+      .addScaledVector(U, Math.sin(el))
+      .normalize();
+  }
+
+  function createTextSprite(text, color) {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 64;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = color || '#fff';
+    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 128, 32);
+    const tex = new THREE.CanvasTexture(c);
+    const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(0.75, 0.19, 1);
+    return sprite;
+  }
+
+  // --- Sun & Earth Markers (clearly "not to scale") ---
+  const sunMarker = new THREE.Group();
+  const sunMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.08, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0xffea75 })
+  );
+  const sunCorona = new THREE.Mesh(
+    new THREE.SphereGeometry(0.14, 16, 16),
+    new THREE.MeshBasicMaterial({ color: 0xffa500, transparent: true, opacity: 0.35 })
+  );
+  const sunLabel = createTextSprite('Sun (not to scale)', '#ffe066');
+  sunLabel.position.set(0, -0.16, 0);
+  sunMarker.add(sunMesh);
+  sunMarker.add(sunCorona);
+  sunMarker.add(sunLabel);
+  scene.add(sunMarker);
+
+  const earthMarker = new THREE.Group();
+  const earthMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.065, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0x2563eb })
+  );
+  const earthGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.10, 16, 16),
+    new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.35 })
+  );
+  const earthLabel = createTextSprite('Earth (not to scale)', '#60a5fa');
+  earthLabel.position.set(0, -0.14, 0);
+  earthMarker.add(earthMesh);
+  earthMarker.add(earthGlow);
+  earthMarker.add(earthLabel);
+  scene.add(earthMarker);
+
+  // Edge badges elements
+  const sunEdgeEl = document.getElementById('moonSunEdge');
+  const earthEdgeEl = document.getElementById('moonEarthEdge');
+
+  function updateSingleEdgeBadge(el, worldPos, label, sub) {
+    if (!el || !wrap) return;
+    const p = worldPos.clone().project(camera);
+    const inFront = p.z < 1;
+    const onScreen = inFront && p.x >= -0.84 && p.x <= 0.84 && p.y >= -0.78 && p.y <= 0.78;
+    if (onScreen) {
+      el.style.display = 'none';
+      return;
+    }
+    el.style.display = 'flex';
+    let nx = p.x, ny = p.y;
+    if (!inFront) { nx = -nx; ny = -ny; }
+    const dist = Math.hypot(nx, ny) || 1;
+    const clampX = (nx / dist) * 0.88;
+    const clampY = (ny / dist) * 0.82;
+    const leftPct = (clampX * 0.5 + 0.5) * 100;
+    const topPct = (-clampY * 0.5 + 0.5) * 100;
+    el.style.left = `${leftPct.toFixed(1)}%`;
+    el.style.top = `${topPct.toFixed(1)}%`;
+    const angleDeg = Math.round(Math.atan2(-clampY, clampX) * 180 / Math.PI);
+    el.innerHTML = `${label} <span style="font-size:9px;opacity:0.7">(${sub})</span> <span style="display:inline-block;transform:rotate(${angleDeg}deg)">➜</span>`;
+  }
+
+  function updateEdgeIndicators(){
+    updateSingleEdgeBadge(sunEdgeEl, sunMarker.position, '☀️ Sun', 'not to scale');
+    updateSingleEdgeBadge(earthEdgeEl, earthMarker.position, '🌍 Earth', 'not to scale');
   }
 
   // --- Pin meshes (coordinates read dynamically from REAL_SITES) ---
@@ -2264,11 +2468,116 @@ populatePnDateSel();
   });
   canvas.addEventListener('mouseleave', ()=>{ tipEl.style.display='none'; });
 
+  // --- 3D Timeline & Real Sunlight Drive ---
+  let currentHour = 0;
+  const hourSlider = document.getElementById('moonHourSlider');
+  const playBtn = document.getElementById('moonPlayBtn');
+  const playIcon = document.getElementById('moonPlayIcon');
+  const playText = document.getElementById('moonPlayText');
+  const mrTime = document.getElementById('mrTime');
+  const mrRel = document.getElementById('mrRel');
+  const mrSunEl = document.getElementById('mrSunEl');
+  const mrSunBadge = document.getElementById('mrSunBadge');
+  const mrEarthEl = document.getElementById('mrEarthEl');
+  const mrEarthBadge = document.getElementById('mrEarthBadge');
+  const mrHourNum = document.getElementById('mrHourNum');
+
+  function update3DSunlight(h){
+    currentHour = Math.max(0, Math.min(239, Math.floor(h)));
+    if (hourSlider && +hourSlider.value !== currentHour) hourSlider.value = currentHour;
+    if (mrHourNum) mrHourNum.textContent = `+${currentHour} h`;
+
+    const di = +document.getElementById('pnDateSel').value || 0;
+    const si = (typeof sel !== 'undefined' && sel && sel[0] !== undefined) ? sel[0] : 0;
+    const sites = (typeof REAL_SITES !== 'undefined' && REAL_SITES.length) ? REAL_SITES : (typeof SITES !== 'undefined' ? SITES : []);
+    const metrics = (typeof M !== 'undefined') ? M : [];
+    const s = sites[si] || sites[0] || {};
+    const m = (metrics[si] && metrics[si][di]) ? metrics[si][di] : null;
+
+    const lat = typeof s.lat === 'number' ? s.lat : -89.46;
+    const lon = typeof s.lon === 'number' ? s.lon : 222.51;
+
+    let sa = 0, se = 0, ea = 0, ee = 0, isLit = false, isCon = false, timeStr = `T+${currentHour}h`;
+    if (m && m.sun_az && m.sun_az[currentHour] !== undefined) {
+      sa = m.sun_az[currentHour];
+      se = m.sun_el[currentHour];
+      ea = m.earth_az[currentHour];
+      ee = m.earth_el[currentHour];
+      isLit = !!(m.lit && m.lit[currentHour]);
+      isCon = !!(m.con && m.con[currentHour]);
+      if (m.times && m.times[currentHour]) timeStr = m.times[currentHour];
+    }
+
+    const sunDir = azElToMoonFixed(lat, lon, sa, se);
+    const earthDir = azElToMoonFixed(lat, lon, ea, ee);
+
+    // Set DirectionalLight position from Sun direction (multiply by ~10)
+    sunLight.position.copy(sunDir.clone().multiplyScalar(10));
+    rimLight.position.copy(sunDir.clone().negate().multiplyScalar(5));
+
+    // Position Sun and Earth markers (clearly not to scale)
+    const MARKER_DIST = 2.8;
+    sunMarker.position.copy(sunDir.clone().multiplyScalar(MARKER_DIST));
+    earthMarker.position.copy(earthDir.clone().multiplyScalar(MARKER_DIST));
+
+    // Telemetry readouts
+    if (mrTime) mrTime.textContent = timeStr;
+    const dayNum = Math.floor(currentHour / 24) + 1;
+    if (mrRel) mrRel.textContent = `(T+${currentHour}h · Day ${dayNum})`;
+    if (mrSunEl) mrSunEl.textContent = `${se >= 0 ? '+' : ''}${se.toFixed(1)}°`;
+    if (mrSunBadge) {
+      mrSunBadge.className = isLit ? 'chip ok' : 'chip bad';
+      mrSunBadge.textContent = isLit ? 'LIT ✓' : 'BLOCKED ✗';
+    }
+    if (mrEarthEl) mrEarthEl.textContent = `${ee >= 0 ? '+' : ''}${ee.toFixed(1)}°`;
+    if (mrEarthBadge) {
+      mrEarthBadge.className = isCon ? 'chip ok' : 'chip bad';
+      mrEarthBadge.textContent = isCon ? 'LINK ✓' : 'NO LINK ✗';
+    }
+  }
+
+  // Play/Pause loop (advances one hour every ~60ms and loops)
+  let playTimer = null;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let isPlaying = false; // Respect prefers-reduced-motion: start paused
+
+  function setPlaying(play) {
+    isPlaying = play;
+    if (play) {
+      if (playIcon) playIcon.textContent = '⏸';
+      if (playText) playText.textContent = 'Pause';
+      if (playBtn) playBtn.style.background = 'var(--bad)';
+      if (playTimer) clearInterval(playTimer);
+      playTimer = setInterval(()=>{
+        const nextH = (currentHour + 1) % 240;
+        update3DSunlight(nextH);
+      }, 60);
+    } else {
+      if (playIcon) playIcon.textContent = '▶';
+      if (playText) playText.textContent = 'Play';
+      if (playBtn) playBtn.style.background = 'var(--main-purple)';
+      if (playTimer) { clearInterval(playTimer); playTimer = null; }
+    }
+  }
+
+  if (playBtn) {
+    playBtn.addEventListener('click', () => setPlaying(!isPlaying));
+  }
+  if (hourSlider) {
+    hourSlider.addEventListener('input', (e) => {
+      setPlaying(false);
+      update3DSunlight(+e.target.value);
+    });
+  }
+
   // --- Animation loop ---
   function animate(){
     requestAnimationFrame(animate);
     ctrl.update();
     atm.lookAt(camera.position);
+    sunLabel.lookAt(camera.position);
+    earthLabel.lookAt(camera.position);
+
     // Pulse pin rings
     const t = Date.now()*0.003;
     pins3d.forEach(p=>{
@@ -2278,6 +2587,10 @@ populatePnDateSel();
         ring.scale.setScalar(1 + Math.sin(t)*0.12);
       }
     });
+
+    // Update edge markers if Sun or Earth is off-screen
+    updateEdgeIndicators();
+
     renderer.render(scene, camera);
   }
 
@@ -2288,13 +2601,27 @@ populatePnDateSel();
     renderer.setSize(W(), H());
   });
 
-  // --- Hook into drawPolarMap for live updates ---
+  // --- Hook into drawPolarMap and atlas for live updates ---
   const _origDPM = drawPolarMap;
-  drawPolarMap = function(){ _origDPM(); update3DPins(); };
+  drawPolarMap = function(){
+    _origDPM();
+    update3DPins();
+    update3DSunlight(currentHour);
+  };
+
+  const _origAtlas = atlas;
+  atlas = function(){
+    _origAtlas();
+    update3DPins();
+    update3DSunlight(currentHour);
+  };
 
   // --- Start ---
   animate();
-  setTimeout(update3DPins, 600);
+  setTimeout(()=>{
+    update3DPins();
+    update3DSunlight(0);
+  }, 600);
 })();
 </script>
 
