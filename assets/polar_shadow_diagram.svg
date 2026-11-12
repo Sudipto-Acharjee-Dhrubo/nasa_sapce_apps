@@ -2,32 +2,32 @@
   <defs>
     <style>
       @keyframes sunCoronaFlare {
-        0%, 100% { transform: scale(1); opacity: 0.85; }
-        50% { transform: scale(1.14); opacity: 1; }
+        0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 20px rgba(255,170,0,0.8)); }
+        50% { opacity: 1; filter: drop-shadow(0 0 45px rgba(255,130,0,1)); }
       }
       @keyframes streamRay {
         0% { stroke-dashoffset: 400; }
         100% { stroke-dashoffset: 0; }
       }
       @keyframes beaconGreen {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.35; transform: scale(1.6); }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.25; }
       }
       @keyframes beaconRed {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.15; transform: scale(0.7); }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.1; }
       }
       @keyframes earthGlowPulse {
-        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 14px rgba(0,210,255,0.6)); }
-        50% { transform: scale(1.06); filter: drop-shadow(0 0 28px rgba(0,210,255,0.95)); }
+        0%, 100% { opacity: 0.88; filter: drop-shadow(0 0 16px rgba(0,210,255,0.7)); }
+        50% { opacity: 1; filter: drop-shadow(0 0 32px rgba(0,225,255,1)); }
       }
       @keyframes commsStream {
         0% { stroke-dashoffset: 240; }
         100% { stroke-dashoffset: 0; }
       }
       @keyframes blockWave {
-        0%, 100% { opacity: 0.2; transform: scale(0.8); }
-        50% { opacity: 0.95; transform: scale(1.45); }
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
       }
       @keyframes starBlink {
         0%, 100% { opacity: 0.2; }
@@ -38,14 +38,14 @@
         50% { opacity: 0.8; }
         100% { opacity: 0.35; }
       }
-      .anim-sun-corona { transform-origin: 160px 660px; animation: sunCoronaFlare 4s ease-in-out infinite; }
+      .anim-sun-corona { animation: sunCoronaFlare 3.5s ease-in-out infinite; }
       .anim-sun-ray { stroke-dasharray: 32, 20; animation: streamRay 2.4s linear infinite; }
       .anim-sun-ray-fast { stroke-dasharray: 48, 24; animation: streamRay 1.7s linear infinite; }
-      .anim-beacon-green { transform-origin: 880px 655px; animation: beaconGreen 2s ease-in-out infinite; }
-      .anim-beacon-red { transform-origin: 1380px 800px; animation: beaconRed 1s ease-in-out infinite; }
-      .anim-earth { transform-origin: 1560px 290px; animation: earthGlowPulse 5s ease-in-out infinite; }
+      .anim-beacon-green { animation: beaconGreen 1.8s ease-in-out infinite; }
+      .anim-beacon-red { animation: beaconRed 0.9s ease-in-out infinite; }
+      .anim-earth-globe { animation: earthGlowPulse 4s ease-in-out infinite; }
       .anim-comms { stroke-dasharray: 14, 10; animation: commsStream 1.8s linear infinite; }
-      .anim-block-ring { transform-origin: 880px 655px; animation: blockWave 2s ease-in-out infinite; }
+      .anim-block-ring { animation: blockWave 2s ease-in-out infinite; }
       .anim-photons { animation: photonPulse 3s ease-in-out infinite; }
       .anim-star-1 { animation: starBlink 2.2s ease-in-out infinite; }
       .anim-star-2 { animation: starBlink 3.6s ease-in-out infinite 1s; }
@@ -286,32 +286,35 @@
   </g>
 
   <!-- ================= EARTH & ANIMATED COMMS BEAM ================= -->
-  <!-- Vibrant, Highly Visible 3D Earth Globe (Centred & Prominent) -->
-  <g transform="translate(1560, 290)" class="anim-earth">
-    <!-- Bright Atmosphere Halo Glow -->
-    <circle cx="0" cy="0" r="76" fill="url(#earthAtmoGlow)" filter="url(#glow)"/>
-    <circle cx="0" cy="0" r="56" fill="none" stroke="#00e5ff" stroke-width="2.5" opacity="0.85"/>
-    
-    <!-- Ocean Sphere Base -->
-    <circle cx="0" cy="0" r="54" fill="url(#earthOceanGrad)"/>
-    
-    <!-- Detailed Visible Continents & Clouds Inside Earth Sphere -->
-    <g clip-path="url(#earthClip)">
-      <!-- Africa / Europe Continents -->
-      <path d="M 6,-42 Q 16,-32 18,-15 Q 22,5 12,25 Q 5,42 -5,45 Q -10,30 -6,15 Q -18,-5 -12,-25 Q -2,-42 6,-42 Z" fill="#22c55e" opacity="0.95"/>
-      <!-- Eurasia East -->
-      <path d="M 14,-35 Q 28,-38 42,-25 Q 48,-10 38,5 Q 26,0 20,-15 Z" fill="#10b981" opacity="0.9"/>
-      <!-- Americas West -->
-      <path d="M -48,-30 Q -35,-35 -30,-20 Q -38,-5 -32,15 Q -28,35 -40,38 Q -50,20 -48,-10 Z" fill="#22c55e" opacity="0.9"/>
+  <!-- Vibrant, Highly Visible 3D Earth Globe (Rock Solid at 1540, 290) -->
+  <g transform="translate(1540, 290)">
+    <!-- Animated Glowing Earth Globe & Atmosphere (CSS filter/opacity only - NO transform override) -->
+    <g class="anim-earth-globe">
+      <!-- Bright Atmosphere Halo Glow -->
+      <circle cx="0" cy="0" r="76" fill="url(#earthAtmoGlow)"/>
+      <circle cx="0" cy="0" r="56" fill="none" stroke="#00e5ff" stroke-width="2.5" opacity="0.9"/>
       
-      <!-- Swirling White Atmospheric Clouds -->
-      <path d="M -54,-10 Q -30,-25 0,-15 Q 30,-5 54,-20" stroke="#ffffff" stroke-width="6" fill="none" opacity="0.75" stroke-linecap="round"/>
-      <path d="M -50,15 Q -20,5 15,22 Q 40,15 52,28" stroke="#ffffff" stroke-width="5" fill="none" opacity="0.8" stroke-linecap="round"/>
-      <path d="M -42,-35 Q -10,-42 20,-30" stroke="#ffffff" stroke-width="4.5" fill="none" opacity="0.7" stroke-linecap="round"/>
-      <circle cx="-15" cy="5" r="14" fill="#ffffff" opacity="0.3" filter="url(#glow)"/>
+      <!-- Ocean Sphere Base -->
+      <circle cx="0" cy="0" r="54" fill="url(#earthOceanGrad)"/>
       
-      <!-- 3D Spherical Day/Night Shading -->
-      <circle cx="0" cy="0" r="54" fill="url(#earthSphereShade)"/>
+      <!-- Detailed Visible Continents & Clouds Inside Earth Sphere -->
+      <g clip-path="url(#earthClip)">
+        <!-- Africa / Europe Continents -->
+        <path d="M 6,-42 Q 16,-32 18,-15 Q 22,5 12,25 Q 5,42 -5,45 Q -10,30 -6,15 Q -18,-5 -12,-25 Q -2,-42 6,-42 Z" fill="#22c55e" opacity="0.95"/>
+        <!-- Eurasia East -->
+        <path d="M 14,-35 Q 28,-38 42,-25 Q 48,-10 38,5 Q 26,0 20,-15 Z" fill="#10b981" opacity="0.9"/>
+        <!-- Americas West -->
+        <path d="M -48,-30 Q -35,-35 -30,-20 Q -38,-5 -32,15 Q -28,35 -40,38 Q -50,20 -48,-10 Z" fill="#22c55e" opacity="0.9"/>
+        
+        <!-- Swirling White Atmospheric Clouds -->
+        <path d="M -54,-10 Q -30,-25 0,-15 Q 30,-5 54,-20" stroke="#ffffff" stroke-width="6" fill="none" opacity="0.75" stroke-linecap="round"/>
+        <path d="M -50,15 Q -20,5 15,22 Q 40,15 52,28" stroke="#ffffff" stroke-width="5" fill="none" opacity="0.8" stroke-linecap="round"/>
+        <path d="M -42,-35 Q -10,-42 20,-30" stroke="#ffffff" stroke-width="4.5" fill="none" opacity="0.7" stroke-linecap="round"/>
+        <circle cx="-15" cy="5" r="14" fill="#ffffff" opacity="0.3"/>
+        
+        <!-- 3D Spherical Day/Night Shading -->
+        <circle cx="0" cy="0" r="54" fill="url(#earthSphereShade)"/>
+      </g>
     </g>
     
     <!-- Clear, High-Contrast Earth Label Box -->
@@ -323,7 +326,7 @@
   </g>
 
   <!-- Animated DSN Comms Wave from Earth hitting mountain peak -->
-  <line x1="1510" y1="315" x2="880" y2="655" stroke="#00e5ff" stroke-width="3" class="anim-comms" opacity="0.95" filter="url(#laserGlow)"/>
+  <line x1="1485" y1="315" x2="880" y2="655" stroke="#00e5ff" stroke-width="3" class="anim-comms" opacity="0.95" filter="url(#laserGlow)"/>
   
   <!-- Animated Impact / Block Ring -->
   <circle cx="880" cy="655" r="24" fill="none" stroke="#ea384c" stroke-width="3" class="anim-block-ring"/>
