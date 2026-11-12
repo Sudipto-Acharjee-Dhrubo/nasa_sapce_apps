@@ -12,19 +12,26 @@
     html,body{width:100%;height:100%;background:#010206;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
     .container{width:100%;max-width:1920px;max-height:1080px;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center}
     img{width:100%;height:100%;object-fit:contain;display:block}
-    .nav-bar{position:fixed;top:16px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;z-index:100;pointer-events:none}
-    .btn{pointer-events:auto;background:rgba(4,7,16,0.85);color:#fff;border:1px solid rgba(0,130,243,0.4);padding:8px 16px;border-radius:6px;font:600 12px 'Roboto Condensed',sans-serif;text-decoration:none;letter-spacing:1px;text-transform:uppercase;backdrop-filter:blur(8px);transition:background .2s}
+    .nav-bar{
+      position:fixed;top:16px;left:20px;z-index:100;
+      opacity:0;transition:opacity .3s ease;
+    }
+    body:hover .nav-bar{opacity:1}
+    .btn{
+      background:rgba(4,7,16,0.85);color:#fff;border:1px solid rgba(0,130,243,0.4);
+      padding:8px 16px;border-radius:6px;font:600 12px 'Roboto Condensed',sans-serif;
+      text-decoration:none;letter-spacing:1px;text-transform:uppercase;
+      backdrop-filter:blur(8px);transition:background .2s;display:inline-block;
+    }
     .btn:hover{background:rgba(0,130,243,0.3)}
   </style>
 </head>
 <body>
   <div class="nav-bar">
     <a href="index.html" class="btn">← Back to Horizon Atlas</a>
-    <span style="color:#7d8ea6;font:600 12px 'JetBrains Mono',monospace;letter-spacing:1px">VIDEO 2 · SLIDE DIAGRAM (PRESS F11 FOR FULLSCREEN)</span>
   </div>
   <div class="container">
-    <img src="assets/polar_shadow_diagram.svg" alt="Lunar South Pole Lighting and Shadow Crisis Diagram">
+    <img src="assets/polar_shadow_diagram.svg" alt="Lunar South Pole Lighting and Shadow Crisis Animated Diagram">
   </div>
 </body>
 </html>
-
