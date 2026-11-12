@@ -63,6 +63,10 @@ Output: `data/horizon_<site_id>.json` containing 360-degree horizon elevation ma
 
 ## Model Assumptions & Limitations
 
+<p align="center">
+  <img src="assets/polar_shadow_diagram.svg" alt="Lunar South Pole Lighting and Shadow Physics Diagram" width="100%">
+</p>
+
 - **Topography**: Computed from the official LRO LOLA 80 m/pixel south polar DEM. Sub-pixel boulders and micro-topography below 80 m are smoothed.
 - **Observer Height**: Modeled at ground level (0 m above terrain). A mast or lander solar panel mounted several meters high would experience slightly reduced blockage.
 - **Lunar Curvature**: Incorporates lunar surface sphericity drop ($\Delta z = d^2 / (2R)$, $R = 1737.4\text{ km}$).

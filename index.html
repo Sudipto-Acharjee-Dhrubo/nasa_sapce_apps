@@ -1252,7 +1252,10 @@ textarea{
  <div class="pan" id="p3">
   <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
   <div class="lab cy">Sky view & Ephemeris</div><h2 id="skyT">Sky view</h2>
-  <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:8px 12px;border-left:3px solid var(--cy);background:rgba(232,75,240,.08);line-height:1.6">Sun/Earth: NASA/JPL Horizons API. Topographic horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).</div>
+  <div id="skyDataNote" class="lab" style="margin-bottom:8px;padding:8px 12px;border-left:3px solid var(--cy);background:rgba(232,75,240,.08);line-height:1.6;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <span>Sun/Earth: NASA/JPL Horizons API. Topographic horizon: NASA LRO LOLA 80m DEM ray-marched (30 km).</span>
+    <a href="diagram.html" target="_blank" class="btn" style="padding:4px 12px;font-size:11px;margin:0;border-radius:4px;text-decoration:none">View Physics Diagram ↗</a>
+  </div>
   <svg class="sky" id="sky" viewBox="0 0 720 220"></svg>
   <div class="lab" style="display:flex;justify-content:space-between;padding:4px 6px"><span>N (0°)</span><span>E (90°)</span><span>S (180°)</span><span>W (270°)</span><span>N (360°)</span></div>
   
