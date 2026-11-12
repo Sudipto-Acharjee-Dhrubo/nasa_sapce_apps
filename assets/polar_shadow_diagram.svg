@@ -3,7 +3,7 @@
     <style>
       @keyframes sunCoronaFlare {
         0%, 100% { transform: scale(1); opacity: 0.85; }
-        50% { transform: scale(1.12); opacity: 1; }
+        50% { transform: scale(1.14); opacity: 1; }
       }
       @keyframes streamRay {
         0% { stroke-dashoffset: 400; }
@@ -11,15 +11,15 @@
       }
       @keyframes beaconGreen {
         0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.4; transform: scale(1.5); }
+        50% { opacity: 0.35; transform: scale(1.6); }
       }
       @keyframes beaconRed {
         0%, 100% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.15; transform: scale(0.7); }
       }
       @keyframes earthGlowPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 14px rgba(0,210,255,0.6)); }
+        50% { transform: scale(1.06); filter: drop-shadow(0 0 28px rgba(0,210,255,0.95)); }
       }
       @keyframes commsStream {
         0% { stroke-dashoffset: 240; }
@@ -27,24 +27,24 @@
       }
       @keyframes blockWave {
         0%, 100% { opacity: 0.2; transform: scale(0.8); }
-        50% { opacity: 0.9; transform: scale(1.4); }
+        50% { opacity: 0.95; transform: scale(1.45); }
       }
       @keyframes starBlink {
         0%, 100% { opacity: 0.2; }
         50% { opacity: 0.95; }
       }
       @keyframes photonPulse {
-        0% { opacity: 0.3; }
-        50% { opacity: 0.75; }
-        100% { opacity: 0.3; }
+        0% { opacity: 0.35; }
+        50% { opacity: 0.8; }
+        100% { opacity: 0.35; }
       }
-      .anim-sun-corona { transform-origin: 130px 680px; animation: sunCoronaFlare 4s ease-in-out infinite; }
-      .anim-sun-ray { stroke-dasharray: 30, 20; animation: streamRay 2.5s linear infinite; }
-      .anim-sun-ray-fast { stroke-dasharray: 45, 25; animation: streamRay 1.8s linear infinite; }
+      .anim-sun-corona { transform-origin: 160px 660px; animation: sunCoronaFlare 4s ease-in-out infinite; }
+      .anim-sun-ray { stroke-dasharray: 32, 20; animation: streamRay 2.4s linear infinite; }
+      .anim-sun-ray-fast { stroke-dasharray: 48, 24; animation: streamRay 1.7s linear infinite; }
       .anim-beacon-green { transform-origin: 880px 655px; animation: beaconGreen 2s ease-in-out infinite; }
       .anim-beacon-red { transform-origin: 1380px 800px; animation: beaconRed 1s ease-in-out infinite; }
-      .anim-earth { transform-origin: 1750px 380px; animation: earthGlowPulse 5s ease-in-out infinite; }
-      .anim-comms { stroke-dasharray: 14, 10; animation: commsStream 2s linear infinite; }
+      .anim-earth { transform-origin: 1560px 290px; animation: earthGlowPulse 5s ease-in-out infinite; }
+      .anim-comms { stroke-dasharray: 14, 10; animation: commsStream 1.8s linear infinite; }
       .anim-block-ring { transform-origin: 880px 655px; animation: blockWave 2s ease-in-out infinite; }
       .anim-photons { animation: photonPulse 3s ease-in-out infinite; }
       .anim-star-1 { animation: starBlink 2.2s ease-in-out infinite; }
@@ -71,7 +71,7 @@
     <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="25%" stop-color="#ffe066"/>
-      <stop offset="60%" stop-color="#ff9900" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#ff9900" stop-opacity="0.95"/>
       <stop offset="100%" stop-color="#ff6600" stop-opacity="0"/>
     </radialGradient>
 
@@ -81,13 +81,33 @@
       <stop offset="100%" stop-color="#000000" stop-opacity="0.95"/>
     </linearGradient>
 
-    <!-- Earth Glow -->
-    <radialGradient id="earthGlow" cx="40%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#70c4ff"/>
-      <stop offset="50%" stop-color="#0066cc"/>
-      <stop offset="90%" stop-color="#002255"/>
-      <stop offset="100%" stop-color="#001122"/>
+    <!-- Earth Atmosphere Halo Glow -->
+    <radialGradient id="earthAtmoGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#00e5ff" stop-opacity="0.9"/>
+      <stop offset="85%" stop-color="#0066ff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#002266" stop-opacity="0"/>
     </radialGradient>
+
+    <!-- Earth Ocean Base Gradient -->
+    <radialGradient id="earthOceanGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1a8cff"/>
+      <stop offset="45%" stop-color="#0055cc"/>
+      <stop offset="80%" stop-color="#002b80"/>
+      <stop offset="100%" stop-color="#001440"/>
+    </radialGradient>
+
+    <!-- Earth 3D Sphere Shading -->
+    <radialGradient id="earthSphereShade" cx="30%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#000000" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.95"/>
+    </radialGradient>
+
+    <!-- Earth Clip Path -->
+    <clipPath id="earthClip">
+      <circle cx="0" cy="0" r="54"/>
+    </clipPath>
 
     <!-- Glow Filter -->
     <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -123,7 +143,7 @@
     <line x1="1600" y1="0" x2="1600" y2="1080"/>
   </g>
 
-  <!-- Animated Starry Sky -->
+  <!-- Animated Starry Sky Dots -->
   <g fill="#ffffff">
     <circle cx="120" cy="80" r="1.5" class="anim-star-1"/>
     <circle cx="280" cy="140" r="1" class="anim-star-2"/>
@@ -132,16 +152,16 @@
     <circle cx="890" cy="70" r="1.5" class="anim-star-2"/>
     <circle cx="1120" cy="130" r="2.2" class="anim-star-3"/>
     <circle cx="1340" cy="85" r="1" class="anim-star-1"/>
-    <circle cx="1520" cy="160" r="1.8" class="anim-star-2"/>
+    <circle cx="1520" cy="140" r="1.8" class="anim-star-2"/>
     <circle cx="1780" cy="95" r="1.2" class="anim-star-3"/>
     <circle cx="1850" cy="240" r="1.5" class="anim-star-1"/>
     <circle cx="210" cy="310" r="1.2" class="anim-star-2"/>
     <circle cx="980" cy="270" r="1" class="anim-star-3"/>
-    <circle cx="1410" cy="290" r="1.6" class="anim-star-1"/>
+    <circle cx="1390" cy="240" r="1.6" class="anim-star-1"/>
   </g>
 
   <!-- ================= TOP HEADER BAR ================= -->
-  <g transform="translate(80, 70)">
+  <g transform="translate(80, 65)">
     <rect x="0" y="0" width="360" height="30" rx="4" fill="rgba(232,75,240,0.15)" stroke="rgba(232,75,240,0.5)" stroke-width="1.5"/>
     <circle cx="15" cy="15" r="5" fill="#e84bf0"/>
     <text x="30" y="20" fill="#e84bf0" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" letter-spacing="2">NASA SPACE APPS 2026 · TEAM VOIDBRONE</text>
@@ -152,26 +172,26 @@
 
   <!-- ================= SUN & ANIMATED STREAMING RAYS ================= -->
   <!-- Low Sun on the Far Left -->
-  <g transform="translate(130, 680)">
+  <g transform="translate(160, 660)">
     <!-- Pulsing Corona -->
-    <circle cx="0" cy="0" r="120" fill="url(#sunGlow)" filter="url(#glow)" class="anim-sun-corona"/>
-    <circle cx="0" cy="0" r="50" fill="#ffffff"/>
+    <circle cx="0" cy="0" r="130" fill="url(#sunGlow)" filter="url(#glow)" class="anim-sun-corona"/>
+    <circle cx="0" cy="0" r="55" fill="#ffffff"/>
     
     <!-- Sun Label -->
-    <rect x="-80" y="70" width="160" height="34" rx="4" fill="rgba(8,16,32,0.85)" stroke="#e8a24a" stroke-width="1.5"/>
-    <text x="0" y="93" fill="#e8a24a" font-family="'Roboto Condensed', sans-serif" font-size="15" font-weight="700" text-anchor="middle" letter-spacing="1">☀️ SUN (LOW GRAZING)</text>
-    <text x="0" y="125" fill="#ffe699" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" text-anchor="middle">Elevation: ~1.5° above horizon</text>
+    <rect x="-80" y="75" width="160" height="34" rx="4" fill="rgba(8,16,32,0.85)" stroke="#e8a24a" stroke-width="1.5"/>
+    <text x="0" y="98" fill="#e8a24a" font-family="'Roboto Condensed', sans-serif" font-size="15" font-weight="700" text-anchor="middle" letter-spacing="1">☀️ SUN (LOW GRAZING)</text>
+    <text x="0" y="130" fill="#ffe699" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" text-anchor="middle">Elevation: ~1.5° above horizon</text>
   </g>
 
   <!-- Animated Parallel Golden Sunlight Beams -->
-  <polygon points="130,620 1920,570 1920,650 880,655 130,680" fill="url(#sunbeam)" class="anim-photons"/>
-  <line x1="130" y1="640" x2="880" y2="655" stroke="#ffe277" stroke-width="3" filter="url(#laserGlow)" class="anim-sun-ray-fast"/>
-  <line x1="130" y1="660" x2="880" y2="655" stroke="#ffdd66" stroke-width="3" filter="url(#laserGlow)" class="anim-sun-ray"/>
-  <line x1="130" y1="680" x2="880" y2="655" stroke="#ffffff" stroke-width="2.5" class="anim-sun-ray"/>
+  <polygon points="160,600 1920,540 1920,650 880,655 160,660" fill="url(#sunbeam)" class="anim-photons"/>
+  <line x1="160" y1="620" x2="880" y2="655" stroke="#ffe277" stroke-width="3.5" filter="url(#laserGlow)" class="anim-sun-ray-fast"/>
+  <line x1="160" y1="645" x2="880" y2="655" stroke="#ffdd66" stroke-width="3" filter="url(#laserGlow)" class="anim-sun-ray"/>
+  <line x1="160" y1="660" x2="880" y2="655" stroke="#ffffff" stroke-width="2.5" class="anim-sun-ray"/>
   <line x1="880" y1="655" x2="1920" y2="615" stroke="#ffdd66" stroke-width="2.5" class="anim-sun-ray" opacity="0.6"/>
 
   <!-- Tangent Angle Visual Guide (1.5 deg dashed ray) -->
-  <line x1="130" y1="680" x2="880" y2="655" stroke="#ffb733" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.4"/>
+  <line x1="160" y1="660" x2="880" y2="655" stroke="#ffb733" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.4"/>
 
   <!-- ================= LUNAR TOPOGRAPHY (CRATER RIM & VALLEY) ================= -->
   <!-- Shadow Cone Zone Behind Mountain (Permanently Shadowed Region) -->
@@ -231,7 +251,7 @@
   </g>
 
   <!-- Stranded Lander Graphic inside Crater Floor -->
-  <g transform="translate(1380, 845)">
+  <g transform="translate(1360, 845)">
     <!-- Lander Legs & Body -->
     <line x1="-35" y1="65" x2="-18" y2="25" stroke="#a0aec0" stroke-width="3"/>
     <line x1="35" y1="65" x2="18" y2="25" stroke="#a0aec0" stroke-width="3"/>
@@ -266,22 +286,47 @@
   </g>
 
   <!-- ================= EARTH & ANIMATED COMMS BEAM ================= -->
-  <!-- Earth Hovering Low with Pulsing Atmosphere -->
-  <g transform="translate(1750, 380)" class="anim-earth">
-    <circle cx="0" cy="0" r="45" fill="url(#earthGlow)" filter="url(#glow)"/>
-    <circle cx="0" cy="0" r="45" fill="none" stroke="#0082f3" stroke-width="2"/>
+  <!-- Vibrant, Highly Visible 3D Earth Globe (Centred & Prominent) -->
+  <g transform="translate(1560, 290)" class="anim-earth">
+    <!-- Bright Atmosphere Halo Glow -->
+    <circle cx="0" cy="0" r="76" fill="url(#earthAtmoGlow)" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="56" fill="none" stroke="#00e5ff" stroke-width="2.5" opacity="0.85"/>
     
-    <!-- Earth Label -->
-    <rect x="-70" y="58" width="140" height="32" rx="4" fill="rgba(8,16,32,0.9)" stroke="#0082f3" stroke-width="1.5"/>
-    <text x="0" y="79" fill="#0082f3" font-family="'Roboto Condensed', sans-serif" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="1">🌍 EARTH</text>
-    <text x="0" y="108" fill="#70c4ff" font-family="'JetBrains Mono', monospace" font-size="12" text-anchor="middle">Low Elevation: +3° to +8°</text>
+    <!-- Ocean Sphere Base -->
+    <circle cx="0" cy="0" r="54" fill="url(#earthOceanGrad)"/>
+    
+    <!-- Detailed Visible Continents & Clouds Inside Earth Sphere -->
+    <g clip-path="url(#earthClip)">
+      <!-- Africa / Europe Continents -->
+      <path d="M 6,-42 Q 16,-32 18,-15 Q 22,5 12,25 Q 5,42 -5,45 Q -10,30 -6,15 Q -18,-5 -12,-25 Q -2,-42 6,-42 Z" fill="#22c55e" opacity="0.95"/>
+      <!-- Eurasia East -->
+      <path d="M 14,-35 Q 28,-38 42,-25 Q 48,-10 38,5 Q 26,0 20,-15 Z" fill="#10b981" opacity="0.9"/>
+      <!-- Americas West -->
+      <path d="M -48,-30 Q -35,-35 -30,-20 Q -38,-5 -32,15 Q -28,35 -40,38 Q -50,20 -48,-10 Z" fill="#22c55e" opacity="0.9"/>
+      
+      <!-- Swirling White Atmospheric Clouds -->
+      <path d="M -54,-10 Q -30,-25 0,-15 Q 30,-5 54,-20" stroke="#ffffff" stroke-width="6" fill="none" opacity="0.75" stroke-linecap="round"/>
+      <path d="M -50,15 Q -20,5 15,22 Q 40,15 52,28" stroke="#ffffff" stroke-width="5" fill="none" opacity="0.8" stroke-linecap="round"/>
+      <path d="M -42,-35 Q -10,-42 20,-30" stroke="#ffffff" stroke-width="4.5" fill="none" opacity="0.7" stroke-linecap="round"/>
+      <circle cx="-15" cy="5" r="14" fill="#ffffff" opacity="0.3" filter="url(#glow)"/>
+      
+      <!-- 3D Spherical Day/Night Shading -->
+      <circle cx="0" cy="0" r="54" fill="url(#earthSphereShade)"/>
+    </g>
+    
+    <!-- Clear, High-Contrast Earth Label Box -->
+    <g transform="translate(0, 72)">
+      <rect x="-115" y="0" width="230" height="42" rx="6" fill="rgba(6,12,26,0.92)" stroke="#0082f3" stroke-width="2"/>
+      <text x="0" y="18" fill="#00e5ff" font-family="'Roboto Condensed', sans-serif" font-size="14.5" font-weight="700" text-anchor="middle" letter-spacing="1">🌍 EARTH (DIRECT-TO-EARTH LINK)</text>
+      <text x="0" y="33" fill="#a5d8ff" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">Elevation: +3° to +8° above horizon</text>
+    </g>
   </g>
 
-  <!-- Animated DSN Comms Wave from Earth hitting mountain -->
-  <line x1="1710" y1="400" x2="880" y2="655" stroke="#00d2ff" stroke-width="2.5" class="anim-comms" opacity="0.9"/>
+  <!-- Animated DSN Comms Wave from Earth hitting mountain peak -->
+  <line x1="1510" y1="315" x2="880" y2="655" stroke="#00e5ff" stroke-width="3" class="anim-comms" opacity="0.95" filter="url(#laserGlow)"/>
   
   <!-- Animated Impact / Block Ring -->
-  <circle cx="880" cy="655" r="22" fill="none" stroke="#ea384c" stroke-width="2.5" class="anim-block-ring"/>
+  <circle cx="880" cy="655" r="24" fill="none" stroke="#ea384c" stroke-width="3" class="anim-block-ring"/>
   <text x="895" y="640" fill="#ea384c" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700">✗ TERRAIN BLOCKS COMMS</text>
 
   <!-- ================= BOTTOM KEY TAKEAWAYS BAR ================= -->
