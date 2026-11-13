@@ -64,7 +64,7 @@ Output: `data/horizon_<site_id>.json` containing 360-degree horizon elevation ma
 ## Model Assumptions & Limitations
 
 <p align="center">
-  <img src="assets/polar_shadow_diagram.svg" alt="Lunar South Pole Lighting and Shadow Physics Diagram" width="100%">
+  <img src="assets/polar_shadow_diagram.svg?v=3" alt="Lunar South Pole Lighting and Shadow Physics Diagram" width="100%">
 </p>
 
 - **Topography**: Computed from the official LRO LOLA 80 m/pixel south polar DEM. Sub-pixel boulders and micro-topography below 80 m are smoothed.
